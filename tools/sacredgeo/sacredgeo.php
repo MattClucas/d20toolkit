@@ -25,7 +25,7 @@
             <select id="spellLevelSelect"></select>
             </br></br>
             <label>Enter one digit for each dice</label></br>
-            <label>Example - rolled: 5, 6, 3, 2, 4, 4 -> input: "563244"</label>
+            <label>Ex: rolled: 5, 6, 3, 2, 4, 4 -> input: "563244"</label>
             </br>Rolled Numbers
             <input type="text" id="rolledNumbers" />
             </br>
