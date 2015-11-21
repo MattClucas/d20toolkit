@@ -6,14 +6,14 @@ inputBox.onkeyup = function(){
 
 function digitalRoot(spellname)
 {
-	//translate each letter in the spell name into its correct value, and add all of the values together
+	// translate each letter in the spell name into its correct value, and add all of the values together
 	var total = 0;
 	for(var i = 0; i < spellname.length; i++)
 	{
 		total += numericalValue(spellname.charAt(i));
 	}
 	
-	//
+	// add digits together until there is one digit
 	var digits = total.toString();
 	while(digits.length > 1)
 	{
