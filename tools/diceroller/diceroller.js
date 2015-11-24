@@ -15,7 +15,7 @@ window.onload = function(){
         input = replaceDiceString(input);
 
         // try to evaluate the total
-        var outcome = input + "</br>";
+        var outcome = input + "<br/>";
         try
         {
             // uses parser.js to evaluate any total
@@ -28,7 +28,7 @@ window.onload = function(){
         }
 
         // prepend the new string to the existing output and get the total
-        document.getElementById("output").innerHTML = outcome + "</br>" + document.getElementById("output").innerHTML;
+        document.getElementById("output").innerHTML = outcome + "<br/>" + document.getElementById("output").innerHTML;
 
         // clear input box if clearText is checked
         if (document.getElementById("clearText").checked)

@@ -77,7 +77,7 @@
                         content = replaceDiceStringAndEvaluate(content);
 
                         // show results in the results div
-                        rollResults.innerHTML = content + "</br>" + rollResults.innerHTML;
+                        rollResults.innerHTML = content + "<br/>" + rollResults.innerHTML;
                     };
 
                     // get div to hold table
@@ -143,14 +143,14 @@
         <div id="mainDiv" class="container">
             <h1>Equilikely Table Roller</h1>
             <a href="links.php">Example Tables</a>
-            </br>
+            <br/>
 
             <div id="formBlock" class="block form-group">
                 <form method="GET" action="/tools/tableroller/tableroller.php">
                     <label>Insert each possiblity here, one per line.</label>
-                    </br>
+                    <br/>
                     <textarea id="tableInput" class="form-control" name="t"></textarea>
-                    </br>
+                    <br/>
                     <input type="submit" class="btn btn-default" value="Update Table"/>
                 </form>
             </div>

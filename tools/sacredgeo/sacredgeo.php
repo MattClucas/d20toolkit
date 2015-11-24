@@ -20,16 +20,16 @@
             <a href="http://www.d20pfsrd.com/feats/general-feats/sacred-geometry">See the rules.</a>
             <a href="https://play.google.com/store/apps/details?id=com.clucasprojects.sacredgeometry&hl=en">Get the Android app.</a>
 
-            </br>
-            </br>Spell Level
+            <br/>
+            <br/>Spell Level
             <select id="spellLevelSelect"></select>
-            </br></br>
-            <label>Enter one digit for each dice</label></br>
+            <br/><br/>
+            <label>Enter one digit for each dice</label><br/>
             <label>Ex: rolled: 5, 6, 3, 2, 4, 4 -> input: "563244"</label>
-            </br>Rolled Numbers
+            <br/>Rolled Numbers
             <input type="text" id="rolledNumbers" />
-            </br>
-            </br>
+            <br/>
+            <br/>
             <button id="calculateButton">Wizard!</button>
 
             <h4>Results</h4>

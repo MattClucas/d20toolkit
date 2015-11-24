@@ -19,15 +19,15 @@
         <div class="container">
             <h1>Dice Roller</h1>
             <label>Ex: 5d6 + 3d3 + 15 - 8</label>
-            </br>
+            <br/>
             <input
                 type="text"
                 id="inputBox"
                 onkeydown="if(event.keyCode==13)document.getElementById('submitBtn').click()"
                 autofocus/>
             <button id="submitBtn">Roll!</button>
-            </br>
-            </br>
+            <br/>
+            <br/>
             <input type="checkbox" id="clearText"/>
             <label >Clear input after rolling?</label>
             <div style="padding-top: 10px;" id="output"></div>
