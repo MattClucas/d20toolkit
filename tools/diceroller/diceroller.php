@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" href="../../css/bootswatch.min.css">
         <script src="parser.js" async></script>
+        <script src="diceParser.js" async></script>
         <script src="diceroller.js" async></script>
     </head>
     <body>

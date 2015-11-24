@@ -23,6 +23,7 @@
                             <h4><a href="./tools/sacredgeo/sacredgeo.php">Sacred Geometry Calculator</a></h4>
                             <h4><a href="./tools/arithmancy/arithmancy.php">Arithmancy Calculator</a></h4>
                             <h4><a href="./tools/diceroller/diceroller.php">Dice Roller</a></h4>
+                            <h4><a href="./tools/tableroller/tableroller.php">Table Roller</a></h4>
                         </div>
                         <h3>Linked Resources</h3>
                         <h4><a href="http://www.d20pfsrd.com/">D20PFSRD</a></h4>
