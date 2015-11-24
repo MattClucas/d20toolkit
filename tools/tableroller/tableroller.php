@@ -142,6 +142,8 @@
         ?>
         <div id="mainDiv" class="container">
             <h1>Equilikely Table Roller</h1>
+            <a href="links.php">Example Tables</a>
+            </br>
 
             <div id="formBlock" class="block form-group">
                 <form method="GET" action="/tools/tableroller/tableroller.php">
