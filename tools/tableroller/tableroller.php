@@ -1,31 +1,3 @@
-<?php
-    // get table from url
-    // give it to javascript
-    $input = $_GET['t'];
-    if (isset($input) && !empty($input))
-    {
-        // break string into array with each element being a new line
-        $input = explode("\n", $input);
-        for ($i = 0; $i < count($input); $i++)
-        {
-            // delete anything that is just white space
-            $input[$i] = trim($input[$i]);
-            if (empty($input[$i]) || $input[$i] == "")
-            {
-                unset($input[$i]);
-            }
-            else
-            {
-                $input[$i] = htmlspecialchars($input[$i]);
-            }
-        }
-        $input = array_values($input);
-    }
-    else
-    {
-        $input = null;
-    }
-?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -43,27 +15,38 @@
         <script src="/tools/diceroller/parser.js" async></script>
         <script src="/tools/diceroller/diceParser.js" async></script>
         <script>
-            var TABLE = <?php echo (($input != null) ? json_encode($input) : "[]") . ";\n";?>
-            var URLBase = "http://d20toolkit.com/tools/tableroller/tableroller.php?t=";
-            var MAX_LENGTH = 675;
-            function checkLength(){
-                var text = document.getElementById("tableInput").value;
-                var encodedText = encodeURIComponent(text);
-                var fullUrl = URLBase + encodedText;
-                var errortxt = "";
-                if (fullUrl.length > MAX_LENGTH)
-                {
-                    var overlength = fullUrl.length - MAX_LENGTH;
-                    errortxt = "Sorry, the input is " + overlength + " characters too large.";
+            // parse the url parameters
+            var urlParams; // url params will be inside this object
+            (window.onpopstate = function () {
+                var match,
+                pl     = /\+/g,  // Regex for replacing addition symbol with a space
+                search = /([^&=]+)=?([^&]*)/g,
+                decode = function (s) {
+                    return decodeURIComponent(s.replace(pl, " "));
+                },
+                query  = window.location.search.substring(1);
+
+                urlParams = {};
+                while (match = search.exec(query)){
+                    urlParams[decode(match[1])] = decode(match[2]);
                 }
-                document.getElementById("tooLong").innerText = errortxt;
+            })();
+
+            // create the TABLE array of items
+            var TABLE = urlParams.t.split("\n"); // every new line is a seperate item
+            for (var i = 0; i < TABLE.length; i++)
+            {
+                TABLE[i] = TABLE[i].trim(); // remove all unnecessary whitespace
+                if (TABLE[i] == null || TABLE[i] == "")
+                {
+                    TABLE.splice(i, 1); // delete the item if it contains nothing
+                    i--; // go back one index because now the array has shifted by one
+                }
             }
+
             window.onload = function(){
-                document.getElementById("tableInput").onchange = checkLength;
-                document.getElementById("tableInput").onkeyup = checkLength;
                 document.getElementById("tableInput").rows = Math.max(TABLE.length, 5);
                 document.getElementById("tableInput").value = TABLE.join("\n");
-                checkLength();
 
                 // create content table
                 if (TABLE.length > 0)
@@ -177,7 +160,6 @@
                     <br/>
                     <textarea id="tableInput" class="form-control" name="t"></textarea>
                     <br/>
-                    <h6 id="tooLong"></h6>
                     <input type="submit" class="btn btn-default" value="Update Table"/>
                 </form>
             </div>
