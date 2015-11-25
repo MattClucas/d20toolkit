@@ -114,13 +114,22 @@
                         tbody.appendChild(row);
 
                         // compute percentages
-                        var percent = i;
+                        var percent = i + 1;
                         if (TABLE.length <= 100)
                         {
                             percent = Math.floor(curPercent) + 1;
                             percent += '-';
                             curPercent += increment;
-                            percent += Math.floor(curPercent);
+
+                            // ensure that the last percentage ends with 100
+                            if ((i == TABLE.length - 1) && Math.floor(curPercent) != 100)
+                            {
+                                percent += "100";
+                            }
+                            else
+                            {
+                                percent += Math.floor(curPercent);
+                            }
                         }
 
                         // create tbody data
