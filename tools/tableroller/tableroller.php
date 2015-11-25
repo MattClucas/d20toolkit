@@ -44,9 +44,26 @@
         <script src="/tools/diceroller/diceParser.js" async></script>
         <script>
             var TABLE = <?php echo (($input != null) ? json_encode($input) : "[]") . ";\n";?>
+            var URLBase = "http://d20toolkit.com/tools/tableroller/tableroller.php?t=";
+            var MAX_LENGTH = 675;
+            function checkLength(){
+                var text = document.getElementById("tableInput").value;
+                var encodedText = encodeURIComponent(text);
+                var fullUrl = URLBase + encodedText;
+                var errortxt = "";
+                if (fullUrl.length > MAX_LENGTH)
+                {
+                    var overlength = fullUrl.length - MAX_LENGTH;
+                    errortxt = "Sorry, the input is " + overlength + " characters too large.";
+                }
+                document.getElementById("tooLong").innerText = errortxt;
+            }
             window.onload = function(){
+                document.getElementById("tableInput").onchange = checkLength;
+                document.getElementById("tableInput").onkeyup = checkLength;
                 document.getElementById("tableInput").rows = Math.max(TABLE.length, 5);
                 document.getElementById("tableInput").value = TABLE.join("\n");
+                checkLength();
 
                 // create content table
                 if (TABLE.length > 0)
@@ -160,6 +177,7 @@
                     <br/>
                     <textarea id="tableInput" class="form-control" name="t"></textarea>
                     <br/>
+                    <h6 id="tooLong"></h6>
                     <input type="submit" class="btn btn-default" value="Update Table"/>
                 </form>
             </div>
