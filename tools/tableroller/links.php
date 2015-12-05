@@ -587,13 +587,13 @@
                     <td><a href="/tools/tableroller/tableroller.php?t=Energy+resistance%0D%0ASpell+resistance%2817%29">
                         Shield
                     </a></td>
-                    <td>+4<td>
+                    <td>+4</td>
                 </tr>
                 <tr>
                     <td><a href="/tools/tableroller/tableroller.php?t=Determination%0D%0AEnergy+resistance%2C+improved%0D%0AUndead+controlling%0D%0AEnergy+resistance%2C+greater%0D%0AFortification%28heavy%29%0D%0AReflecting%0D%0ASpell+resistance%2819%29">
                         Shield
                     </a></td>
-                    <td>+5<td>
+                    <td>+5</td>
                 </tr>
             </table>
             <table class="table table-striped table-bordered block">
