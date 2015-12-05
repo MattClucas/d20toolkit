@@ -533,6 +533,128 @@
                     </a></td>
                 </tr>
             </table>
+            <table class="table table-striped table-bordered block">
+                <tr><th>Magic Armor & Shield Abilities</th><th>Bonus</th></tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Benevolent%0D%0APoison-resistant%0D%0ABalanced%0D%0ABitter%0D%0ABolstering%0D%0ABrawling%0D%0AChampion%0D%0ADastard%0D%0ADeathless%0D%0ADefiant%0D%0AFortification%28light%29%0D%0AGrinding%0D%0AImpervious%0D%0AMirrored%0D%0ASpell+storing%0D%0AStanching%0D%0AWarding">
+                        Armor
+                    </a></td>
+                    <td>+1</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Glamered%0D%0AJousting%0D%0AShadow%0D%0ASlick%0D%0AExpeditious%0D%0ACreeping%0D%0ARallying%0D%0ASpell+resistance%2813%29">
+                        Armor
+                    </a></td>
+                    <td>+2</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Adhesive%0D%0AHosteling%0D%0ARadiant%0D%0ADelving%0D%0APutrid%0D%0AFortification%28moderate%29%0D%0AGhost+touch%0D%0AInvulnerability%0D%0ASpell+resistance%2815%29%0D%0ATitanic%0D%0AWild">
+                        Armor
+                    </a></td>
+                    <td>+3</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Harmonizing%0D%0AShadow%2C+improved%0D%0ASlick%2C+improved%0D%0AEnergy+resistance%0D%0AMartyring%0D%0ASpell+resistance%2817%29">
+                        Armor
+                    </a></td>
+                    <td>+4</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Righteous%0D%0AUnbound%0D%0AUnrighteous%0D%0AVigilant%0D%0ADetermination%0D%0AShadow%2C+greater%0D%0ASlick%2C+greater%0D%0AEnergy+resistance%2C+improved%0D%0AEtherealness%0D%0AUndead+controlling%0D%0AEnergy+resistance%2C+greater%0D%0AFortification%28heavy%29%0D%0ASpell+resistance%2819%29">
+                        Armor
+                    </a></td>
+                    <td>+5</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Poison-resistant%0D%0AArrow+catching%0D%0ABashing%0D%0ABlinding%0D%0AClangorous%0D%0ADefiant%0D%0AFortification%28light%29%0D%0AGrinding%0D%0AImpervious%0D%0AMirrored%0D%0ARamming">
+                        Shield
+                    </a></td>
+                    <td>+1</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Rallying%0D%0AWyrmsbreath%0D%0AAnimated%0D%0AArrow+deflection%0D%0AMerging%0D%0ASpell+resistance%2813%29">
+                        Shield
+                    </a></td>
+                    <td>+2</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Hosteling%0D%0ARadiant%0D%0AFortification%28moderate%29%0D%0AGhost+touch%0D%0ASpell+resistance%2815%29%0D%0AWild">
+                        Shield
+                    </a></td>
+                    <td>+3</td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Energy+resistance%0D%0ASpell+resistance%2817%29">
+                        Shield
+                    </a></td>
+                    <td>+4<td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Determination%0D%0AEnergy+resistance%2C+improved%0D%0AUndead+controlling%0D%0AEnergy+resistance%2C+greater%0D%0AFortification%28heavy%29%0D%0AReflecting%0D%0ASpell+resistance%2819%29">
+                        Shield
+                    </a></td>
+                    <td>+5<td>
+                </tr>
+            </table>
+            <table class="table table-striped table-bordered block">
+                <tr><th>Armor</th><th>Shields</th></tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Mithral+shirt%0D%0AMasterwork+armor+or+non-magical+armor+made+with+special+material">
+                        Lesser Minor
+                    </a></td>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Living+steel+heavy+shield%0D%0ADarkwood+Buckler%0D%0ADarkwood+shield%0D%0AMithral+heavy+shield">
+                        Lesser Minor
+                    </a></td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Mistmail%0D%0AOtyugh+hide%0D%0ADragonhide+plate">
+                        Greater Minor
+                    </a></td>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Zombie+skin+shield%0D%0ACaster%27s+shield%0D%0ABurglar%27s+Buckler%0D%0AMithral+heavy+shield">
+                        Greater Minor
+                    </a></td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Elven+chain%0D%0ARhino+hide%0D%0AMorlock+hide">
+                        Lesser Medium
+                    </a></td>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Spined+shield%0D%0ADragonslayer%27s+shield%0D%0ACollapsible+tower%0D%0ALion%27s+shield">
+                        Lesser Medium
+                    </a></td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Adamantine+breastplate%0D%0ASoothsayer%27s+raiment%0D%0AEquestrian+plate%0D%0AEnchanted+eelskin%0D%0ABoneless+leather%0D%0AMurderer%27s+blackcloth%0D%0AFolding+plate%0D%0ABreastplate+of+vanishing">
+                        Greater Medium
+                    </a></td>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Caster%27s+shield%2C+greater%0D%0ACelestial+shield%0D%0AMaelstrom+shield%0D%0AVolcanic+shield%0D%0ATempest+shield">
+                        Greater Medium
+                    </a></td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Armor+of+insults%0D%0ADwarven+plate%0D%0ABanded+mail+of+luck%0D%0ACatskin+leather%0D%0ACelestial+armor%0D%0ABuccaneer%27s+breastplate%0D%0APlate+armor+of+the+deep">
+                        Lesser Major
+                    </a></td>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Battlement+shield%0D%0AWinged+shield%0D%0AAvalanche+shield%0D%0AFortress+shield%0D%0AWyrmslayer%27s+shield">
+                        Lesser Major
+                    </a></td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Breastplate+of+command%0D%0AForsaken+banded+mail%0D%0AMithral+full+plate+of+speed%0D%0AWarden+of+the+woods%0D%0AScarab+breastplate%0D%0AGiant-hide+armor+%28ogre%29%0D%0AHamatula+hide%0D%0AGiant-hide+armor+%28hill+giant%29%0D%0ADemon+armor%0D%0AGiant-hide+armor%28stone%2C+fire%2C+or+frost+giant%29%0D%0AGiant-hide+armor+%28troll%29%0D%0AMail+of+malevolence%0D%0AGiant-hide+armor%28cloud+giant%29%0D%0AGiant-hide+armor%28storm+giant%29%0D%0ADaystar+half-plate%0D%0AInvincible+armor%0D%0APrismatic+plate">
+                        Greater Major
+                    </a></td>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Spell+ward+tower+shield%0D%0AQuick+block+buckler%0D%0ABelligerent+shield%0D%0AForce+tower%0D%0AAbsorbing+shield%0D%0AElysian+shield">
+                        Greater Major
+                    </a></td>
+                </tr>
+                <tr>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Adamantine+Breastplate%0D%0AAdvocate%27s+Armor%0D%0AAlchemist%27s+Suit%0D%0AAll-Seeing+Armor%0D%0AArboreal+Armor%0D%0AArmiger%27s+Armor%0D%0AArmor+of+Fragmenting+Stone%0D%0AArmor+of+Insults%0D%0AArmor+of+the+Sands%0D%0AArmor+of+the+Unquenchable+Fire%0D%0ABackbreaker+Mail%0D%0ABanded+Mail+of+Luck%0D%0ABlackfingers+Apron%0D%0ABoneless+Leather%0D%0ABreastplate+of+Command%0D%0ABreastplate+of+Vanishing%0D%0ABuccaneer%27s+Breastplate%0D%0ACatskin+Leather%0D%0ACelestial+Armor%0D%0ACelestial+Plate+Armor%0D%0AChain+Vest+of+Dawn%0D%0ACrag+Linnorm+Plate%0D%0ADaystar+Half-Plate%0D%0ADeath%27s+Preservation+Banded+Mail%0D%0ADemon+Armor%0D%0ADragonform+Armor%0D%0ADragonhide+Plate%0D%0ADwarven+Plate%0D%0AElven+Chain%0D%0AEmpyreal+Armor%0D%0AEnchanted+Eelskin%0D%0AEquestrian+Plate%0D%0AEternal+Iron+Breastplate%0D%0AFangtide+Scale+Mail%0D%0AField+Medic%27s+Breastplate%0D%0AFlashguard+Plate%0D%0AFolding+Plate%0D%0AForgemaster%27s+Half-Plate%0D%0AForsaken+Banded+Mail%0D%0AFull+Plate+of+the+Corpse%0D%0AGelugon+Armor%0D%0AGelugon+Plate%0D%0AGhoul+Hide%0D%0AGiant-Hide+Armor%0D%0AGloom+Mail%0D%0AGossamer+Shrouds+of+the+Clairvoyant%0D%0AGravewatcher+Chainmail%0D%0AGray+Master%27s+Leathers%0D%0AHalf-Plate+of+the+Dark+Prince%0D%0AHamatula+Hide%0D%0AHellwasp+Corset%0D%0AHero%27s+Hauberk%0D%0AHunter%27s+Leather%0D%0AInfiltrator%27s+Mail%0D%0AInheritor%27s+Breastplate%0D%0AInvincible+Armor%0D%0AJudge%27s+Breastplate%0D%0AJungle+Armor%0D%0ALifecollar+Coat%0D%0ALuck+Mail%2C+Greater%0D%0ALuck+Mail%2C+Lesser%0D%0AMail+of+Malevolence%0D%0AMammoth+Hide+%28ISC%29%0D%0AMammoth+Hide+%28MTT%29%0D%0AMan+Mountain+Armor%0D%0AMistmail%0D%0AMithral+Full+Plate+of+Speed%0D%0AMithral+Shirt%0D%0AMorlock+Hide%0D%0AMosswater+Stained+Leather%0D%0AMurderer%27s+Blackcloth%0D%0AOtyugh+Hide%0D%0APainspike+Armor%0D%0APallid+Chain%0D%0APelt+of+the+Demon+Mother%0D%0APerfection+Leather%0D%0APhoenix+Armor%0D%0APlate+Armor+of+the+Deep%0D%0APrismatic+Plate%0D%0ARed+Stalker+Armor%0D%0ARhino+Hide%0D%0ARosy+Hauberk%0D%0AScarab+Breastplate%0D%0AScouting+Leather%0D%0ASea+Banshee+Coat%0D%0ASea+Coat%0D%0ASkullduster%0D%0ASky+Knight+Dress+Uniform%0D%0ASnailplate%0D%0ASnakescale+Armor%0D%0ASoothsayer%27s+Raiment%0D%0AStalking+Armor%0D%0AStarfaring+Robes%0D%0AStarsong+Mail%0D%0ATiger%27s+Hide%0D%0ATireless+Tracking+Hide%0D%0AToiler%27s+Armor%0D%0ATunnel+Defender+Stoneplate%0D%0AVeiled+Chain%0D%0AWar+Commander%27s+Field+Plate%0D%0AWarden+of+the+Woods%0D%0AWaverider+Breastplate%0D%0AWizard%27s+Mail%0D%0AWorkman%27s+Armor%0D%0AWrithing+Armor%0D%0AXill+Carapace+Armor">
+                        All Piazo
+                    </a></td>
+                    <td><a href="/tools/tableroller/tableroller.php?t=Absorbing+Shield%0D%0AAvalanche+Shield%0D%0ABattlement+Shield%0D%0ABelligerent+Shield%0D%0ABloodfeast+Shield%0D%0ABroadside+Bulwark%0D%0ABronze+Whisperer%27s+Shield%0D%0ABurglar%27s+Buckler%0D%0ACaster%27s+Shield%0D%0ACelestial+Shield%0D%0ACollapsible+Tower%0D%0ADarkwood+Buckler%0D%0ADarkwood+Shield%0D%0ADragonslayer%27s+Shield%0D%0ADriftwood+Shield%0D%0AElephant+Shield%0D%0AElysian+Shield%0D%0AEqualizer+Shield%0D%0AForce+Tower%0D%0AFortress+Shield%0D%0AGuard+of+Man%0D%0AHowling+Skull+Armor%0D%0ALion%27s+Shield%0D%0ALion-Skull+Klar%0D%0ALiving+Steel+Heavy+Shield%0D%0AMaelstrom+Shield%0D%0AMithral+Heavy+Shield%0D%0AQuick+Block+Buckler%0D%0AShield+of+Covered+Retreat%0D%0AShield+of+Hags%0D%0AShield+of+Sunrise%0D%0AShield+of+the+Mazeborn%0D%0ASlaver%27s+Madu%0D%0ASpell+Ward+Tower+Shield%0D%0ASpellbane+Shield%0D%0ASpined+Shield%0D%0ASpirit+Shield%0D%0ATempest+Shield%0D%0AVolcanic+Shield%0D%0AWinged+Shield%0D%0AWyrmslayer%27s+Shield%0D%0AZombie+Skin+Shield">
+                        All Piazo
+                    </a></td>
+                </tr>
+            </table>
         </div>
     </body>
 </html>
