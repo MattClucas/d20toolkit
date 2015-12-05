@@ -15,7 +15,6 @@
         ?>
         <div class="container">
             <h1>Pathfinder Sacred Geometry Solver</h1>
-            <h6>Algorithm by Matt Clucas - Web version by Jacob Moyer</h6>
 
             <a href="http://www.d20pfsrd.com/feats/general-feats/sacred-geometry">See the rules.</a>
             <a href="https://play.google.com/store/apps/details?id=com.clucasprojects.sacredgeometry&hl=en">Get the Android app.</a>
