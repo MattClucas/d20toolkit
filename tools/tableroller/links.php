@@ -805,6 +805,24 @@
                         </a></td>
                     </tr>
                 </table>
+                <table class="table table-striped table-bordered block">
+                    <tr><th>Artifacts</th></tr>
+                    <tr>
+                        <td><a href="/tools/tableroller/tableroller.php?t=Anathema+Archive%0D%0AAxe+of+the+Dwarvish+Lords%0D%0ABlackaxe%0D%0ABook+of+the+Damned+%28Original%29%0D%0ABook+of+the+Damned%3A+Daemonic%0D%0ABook+of+the+Damned%3A+Demonic%0D%0ABottle+of+the+Bound%0D%0ABrazen+Egg%0D%0ACelestial+Lens%0D%0AChronicle+of+the+Righteous%0D%0ACloud+Castle+of+the+Storm+King%0D%0ACodex+of+the+Infinite+Planes%0D%0ADancing+Hut+of+Baba+Yaga%0D%0ADemon+Prince+Armor%0D%0AFlame+of+Guidance%0D%0AFork+of+the+Forgotten+One%0D%0AGem+of+Dreams%0D%0AJar+of+Dragon%27s+Teeth%0D%0AMoaning+Diamond%0D%0ARandom+Orb+of+Dragonkind%0D%0AOrb+of+Dragon+Mastery%0D%0AOrb+of+Dragonkin%0D%0AOrb+of+Dragonshape%0D%0APerfection%27s+Key%0D%0ARing+of+Nine+Facets%0D%0ARunewell+of+Greed%0D%0ASaint+Cuthbert%27s+Mace%0D%0AScepter+of+Ages%0D%0AShadowstaff%0D%0AShield+of+the+Sun%0D%0AShield+of+the+Winged+Eye%0D%0ASkull+of+the+Viper+God%0D%0ASkullsoul%0D%0ASong+of+Extinction+%28Music+Box%29%0D%0ASword+of+Greed%0D%0AThe+Briar+Blade%0D%0AThe+Jewel+of+Everlasting+Gold%0D%0AThorncrown+of+Blasting">
+                            Major
+                        </a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/tools/tableroller/tableroller.php?t=Argental+Font%0D%0ABeacon+of+True+Faith%0D%0ABell+of+Mercy%0D%0ABone+House%0D%0ABook+of+Infinite+Spells%0D%0ABranch+of+Life%0D%0ACrown+of+the+Iron+King%0D%0ACrown+of+the+Simurgh%0D%0ADeck+of+Harrowed+Tales%0D%0ADeck+of+Many+Things%0D%0ADeck+of+Many+Things%2C+Harrow%0D%0ADragon+Seal%0D%0ADragon+Slayer%0D%0AEnemy+of+All+Enemies%0D%0AHammer+of+Thunderbolts%0D%0AHourglass+of+Shadows%0D%0AId+Portrait%0D%0AKnucklebone+of+Fickle+Fortune%0D%0AMaleficus+Spike%0D%0AMantis+Blade%0D%0AMonkey%27s+Paw%0D%0APerfect+Golden+Lute%0D%0APhilosopher%27s+Stone%0D%0APhylactery+of+the+Failed%0D%0ARaven’s+Head%0D%0ARevelation+Quill%0D%0ARunescarred+Dragonship%0D%0ARuneslave+Cauldron%0D%0ARunewell+Amulet%0D%0ARunewell%2C+Minor%0D%0ASphere+of+Annihilation%0D%0ASpindle+of+Perfect+Knowledge%0D%0AStaff+of+the+Magi%0D%0ATalisman+of+Pure+Good%0D%0ATalisman+of+Reluctant+Wishes%0D%0ATalisman+of+the+Sphere%0D%0ATalisman+of+Ultimate+Evil%0D%0AUnending+Tome%0D%0AVernal+Key%0D%0AVisionary+Lens%0D%0AWarding+Box%0D%0AWeird+Queen%27s+Magpie">
+                            Minor
+                        </a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/tools/tableroller/tableroller.php?t=Black%0D%0ABlue%0D%0ABrass%0D%0ABronze%0D%0ACopper%0D%0AGold%0D%0AGreen%0D%0ARed%0D%0ASilver%0D%0AWhite%0D%0AForest%0D%0ASea%0D%0ASky%0D%0ASovereign%0D%0AUnderworld%0D%0ABrine%0D%0ACloud%0D%0ACrystal%0D%0AMagma%0D%0AUmbral">
+                            Orbs of Dragonkind
+                        </a></td>
+                    </tr>
+                </table>
             </div>
         </div>
     </body>
