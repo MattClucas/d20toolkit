@@ -28,6 +28,7 @@
             <!-- Link to specific table sections -->
             <a href="#Encounters">Encounters</a><br/>
             <a href="#Magic-Items">Magic Items</a><br/>
+            <a href="#Miscellaneous">Miscellaneous</a><br/>
 
             <!-- Begin the blocks of tables -->
             <div class="blockHolder">
@@ -820,6 +821,17 @@
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Black%0D%0ABlue%0D%0ABrass%0D%0ABronze%0D%0ACopper%0D%0AGold%0D%0AGreen%0D%0ARed%0D%0ASilver%0D%0AWhite%0D%0AForest%0D%0ASea%0D%0ASky%0D%0ASovereign%0D%0AUnderworld%0D%0ABrine%0D%0ACloud%0D%0ACrystal%0D%0AMagma%0D%0AUmbral">
                             Orbs of Dragonkind
+                        </a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="blockHolder">
+                <h2 id="Miscellaneous">Miscellaneous</h2>
+                <table class="table table-striped table-bordered block">
+                    <tr><th>Other</th></tr>
+                    <tr>
+                        <td><a href="/tools/tableroller/tableroller.php?t=Eya-Doh%09The+character+gains+1+permanent+negative+level.%0D%0ABvu%09The+character+is+subject+to+a+powerful+compulsion+never+to+roll+the+knucklebone+of+fickle+fortune+again.+He+can+shake+thiscompulsion+only+by+succeeding+a+DC+25+Will+saving+throw.+He+can+attempt+this+saving+throw+only+once+per+day.%0D%0AEij%09The+character+is+affected+by+a+harm+spell+%28caster+level+15th%29.%0D%0AHor%09The+character+is+subject+to+a+powerful+compulsion+to+roll+the+knucklebone+three+more+times+immediately+%28Will+DC+25+negates%29.+All+three+of+these+rolls+are+made+with+a+%E2%80%945+penalty+on+the+knucklebone%27s+die+roll+%28minimum+1%29.%0D%0AVeh%09The+character+is+blinded+as+with+blindness%2Fdeafness+%28no+saving+throw%29.%0D%0AChu%09The+character+takes+5d10+points+of+cold+damage+%28DC+25+Fort+save+for+half%29+and+moves+at+half+speed+for+the+next+hour+%28a+successful+saving+throw+does+not+negate+the+reduced+speed%29.%0D%0ARoh%09For+the+next+24+hours%2C+the+character+suffers+a+%E2%80%942+penalty+on+all+skill+and+ability+checks.%0D%0ASeh%09The+character+is+paralyzed+for+2d12+hours%2C+as+with+hold+monster%2C+except+he+cannot+attempt+new+saving+throws+to+overcome+the+effect.%0D%0AKog%09For+the+next+week%2C+the+character+emits+a+horrible+smell.+He+suffers+a+%E2%80%944+penalty+on+Diplomacy+and+Stealth+checks.%0D%0AVis%09Once%2C+during+the+next+24+hours%2C+the+character+can+reroll+a+single+die+roll+he+has+just+made+and+take+the+second+result%2C+as+if+using+the+good+fortune+ability+from+the+Luck+domain.%0D%0AFyeh%09The+character+gains+100+points+of+fire+immunity%2C+as+if+using+protection+from+energy.%0D%0AXal%09The+character+gains+the+benefits+of+a+heroism+spell+for+the+next+200+minutes.%0D%0AYaq%09For+the+next+24+hours%2C+when+the+character+hits+a+target+he+is+flanking+with+a+melee+weapon%2C+the+attack+does+%2B1d6+points+of+precision+damage.%0D%0AGib%09Once+in+the+next+24+hours%2C+the+character+can+cast+faerie+fire+%28caster+level+equal+to+his+character+level%29.+This+ability+is+lost+if+the+character+rolls+this+result+again+with+the+knucklebone+of+fickle+fortune+before+the+24+hours+is+concluded.%0D%0AXku%09The+character+is+immune+to+fear+for+the+next+24+hours.%0D%0ALev%09Once+in+the+next+24+hours%2C+the+character+can+cast+a+lightning+bolt+%28caster+level+equal+to+his+character+level%29.+This+ability+is+lost+if+the+character+rolls+this+result+again+with+the+knucklebone+of+fickle+fortune+before+the+24+hours+is+concluded.%0D%0ANhi%09For+the+next+7+days%2C+when+the+character+is+the+target+of+healing+magic%2C+he+heals+an+additional+2d8+hit+points.+This+effect+is+lost+if+the+character+rolls+the+knucklebone+of+fickle+fortune+again+before+the+7+days+are+concluded.%0D%0AZmi%09For+the+next+24+hours%2C+whenever+the+character+succeeds+on+a+saving+throw+against+a+harmful+effect+that+does+half+damage+or+partial+effect+on+a+failed+save%2C+the+knucklebone%27s+character+takes+no+damage+or+suffers+no+effect.%0D%0ATem%09For+the+next+24+hours%2C+the+character+automatically+confirms+all+critical+hits.%0D%0AEha-Zah%09The+next+time+the+character+dies%2C+he+comes+back+from+the+dead+the+very+next+morning+as+if+the+subject+of+a+resurrection+spell.+This+effect+is+negated+if+the+character+rolls+the+knucklebone+of+fickle+fortune+again+before+he+dies.">
+                            Knucklebone of Fickle Fortune
                         </a></td>
                     </tr>
                 </table>
