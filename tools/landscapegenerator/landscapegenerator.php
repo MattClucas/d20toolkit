@@ -8,12 +8,6 @@
         <!-- CSS -->
         <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" href="../../css/bootswatch.min.css">
-        <style>
-            .block {
-                padding: 10px;
-                float: left;
-            }
-        </style>
 
         <!-- Javascript -->
         <script src="javascript/threejs/three.min.js" ></script>
@@ -34,11 +28,11 @@
                 Please use a browser that supports "canvas"
             </canvas>
             <div class="controls">
-                <form action="" method="get" id="terrainControls">
+                <form action="" method="get" id="terrainControls" class="form-group">
 
                     <label for="seed"><strong>Seed:</strong> 0 for random</label>
                     <br/>
-                    <input type="text" id="seed" name="seed" value="0">
+                    <input type="text" class="form-control" id="seed" name="seed" value="0">
                     <br/>
 
                     <label for="smoothness"><strong>Smoothness:</strong> higher values gives smoother landscapes</label>
@@ -56,7 +50,7 @@
                     <input type="range" name="grids_per_side" id="grids_per_side" value="2" min="0" max="10"><label id="gridsLabel"></label>
                     <br/>
 
-                    <input type="submit" value="Generate">
+                    <input type="submit" class="btn btn-default" value="Generate">
                 </form>
             </div>
             <div>
