@@ -24,7 +24,7 @@
                             <h4><a href="./tools/arithmancy/arithmancy.php">Arithmancy Calculator</a></h4>
                             <h4><a href="./tools/diceroller/diceroller.php">Dice Roller</a></h4>
                             <h4><a href="./tools/tableroller/tableroller.php">Table Roller</a></h4>
-                            <h4><a href="./tools/landscapegenerator/landscapegenerator.php">Landscape Generator</a></h4>
+                            <h4><a href="./tools/terraingenerator/terraingenerator.php">Terrain Generator</a></h4>
                         </div>
                         <h3>Linked Resources</h3>
                         <h4><a href="http://www.d20pfsrd.com/">D20PFSRD</a></h4>

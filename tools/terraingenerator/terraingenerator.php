@@ -2,12 +2,26 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Landscape Generator</title>
+        <title>Terrain Generator</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- CSS -->
         <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" href="../../css/bootswatch.min.css">
+        <style>
+            .canvasGrandparent {
+                width: 100%;
+                padding-bottom: 56.25%; /* 16:9 aspect ratio */
+                position: relative;
+            }
+            .canvasGrandparent > div {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        </style>
     </head>
     <body>
         <?php
@@ -15,10 +29,14 @@
             include_once('../../header/header.php');
         ?>
         <div id="mainDiv" class="container">
-            <h1>Landscape Generator</h1>
-            <canvas id="theCanvas" width="900" height="600">
-                Please use a browser that supports "canvas"
-            </canvas>
+            <h1>Terrain Generator</h1>
+            <div class="canvasGrandparent">
+                <div>
+                    <canvas id="theCanvas">
+                        Please use a browser that supports "canvas"
+                    </canvas>
+                </div>
+            </div>
             <div class="controls">
                 <form action="" method="get" id="terrainControls" class="form-group">
 
@@ -27,7 +45,7 @@
                     <input type="text" class="form-control" id="seed" name="seed" value="0">
                     <br/>
 
-                    <label for="smoothness"><strong>Smoothness:</strong> higher values gives smoother landscapes</label>
+                    <label for="smoothness"><strong>Smoothness:</strong> higher values gives smoother terrain</label>
                     <br/>
                     <input type="range" name="smoothness" id="smoothness" value="1.8" min="1.0" max="2.5" step=".05"><label id="smoothnessLabel"></label>
                     <br/>

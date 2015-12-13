@@ -24,6 +24,14 @@ function getUrlParams() {
 /* enter here on page reload */
 function main() {
     var mainBefore = Date.now();
+    
+    // set canvas to take up parent width and height
+    var theCanvas = document.getElementById("theCanvas");
+    theCanvas.style.width  = "100%";
+    theCanvas.style.height = "100%";
+    theCanvas.width = theCanvas.offsetWidth;
+    theCanvas.height = theCanvas.offsetHeight;
+
     // submit form and reload controls {method = get}
     document.getElementById("terrainControls").submit = function(){
         this.submit();
