@@ -8,14 +8,6 @@
         <!-- CSS -->
         <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" href="../../css/bootswatch.min.css">
-
-        <!-- Javascript -->
-        <script src="javascript/threejs/three.min.js" ></script>
-        <script src="javascript/main.js" async></script>
-        <script src="javascript/randomNormal.js" async></script>
-        <script src="javascript/terrain.js" async></script>
-        <script src="javascript/graphics.js" async></script>
-        <script src="javascript/controls.js" async></script>
     </head>
     <body>
         <?php
@@ -55,12 +47,17 @@
             </div>
             <div>
                 <ul>
-                    <li>w,a,s,d,r,f -> Move camera forward, left, backward, right, up, down.</li>
-                    <li>i,j,k,l -> Look up, left, down, right.</li>
-                    <li>I,J,K,L -> Orbit camera up, right, down, left.</li>
                     <li>Spacebar -> Pause the sun cycle.</li>
                 </ul>
             </div>
         </div>
     </body>
+    <!-- Javascript -->
+    <script src="javascript/threejs/three.min.js" ></script>
+    <script src="javascript/threejs/OrbitControls.min.js"></script>
+    <script src="javascript/main.js" ></script>
+    <script src="javascript/randomNormal.js" ></script>
+    <script src="javascript/terrain.js" ></script>
+    <script src="javascript/graphics.js" ></script>
+    <script src="javascript/controls.js" ></script>
 </html>

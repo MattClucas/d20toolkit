@@ -1,11 +1,5 @@
 var SEED = 0;
 
-// submit form and reload controls {method = get}
-document.getElementById("terrainControls").submit = function(){
-    this.submit();
-    location.reload();
-};
-
 /* get parameters for terrain from url */
 function getUrlParams() {
     // parse the url parameters
@@ -30,6 +24,11 @@ function getUrlParams() {
 /* enter here on page reload */
 function main() {
     var mainBefore = Date.now();
+    // submit form and reload controls {method = get}
+    document.getElementById("terrainControls").submit = function(){
+        this.submit();
+        location.reload();
+    };
     window.onkeypress = handleKeyPress;
 
     // put all values from url into the form on html

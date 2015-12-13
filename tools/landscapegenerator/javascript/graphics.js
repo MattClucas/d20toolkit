@@ -208,6 +208,11 @@ function createScene(geometry, size) {
         canvas: ourCanvas
     });
 
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = true;
+
     /* create a mesh from geometry object scale the grid to 1x1 and center it in scene */
     var material = new THREE.MeshPhongMaterial({
         vertexColors: THREE.VertexColors,
@@ -250,6 +255,7 @@ function createScene(geometry, size) {
     var render = function() {
         requestAnimationFrame(render);
         renderer.render(scene, camera);
+        controls.update();
 
         /* rotate about the y axis, never going below the horizon */
         //sun.position.set(Math.sin(x), Math.abs(Math.sin(x)), Math.cos(x));
