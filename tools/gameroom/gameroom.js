@@ -1,6 +1,23 @@
 const PEER_MSG_TYPE_NAME_CHANGE = "name";
 const PEER_MSG_TYPE_CHAT = "chat";
 
+var ENTITY_MAP = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+};
+
+function escapeHtml(string)
+{
+    return String(string).replace(/[&<>"'\/]/g, function(s)
+    {
+        return ENTITY_MAP[s];
+    });
+}
+
 $(document).ready(function()
 {
     var $roomNameInput = $("#roomNameInput");
@@ -10,8 +27,18 @@ $(document).ready(function()
     var $gameroomCreationDiv = $('#gameroomCreationDiv');
     var $gameroomJoinedDiv = $('#gameroomJoinedDiv');
     var $userNameInput = $('#userNameInput');
+    var $logdiv = $('#log');
+    var $membersDiv = $('#membersDiv');
+    var $messagesBlock = $('#messagesBlock');
+    var $messageInput = $('#messageInput');
+    var $userNameLabel = $('#userNameLabel');
+    var $roomStatusInfoBarChild = $('#roomStatusInfoBarChild');
+    var $messagesInfoBarChild = $('#messagesInfoBarChild');
+    var $infoBarDivider = $('#infoBarDivider');
+    var $infoBar = $('#infoBar');
+    var $leaveRoomBtn = $('#leaveRoom');
+    var $roomMembersHeader = $('#roomMembersHeader');
 
-    $logdiv = $('#log');
     // Connect to PeerJS, have server assign an ID instead of providing one
     // Showing off some of the configs available with PeerJS :).
     var peer = new Peer(
@@ -38,6 +65,7 @@ $(document).ready(function()
     peer.on('open', function(id)
     {
         $logdiv.append("Created local id: " + id + "<br>");
+        $userNameLabel.text(escapeHtml(id));
         USER_ID = id;
     });
 
@@ -45,6 +73,30 @@ $(document).ready(function()
     {
         $logdiv.append(err.toString() + "<br>");
     });
+
+    function updatePeerName(peerId, name)
+    {
+        CONNECTED_PEERS[peerId].peerName = name;
+
+        // update display
+        $('#' + peerId).html(escapeHtml(name));
+    }
+
+    function showMessage(peerId, message)
+    {
+        // allow 1px inaccuracy by adding 1
+        var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
+
+        var name = (CONNECTED_PEERS[peerId] && CONNECTED_PEERS[peerId].peerName) || peerId || USER_ID;
+        $messagesBlock.append('<div class="fullWidth"><span class="premessage">' +
+            escapeHtml(name) + ':</span> ' +
+            escapeHtml(message) + '</div>');
+
+        if (isScrolledToBottom)
+        {
+            $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
+        }
+    }
 
     function setupConnection(conn)
     {
@@ -76,13 +128,12 @@ $(document).ready(function()
             switch (data.type)
             {
                 case PEER_MSG_TYPE_NAME_CHANGE:
-                    // update display name for this peer
+                    updatePeerName(conn.peer, data.content);
                     break;
                 case PEER_MSG_TYPE_CHAT:
-                    // show chat message
+                    showMessage(conn.peer, data.content);
                     break;
                 default:
-                    // handle bad message
                     break;
             }
         }
@@ -93,6 +144,18 @@ $(document).ready(function()
             conn.on('data', receivePeerData);
 
             // create display for connection
+            $membersDiv.append('<div id="' + conn.peer + '" class="fullWidth memberLabel">' + conn.peer + '</div>');
+            infoBarUpdateUI();
+
+            // send the peer our user name
+            if (USER_NAME)
+            {
+                CONNECTED_PEERS[conn.peer].send(
+                {
+                    type: PEER_MSG_TYPE_NAME_CHANGE,
+                    content: USER_NAME
+                });
+            }
         });
 
         conn.on("close", function()
@@ -103,6 +166,8 @@ $(document).ready(function()
             delete CONNECTED_PEERS.IDS[peerIndex];
 
             // remove display for connection
+            $('#' + conn.peer).remove();
+            infoBarUpdateUI();
         });
 
         // log errors
@@ -223,15 +288,148 @@ $(document).ready(function()
         serverRequest(INTERFACE.TYPE_PING_ROOM, false, successFunc, defaultErrorFunc);
     }
 
+    function infoBarUpdateUI()
+    {
+        // allow 1px inaccuracy by adding 1
+        var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
+
+        var infoBarHeight = $infoBar.height();
+        var statusHeight = $roomStatusInfoBarChild.height();
+        var dividerHeight = 2;
+        $infoBarDivider.css(
+        {
+            "top": statusHeight
+        });
+
+        var messagesHeight = infoBarHeight - (statusHeight + dividerHeight);
+        $messagesInfoBarChild.css(
+        {
+            "height": messagesHeight
+        });
+
+        if (isScrolledToBottom)
+        {
+            $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
+        }
+
+        // force membersDiv to fit in statusHeight
+        // maximum height is the maximum height of the roomStatusInfoBarChild - 135px because there are 135px of other elements in it
+        // the maximum height of the roomStatusInfoBarChild is infoBarHeight * 0.5 - 1px
+        $membersDiv.css(
+        {
+            "max-height": infoBarHeight * 0.5 - 136
+        });
+    }
+
+    function infoBarInRoomMode()
+    {
+        // switch to active room UI
+        $gameroomCreationDiv.hide();
+        $noRoomLabel.hide();
+        $leaveRoomBtn.show();
+        $roomMembersHeader.show();
+        $membersDiv.show();
+        $roomNameLabel.text($roomNameInput.val().trim());
+        infoBarUpdateUI();
+    }
+
+    function infoBarNoRoomMode()
+    {
+        // switch to no joined rooms UI
+        $gameroomCreationDiv.show();
+        $noRoomLabel.show();
+        $leaveRoomBtn.hide();
+        $roomMembersHeader.hide();
+        $membersDiv.hide();
+        $roomNameLabel.text("");
+        infoBarUpdateUI();
+    }
+
     /*
      * attach button click handlers
      */
 
     $('#setUserName').click(function()
     {
-        USER_NAME = $userNameInput.val();
+        var userName = $userNameInput.val().trim();
 
-        // update all connected users of this change
+        // check if there was anything typed before actually doing stuff
+        if (!userName)
+        {
+            return;
+        }
+
+        if (userName.length > 25)
+        {
+            alert("Please enter a name less than 25 characters long.");
+            return;
+        }
+
+        $userNameInput.val("");
+        USER_NAME = userName;
+        $userNameLabel.text(escapeHtml(USER_NAME));
+
+        // update all connected users knowledge of this change
+        for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
+        {
+            var peerId = CONNECTED_PEERS.IDS[i];
+            if (peerId)
+            {
+                CONNECTED_PEERS[peerId].send(
+                {
+                    type: PEER_MSG_TYPE_NAME_CHANGE,
+                    content: USER_NAME
+                });
+            }
+        }
+    });
+
+    // when enter is pressed on the user name input it automatically clicks the set name button
+    $userNameInput.keyup(function(event)
+    {
+        if (event.keyCode == 13)
+        {
+            $('#setUserName').click();
+        }
+    });
+
+    $('#sendButton').click(function()
+    {
+        var messageToSend = $messageInput.val().trim();
+        $messageInput.val("");
+        $messageInput.focus();
+
+        // check if there was anything typed before actually doing stuff
+        if (!messageToSend)
+        {
+            return;
+        }
+
+        // send message to all connected users
+        for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
+        {
+            var peerId = CONNECTED_PEERS.IDS[i];
+            if (peerId)
+            {
+                CONNECTED_PEERS[peerId].send(
+                {
+                    type: PEER_MSG_TYPE_CHAT,
+                    content: messageToSend
+                });
+            }
+        }
+
+        // show ourselves the message
+        showMessage(USER_NAME, messageToSend);
+    });
+
+    // when enter is pressed on the message input it automatically clicks the send button
+    $messageInput.keyup(function(event)
+    {
+        if (event.keyCode == 13)
+        {
+            $('#sendButton').click();
+        }
     });
 
     $("#createRoom").click(function()
@@ -264,11 +462,7 @@ $(document).ready(function()
             var msg = "Room created successfully.";
             $logdiv.append(msg + '<br>');
 
-            // switch to active room UI
-            $gameroomCreationDiv.hide();
-            $noRoomLabel.hide();
-            $gameroomJoinedDiv.show();
-            $roomNameLabel.text($roomNameInput.val().trim());
+            infoBarInRoomMode();
 
             setTimeout(pingServer, 1000);
         }
@@ -308,11 +502,7 @@ $(document).ready(function()
             var msg = "Room joined successfully.";
             $logdiv.append(msg + '<br>');
 
-            // switch to active room UI
-            $gameroomCreationDiv.hide();
-            $noRoomLabel.hide();
-            $gameroomJoinedDiv.show();
-            $roomNameLabel.text($roomNameInput.val().trim());
+            infoBarInRoomMode();
 
             setTimeout(pingServer, 1000);
 
@@ -348,7 +538,7 @@ $(document).ready(function()
         serverRequest(INTERFACE.TYPE_JOIN_ROOM, true, successFunc, defaultErrorFunc);
     });
 
-    $("#leaveRoom").click(function()
+    $leaveRoomBtn.click(function()
     {
         var roomname = $roomNameLabel.text().trim();
         if (!roomname)
@@ -384,11 +574,7 @@ $(document).ready(function()
             var msg = "Left room successfully.";
             $logdiv.append(msg + '<br>');
 
-            // switch to no joined rooms UI
-            $gameroomCreationDiv.show();
-            $noRoomLabel.show();
-            $gameroomJoinedDiv.hide();
-            $roomNameLabel.text("");
+            infoBarNoRoomMode();
 
             // close all connections
             for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
@@ -409,7 +595,7 @@ $(document).ready(function()
 // Make sure things clean up properly.
 window.onunload = window.onbeforeunload = function(e)
 {
-    $("#leaveRoom").click();
+    $leaveRoomBtn.click();
 
     if (!!peer && !peer.destroyed)
     {
