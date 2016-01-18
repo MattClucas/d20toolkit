@@ -43,7 +43,7 @@ $(document).ready(function()
             return;
         }
 
-        var stylesheet, mediaType;
+        var stylesheet, mediaType, i;
 
         if (document.styleSheets.length > 0)
         {
@@ -132,7 +132,6 @@ $(document).ready(function()
     var $noRoomLabel = $('#noRoomLabel');
     var $roomNameLabel = $('#roomNameLabel');
     var $gameroomCreationDiv = $('#gameroomCreationDiv');
-    var $gameroomJoinedDiv = $('#gameroomJoinedDiv');
     var $userNameInput = $('#userNameInput');
     var $logdiv = $('#log');
     var $membersDiv = $('#membersDiv');
