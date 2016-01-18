@@ -139,7 +139,7 @@
     <script>
         const INTERFACE = <?php echo $INTERFACE_CONSTANTS; ?>;
     </script>
-    <script src="peer.min.js"></script>
-    <script src="jquery-2.2.0.min.js"></script>
+    <script src="../../js/peer.min.js"></script>
+    <script src="../../js/jquery-2.2.0.min.js"></script>
     <script src="gameroom.js"></script>
 </html>

@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" href="../../css/bootswatch.min.css">
-        <script src="parser.min.js" async></script>
+        <script src="../../js/parser.min.js" async></script>
         <script src="diceParser.js" async></script>
         <script src="diceroller.js" async></script>
     </head>

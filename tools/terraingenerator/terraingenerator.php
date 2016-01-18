@@ -71,8 +71,8 @@
         </div>
     </body>
     <!-- Javascript -->
-    <script src="javascript/threejs/three.min.js" ></script>
-    <script src="javascript/threejs/OrbitControls.min.js"></script>
+    <script src="../../js/threejs/three.min.js" ></script>
+    <script src="../../js/threejs/OrbitControls.min.js"></script>
     <script src="javascript/main.js" ></script>
     <script src="javascript/randomNormal.js" ></script>
     <script src="javascript/terrain.js" ></script>

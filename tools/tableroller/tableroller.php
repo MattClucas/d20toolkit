@@ -12,7 +12,7 @@
                 float: left;
             }
         </style>
-        <script src="/tools/diceroller/parser.min.js" async></script>
+        <script src="../../js/diceroller/parser.min.js" async></script>
         <script src="/tools/diceroller/diceParser.js" async></script>
         <script src="/tools/tableroller/tableroller.js" async></script>
     </head>
