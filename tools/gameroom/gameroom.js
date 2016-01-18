@@ -167,6 +167,7 @@ $(document).ready(function()
     };
     var USER_ID = null;
     var USER_NAME;
+    var USER_COLOR = randomColor();
 
     // Show this peer's ID.
     peer.on('open', function(id)
@@ -178,7 +179,7 @@ $(document).ready(function()
         USER_ID = id;
 
         // create css class for user's color
-        createCSSSelector("." + USER_COLOR_CSS_PREFIX + USER_ID, "color: " + randomColor() + ";");
+        createCSSSelector("." + USER_COLOR_CSS_PREFIX + USER_ID, "color: " + USER_COLOR + ";");
     });
 
     peer.on('error', function(err)
@@ -199,7 +200,7 @@ $(document).ready(function()
         // allow 1px inaccuracy by adding 1
         var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
 
-        var name = (CONNECTED_PEERS[peerId] && CONNECTED_PEERS[peerId].peerName) || peerId || USER_ID;
+        var name = (CONNECTED_PEERS[peerId] && CONNECTED_PEERS[peerId].peerName) || peerId || USER_NAME || USER_ID;
 
         // give a class "user-(id)" so each user can have a custom style
         var id = peerId || USER_ID;
@@ -248,6 +249,8 @@ $(document).ready(function()
                 case PEER_MSG_TYPE_CHAT:
                     showMessage(conn.peer, data.content);
                     break;
+                case PEER_MSG_TYPE_COLOR:
+                    createCSSSelector("." + USER_COLOR_CSS_PREFIX + conn.peer, "color: " + escapeHtml(data.content) + ";");
                 default:
                     break;
             }
@@ -259,9 +262,15 @@ $(document).ready(function()
             conn.on('data', receivePeerData);
 
             // create display for connection
-            createCSSSelector("." + USER_COLOR_CSS_PREFIX + conn.peer, "color: " + randomColor() + ";");
             $membersDiv.append('<div id="' + conn.peer + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + conn.peer + '">' + conn.peer + '</div>');
             infoBarUpdateUI();
+
+            // send the peer our color
+            CONNECTED_PEERS[conn.peer].send(
+            {
+                type: PEER_MSG_TYPE_COLOR,
+                content: USER_COLOR
+            });
 
             // send the peer our user name
             if (USER_NAME)
@@ -536,7 +545,7 @@ $(document).ready(function()
         }
 
         // show ourselves the message
-        showMessage(USER_ID, messageToSend);
+        showMessage(null, messageToSend);
     });
 
     // when enter is pressed on the message input it automatically clicks the send button
