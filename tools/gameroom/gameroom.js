@@ -1,25 +1,132 @@
-const PEER_MSG_TYPE_NAME_CHANGE = "name";
-const PEER_MSG_TYPE_CHAT = "chat";
-
-var ENTITY_MAP = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': '&quot;',
-    "'": '&#39;',
-    "/": '&#x2F;'
-};
-
-function escapeHtml(string)
-{
-    return String(string).replace(/[&<>"'\/]/g, function(s)
-    {
-        return ENTITY_MAP[s];
-    });
-}
-
 $(document).ready(function()
 {
+    const PEER_MSG_TYPE_NAME_CHANGE = "name";
+    const PEER_MSG_TYPE_CHAT = "chat";
+    const PEER_MSG_TYPE_COLOR = "color";
+
+    const USER_COLOR_CSS_PREFIX = "user-";
+
+    const ENTITY_MAP = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    };
+
+    function escapeHtml(string)
+    {
+        return String(string).replace(/[&<>"'\/]/g, function(s)
+        {
+            return ENTITY_MAP[s];
+        });
+    }
+
+    // returns a random color hex code
+    function randomColor()
+    {
+        return '#' + ('000000' + (Math.random() * 0xFFFFFF << 0).toString(16)).slice(-6);
+    }
+
+    // creates a css selector
+    // use like createCSSSelector('.someClass', 'color: red; height: 10px;');
+    function createCSSSelector(selector, style)
+    {
+        if (!document.styleSheets)
+        {
+            return;
+        }
+
+        if (document.getElementsByTagName('head').length == 0)
+        {
+            return;
+        }
+
+        var stylesheet, mediaType;
+
+        if (document.styleSheets.length > 0)
+        {
+            for (i = 0; i < document.styleSheets.length; i++)
+            {
+                if (document.styleSheets[i].disabled)
+                {
+                    continue;
+                }
+                var media = document.styleSheets[i].media;
+                mediaType = typeof media;
+
+                if (mediaType == 'string')
+                {
+                    if (media == '' || (media.indexOf('screen') != -1))
+                    {
+                        styleSheet = document.styleSheets[i];
+                    }
+                }
+                else if (mediaType == 'object')
+                {
+                    if (media.mediaText == '' || (media.mediaText.indexOf('screen') != -1))
+                    {
+                        styleSheet = document.styleSheets[i];
+                    }
+                }
+
+                if (typeof styleSheet != 'undefined')
+                {
+                    break;
+                }
+            }
+        }
+
+        if (typeof styleSheet == 'undefined')
+        {
+            var styleSheetElement = document.createElement('style');
+            styleSheetElement.type = 'text/css';
+            document.getElementsByTagName('head')[0].appendChild(styleSheetElement);
+
+            for (i = 0; i < document.styleSheets.length; i++)
+            {
+                if (document.styleSheets[i].disabled)
+                {
+                    continue;
+                }
+                styleSheet = document.styleSheets[i];
+            }
+
+            var media = styleSheet.media;
+            mediaType = typeof media;
+        }
+
+        if (mediaType == 'string')
+        {
+            for (i = 0; i < styleSheet.rules.length; i++)
+            {
+                if (styleSheet.rules[i].selectorText && styleSheet.rules[i].selectorText.toLowerCase() == selector.toLowerCase())
+                {
+                    styleSheet.rules[i].style.cssText = style;
+                    return;
+                }
+            }
+
+            styleSheet.addRule(selector, style);
+        }
+        else if (mediaType == 'object')
+        {
+            var styleSheetLength = (styleSheet.cssRules) ? styleSheet.cssRules.length : 0;
+
+            for (i = 0; i < styleSheetLength; i++)
+            {
+                if (styleSheet.cssRules[i].selectorText && styleSheet.cssRules[i].selectorText.toLowerCase() == selector.toLowerCase())
+                {
+                    styleSheet.cssRules[i].style.cssText = style;
+                    return;
+                }
+            }
+
+            styleSheet.insertRule(selector + '{' + style + '}', styleSheetLength);
+        }
+    }
+
     var $roomNameInput = $("#roomNameInput");
     var $roomPasswordInput = $("#roomPasswordInput");
     var $noRoomLabel = $('#noRoomLabel');
@@ -64,9 +171,14 @@ $(document).ready(function()
     // Show this peer's ID.
     peer.on('open', function(id)
     {
+        id = escapeHtml(id);
         $logdiv.append("Created local id: " + id + "<br>");
-        $userNameLabel.text(escapeHtml(id));
+        $userNameLabel.text(id);
+        $userNameLabel.addClass(USER_COLOR_CSS_PREFIX + id);
         USER_ID = id;
+
+        // create css class for user's color
+        createCSSSelector("." + USER_COLOR_CSS_PREFIX + USER_ID, "color: " + randomColor() + ";");
     });
 
     peer.on('error', function(err)
@@ -88,7 +200,10 @@ $(document).ready(function()
         var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
 
         var name = (CONNECTED_PEERS[peerId] && CONNECTED_PEERS[peerId].peerName) || peerId || USER_ID;
-        $messagesBlock.append('<div class="fullWidth"><span class="premessage">' +
+
+        // give a class "user-(id)" so each user can have a custom style
+        var id = peerId || USER_ID;
+        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapeHtml(id) + '">' +
             escapeHtml(name) + ':</span> ' +
             escapeHtml(message) + '</div>');
 
@@ -144,7 +259,8 @@ $(document).ready(function()
             conn.on('data', receivePeerData);
 
             // create display for connection
-            $membersDiv.append('<div id="' + conn.peer + '" class="fullWidth memberLabel">' + conn.peer + '</div>');
+            createCSSSelector("." + USER_COLOR_CSS_PREFIX + conn.peer, "color: " + randomColor() + ";");
+            $membersDiv.append('<div id="' + conn.peer + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + conn.peer + '">' + conn.peer + '</div>');
             infoBarUpdateUI();
 
             // send the peer our user name
@@ -420,7 +536,7 @@ $(document).ready(function()
         }
 
         // show ourselves the message
-        showMessage(USER_NAME, messageToSend);
+        showMessage(USER_ID, messageToSend);
     });
 
     // when enter is pressed on the message input it automatically clicks the send button
