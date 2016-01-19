@@ -15,7 +15,7 @@ window.onload = function(){
         input = replaceDiceString(input);
 
         // try to evaluate the total
-        var outcome = input + "<br/>";
+        var outcome = input + "<br>";
         try
         {
             // uses parser.js to evaluate any total
