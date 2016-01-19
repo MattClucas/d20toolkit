@@ -21,10 +21,17 @@
                         <div class = "intro">
                             <h3>Custom Tools</h3>
                             <h4><a href="./tools/sacredgeo/sacredgeo.php">Sacred Geometry Calculator</a></h4>
+                            <label>A calculator for the Sacred Geometry feat.</label>
                             <h4><a href="./tools/arithmancy/arithmancy.php">Arithmancy Calculator</a></h4>
+                            <label>A calculator for the Arithmancy feat.</label>
                             <h4><a href="./tools/diceroller/diceroller.php">Dice Roller</a></h4>
+                            <label>A simple tool for rolling dice.</label>
                             <h4><a href="./tools/tableroller/tableroller.php">Table Roller</a></h4>
+                            <label>A tool for generating tables of items and randomly picking individual items. Also includes a library of premade tables.</label>
                             <h4><a href="./tools/terraingenerator/terraingenerator.php">Terrain Generator</a></h4>
+                            <label>Not really a tool, just a visual terrain generator.</label>
+                            <h4><a href="./tools/gameroom/gameroom.php">Game Room</a></h4>
+                            <label>A chat room tool that allows games over the internet. Text only.</label>
                         </div>
                         <h3>Linked Resources</h3>
                         <h4><a href="http://www.d20pfsrd.com/">D20PFSRD</a></h4>
