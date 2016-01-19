@@ -213,7 +213,7 @@
     /* RUNNING CODE BEGINS HERE */
 
     // check if required request parameters are set
-    if (!isset($_POST[REQUEST_TYPE]) || !isset($_POST[REQUEST_ROOM_NAME]) || !isset($_POST[REQUEST_USER]))
+    if (!isset($_POST[REQUEST_TYPE]) || !isset($_POST[REQUEST_ROOM_NAME]) || strlen($_POST[REQUEST_ROOM_NAME]) > 50 || !isset($_POST[REQUEST_USER]))
     {
         sendResponse(false, ERROR_BAD_REQUEST_DATA, null);
     }
