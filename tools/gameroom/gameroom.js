@@ -6,6 +6,25 @@ $(document).ready(function()
 
     const USER_COLOR_CSS_PREFIX = "user-";
 
+    const HELP_MSG_ROLL = "The roll command (/r) is used to roll virtual dice. " +
+        'Syntax: "/r expression" where expression is some mathmatical expression. ' +
+        'Any text in the expression that matches the pattern "[number]d<number>" will be ' +
+        'interpretted as dice and rolled. The [number] determines the number of dice and is ' +
+        'optional and has a default value of 1. ' +
+        'An example use of this command is "/r 3d6 + 5 * 8" which could have an outcome of ' +
+        '"/r 3d6 + 5 * 8 => (5+3+4) + 5 * 8 = 52".';
+
+    const HELP_MSG_HELP = 'The help command (/h) displays information about how to use this tool and the commands available to the user. ' +
+        'Syntax: "/h". ';
+
+    const HELP_MSG_GENERAL = 'The D20ToolKit Game Room is designed as a simple chat room that friends can use to quickly setup a Pathfinder or ' +
+        'other similar styled game together across the internet. Create a room using the interface ' +
+        'above and then share that room and password with your friends or whoever you wish to join you. ' +
+        'This tool, like most of the content at D20ToolKit is currently in development as a hobby so there are ' +
+        'likely to be bugs from time to time. Currently this tool only supports a chat system and allows users to ' +
+        'roll dice too using the roll command. This tool uses WebRTC technology which is fairly new and so for best ' +
+        'results, please use an updated version of Chrome or Firefox.';
+
     const ENTITY_MAP = {
         "&": "&amp;",
         "<": "&lt;",
@@ -153,6 +172,19 @@ $(document).ready(function()
 
         // Set highest debug level (log everything!).
         debug: 3,
+
+        config:
+        {
+            'iceServers': [
+            {
+                url: 'stun:stun.l.google.com:19302'
+            },
+            {
+                url: 'turn:numb.viagenie.ca',
+                credential: 'muazkh',
+                username: 'webrtc@live.com'
+            }]
+        },
 
         // Set a logging function:
         logFunction: function()
@@ -519,27 +551,76 @@ $(document).ready(function()
 
     $('#sendButton').click(function()
     {
-        var messageToSend = $messageInput.val().trim();
+        var input = $messageInput.val().trim();
         $messageInput.val("");
         $messageInput.focus();
 
         // check if there was anything typed before actually doing stuff
-        if (!messageToSend)
+        if (!input)
         {
             return;
         }
 
-        // send message to all connected users
-        for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
+        var messageToSend = input;
+        var broadcast = true; // whether or not to spam this to the room
+        if (input.charAt(0) == "/")
         {
-            var peerId = CONNECTED_PEERS.IDS[i];
-            if (peerId)
+            var command = input.charAt(1);
+            switch (command)
             {
-                CONNECTED_PEERS[peerId].send(
+                // roll
+                case 'r':
+                    // parse everything after the "/r"
+                    var commInput = input.substring(2);
+
+                    // display help message is nothing is entered.
+                    if (!commInput)
+                    {
+                        broadcast = false;
+                        messageToSend = HELP_MSG_ROLL;
+                        break;
+                    }
+
+                    // find all instances of the number"d"number and roll it
+                    var parsedInput = replaceDiceString(commInput);
+
+                    // try to evaluate the total
+                    messageToSend = input + " => " + parsedInput + " = ";
+                    try
+                    {
+                        // uses parser.js to evaluate any total
+                        var total = Parser.evaluate(parsedInput);
+                        messageToSend += total;
+                    }
+                    catch (error)
+                    {
+                        broadcast = false;
+                        messageToSend += error.toString();
+                    }
+                    break;
+                case 'h':
+                    broadcast = false;
+                    messageToSend = HELP_MSG_GENERAL + "\n" + HELP_MSG_HELP + "\n" + HELP_MSG_ROLL;
+                    break;
+                default:
+                    messageToSend = input;
+            }
+        }
+
+        // send message to all connected users
+        if (broadcast)
+        {
+            for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
+            {
+                var peerId = CONNECTED_PEERS.IDS[i];
+                if (peerId)
                 {
-                    type: PEER_MSG_TYPE_CHAT,
-                    content: messageToSend
-                });
+                    CONNECTED_PEERS[peerId].send(
+                    {
+                        type: PEER_MSG_TYPE_CHAT,
+                        content: messageToSend
+                    });
+                }
             }
         }
 

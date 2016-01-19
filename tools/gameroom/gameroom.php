@@ -53,6 +53,7 @@
                 overflow-y: auto;
                 margin-top: 3px;
                 height: calc( 100% - 31px );
+                font-size: smaller;
             }
             #setUserName {
                 width: 70px;
@@ -87,6 +88,9 @@
                 position: absolute;
                 top: 0;
                 max-height: calc( 50% - 1px );
+            }
+            .premessage {
+                font-weight: bold;
             }
         </style>
     </head>
@@ -132,7 +136,8 @@
                     </div>
                 </div>
             </div>
-            <div id="log"></div>
+            <h2>In development</h2>
+            <div id="log" style="display: none;"></div>
         </div>
     </body>
     <!-- Add javascript links here -->
@@ -141,5 +146,7 @@
     </script>
     <script src="../../js/peer.min.js"></script>
     <script src="../../js/jquery-2.2.0.min.js"></script>
+    <script src="../../js/parser.min.js"></script>
+    <script src="../diceroller/diceParser.js"></script>
     <script src="gameroom.js"></script>
 </html>
