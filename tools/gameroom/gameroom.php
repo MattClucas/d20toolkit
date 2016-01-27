@@ -54,6 +54,7 @@
                 </div>
             </div>
             <h2>In development</h2>
+            <p>Type "/help" into the messsage bar at the bottom right for usage information.</p>
             <div id="log" style="display: none;"></div>
         </div>
     </body>
