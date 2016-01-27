@@ -6,12 +6,17 @@ $(document).ready(function()
 
     const USER_COLOR_CSS_PREFIX = "user-";
 
+    const HELP_MSG_AR = 'The aritchmancy solver command (/ar, /arithmancy) prompts the arithmancy ' +
+        'solver tool. Syntax: "/ar spellname" where spellname is the name of the spell. ' +
+        'For example, if the spell name is "Fireball", the input to this command would ' +
+        'be "/ar fireball" and the outcome would be "/ar fireball => 2".';
+
     const HELP_MSG_SG = 'The sacred geometry command (/sg, /sacredgeometry) prompts the sacred geometry ' +
-                        'solver tool. Syntax: "/sg spellLevel diceRolls" where spellLevel is a number (1 through 9) ' +
-                        'representing the level of the spell, and diceRolls is a series of numbers representing the ' +
-                        'dice that were rolled (1 through 8). For example, if the effective spell level is 4 and the ' +
-                        'dice rolled were 5, 6, 3, 2, 4, and 4 for this spell, the input would be "/sg 4 563244" and ' +
-                        'a possible outcome would be "/sg 4 563244 => ((((4*2) *3) /4) *6) +5 = 41 in 13 guesses.".';
+        'solver tool. Syntax: "/sg spellLevel diceRolls" where spellLevel is a number (1 through 9) ' +
+        'representing the level of the spell, and diceRolls is a series of numbers representing the ' +
+        'dice that were rolled (1 through 8). For example, if the effective spell level is 4 and the ' +
+        'dice rolled were 5, 6, 3, 2, 4, and 4 for this spell, the input would be "/sg 4 563244" and ' +
+        'a possible outcome would be "/sg 4 563244 => ((((4*2) *3) /4) *6) +5 = 41 in 13 guesses.".';
 
     const HELP_MSG_ROLL = 'The roll command (/r, /roll) is used to roll dice. ' +
         'Syntax: "/r expression" where expression is some mathmatical expression. ' +
@@ -599,12 +604,20 @@ $(document).ready(function()
                     break;
                 case "ar":
                 case "arithmancy":
-                    // TODO
+                    if (!commandInput)
+                    {
+                        broadcast = false;
+                        messageToSend = HELP_MSG_AR;
+                        break;
+                    }
+                    var outcome = Arithmancy.digitalRoot(commandInput);
+                    messageToSend = input + " => " + outcome;
                     break;
                 case 'h':
                 case "help":
                     broadcast = false;
-                    messageToSend = HELP_MSG_GENERAL + "\n\n" + HELP_MSG_HELP + "\n\n" + HELP_MSG_ROLL + "\n\n" + HELP_MSG_SG;
+                    messageToSend = HELP_MSG_GENERAL + "\n\n" + HELP_MSG_HELP + "\n\n" + HELP_MSG_ROLL + "\n\n" + HELP_MSG_SG +
+                        "\n\n" + HELP_MSG_AR;
                     break;
                 default:
                     messageToSend = input;

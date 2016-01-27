@@ -66,5 +66,6 @@
     <script src="/js/parser.min.js"></script>
     <script src="../diceroller/DiceParser.js"></script>
     <script src="../sacredgeo/SacredGeometry.js"></script>
+    <script src="../arithmancy/Arithmancy.js"></script>
     <script src="gameroom.js"></script>
 </html>
