@@ -3,13 +3,13 @@
 
     // constants for prepared mysql statements
     // prepared statements should not have ending semicolon
-    const PREP_STATEMENT_CREATE_ROOM    =   "INSERT INTO `d20toolkit`.`ROOMS` (`ROOM_NAME`, `ROOM_PASSWORD`, `ROOM_MEMBERS`) VALUES (?, ?, ?)";
-    const PREP_STATEMENT_SELECT_ROOM    =   "SELECT `ROOM_PASSWORD`, `ROOM_MEMBERS` FROM `d20toolkit`.`ROOMS` WHERE `ROOM_NAME`=?";
+    const PREP_STATEMENT_CREATE_ROOM    =   "INSERT INTO `ROOMS` (`ROOM_NAME`, `ROOM_PASSWORD`, `ROOM_MEMBERS`) VALUES (?, ?, ?)";
+    const PREP_STATEMENT_SELECT_ROOM    =   "SELECT `ROOM_PASSWORD`, `ROOM_MEMBERS` FROM `ROOMS` WHERE `ROOM_NAME`=?";
     const PREP_STATEMENT_UPDATE_MEMBERS =   "UPDATE `ROOMS` SET `ROOM_MEMBERS`=?,`LAST_CHECKIN`=CURRENT_TIMESTAMP WHERE `ROOM_NAME`=?";
-    const PREP_STATEMENT_GET_MEMBERS    =   "SELECT `ROOM_MEMBERS` FROM `d20toolkit`.`ROOMS` WHERE `ROOM_NAME`=?";
+    const PREP_STATEMENT_GET_MEMBERS    =   "SELECT `ROOM_MEMBERS` FROM `ROOMS` WHERE `ROOM_NAME`=?";
     const PREP_STATEMENT_PING_ROOM      =   "UPDATE `ROOMS` SET `LAST_CHECKIN`=CURRENT_TIMESTAMP WHERE `ROOM_NAME`=?";
 
-	$db = new mysqli("localhost", "root", "rootpw", "d20toolkit");
+    $db = new mysqli("localhost", "root", "rootpw", "d20toolkit");
     if($db->connect_error)
     {
         sendResponse(false, ERROR_DATABASE_ISSUE, null);

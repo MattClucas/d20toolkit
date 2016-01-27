@@ -1,7 +1,7 @@
 <?php
     // REMOVE BEFORE GOING TO PRODUCTION
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+    //error_reporting(E_ALL);
+    //ini_set('display_errors', 1);
 
     // constants for response error codes
     const ERROR_NONE                = null;                     // when there is no error
