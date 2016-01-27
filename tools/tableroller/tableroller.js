@@ -1,17 +1,21 @@
-window.onload = function(){
+window.onload = function()
+{
     // parse the url parameters
     var urlParams; // url params will be inside this object
-    (window.onpopstate = function () {
+    (window.onpopstate = function()
+    {
         var match,
-        pl     = /\+/g,  // Regex for replacing addition symbol with a space
-        search = /([^&=]+)=?([^&]*)/g,
-        decode = function (s) {
-            return decodeURIComponent(s.replace(pl, " "));
-        },
-        query  = window.location.search.substring(1);
+            pl = /\+/g, // Regex for replacing addition symbol with a space
+            search = /([^&=]+)=?([^&]*)/g,
+            decode = function(s)
+            {
+                return decodeURIComponent(s.replace(pl, " "));
+            },
+            query = window.location.search.substring(1);
 
         urlParams = {};
-        while (match = search.exec(query)){
+        while (match = search.exec(query))
+        {
             urlParams[decode(match[1])] = decode(match[2]);
         }
     })();
@@ -20,7 +24,7 @@ window.onload = function(){
     var TABLE = [];
     if (urlParams.t)
     {
-       TABLE = urlParams.t.split("\n"); // every new line is a seperate item
+        TABLE = urlParams.t.split("\n"); // every new line is a seperate item
     }
     for (var i = 0; i < TABLE.length; i++)
     {
@@ -36,32 +40,40 @@ window.onload = function(){
     document.getElementById("tableInput").value = TABLE.join("\n");
 
     // create resizing functions
-    (function(){
+    (function()
+    {
         var observe;
-        if (window.attachEvent) {
-            observe = function (element, event, handler) {
-                element.attachEvent('on'+event, handler);
+        if (window.attachEvent)
+        {
+            observe = function(element, event, handler)
+            {
+                element.attachEvent('on' + event, handler);
             };
         }
-        else {
-            observe = function (element, event, handler) {
+        else
+        {
+            observe = function(element, event, handler)
+            {
                 element.addEventListener(event, handler, false);
             };
         }
 
         var text = document.getElementById("tableInput");
-        function resize () {
+
+        function resize()
+        {
             text.style.height = 'auto';
-            text.style.height = text.scrollHeight+'px';
+            text.style.height = text.scrollHeight + 'px';
         }
         /* 0-timeout to get the already changed text */
-        function delayedResize () {
+        function delayedResize()
+        {
             window.setTimeout(resize, 0);
         }
-        observe(text, 'change',  resize);
-        observe(text, 'cut',     delayedResize);
-        observe(text, 'paste',   delayedResize);
-        observe(text, 'drop',    delayedResize);
+        observe(text, 'change', resize);
+        observe(text, 'cut', delayedResize);
+        observe(text, 'paste', delayedResize);
+        observe(text, 'drop', delayedResize);
         observe(text, 'keydown', delayedResize);
 
         text.focus();
@@ -87,17 +99,18 @@ window.onload = function(){
         resultsDiv.appendChild(rollResults);
 
         // attach roller function
-        rollbutton.onclick = function(){
+        rollbutton.onclick = function()
+        {
             // roll content
             var roll = Math.floor(Math.random() * TABLE.length);
             var content = TABLE[roll];
 
             // transform any random dice rolls within the content text into actual results
-            // from diceParser.js
-            content = replaceDiceStringAndEvaluate(content);
+            // from DiceParser.js
+            content = DiceParser.replaceDiceStringAndEvaluate(content);
 
             // show results in the results div
-            rollResults.innerHTML = content + "<br/>" + rollResults.innerHTML;
+            rollResults.innerHTML = content + "<br>" + rollResults.innerHTML;
         };
 
         // get div to hold table

@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Table Roller Links</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
-        <link rel="stylesheet" href="../../css/bootswatch.min.css">
-        <style>
-            .block {
-                float: left;
-                width: initial;
-                margin-left: 5px;
-            }
-            .blockHolder {
-                clear: left;
-            }
-        </style>
-    </head>
-    <body>
-        <?php
+
+<head>
+    <meta charset="utf-8">
+    <title>Table Roller Links</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="../../css/bootswatch.min.css">
+    <style>
+        .block {
+            float: left;
+            width: initial;
+            margin-left: 5px;
+        }
+
+        .blockHolder {
+            clear: left;
+        }
+    </style>
+</head>
+
+<body>
+    <?php
             include_once('../../stats.php');
             include_once('../../header/header.php');
         ?>
@@ -26,15 +29,21 @@
             <h1>Table Roller Links</h1>
 
             <!-- Link to specific table sections -->
-            <a href="#Encounters">Encounters</a><br/>
-            <a href="#Magic-Items">Magic Items</a><br/>
-            <a href="#Miscellaneous">Miscellaneous</a><br/>
+            <a href="#Encounters">Encounters</a>
+            <br>
+            <a href="#Magic-Items">Magic Items</a>
+            <br>
+            <a href="#Miscellaneous">Miscellaneous</a>
+            <br>
 
             <!-- Begin the blocks of tables -->
             <div class="blockHolder">
                 <h2 id="Encounters">Encounters</h2>
                 <table class="table table-striped table-bordered block">
-                    <tr><th>By Location</th><th>Average CR</th></tr>
+                    <tr>
+                        <th>By Location</th>
+                        <th>Average CR</th>
+                    </tr>
                     <tr>
                         <td>
                             <a href="/tools/tableroller/tableroller.php?t=1d6+dire+rats%0D%0A1d6+fire+beetles%0D%0A1d6+human+skeletons%0D%0A1d4+giant+centipedes%0D%0A1+spider+swarm%0D%0A1d6+human+zombies%0D%0A1+choker%0D%0A1+skeletal+champion%0D%0A2d6+goblins%0D%0A1d4+ghouls%0D%0A1d4+giant+spiders%0D%0A1+cockatrice%0D%0A1+gelatinous+cube%0D%0A1+rust+monster%0D%0A1+shadow%0D%0A1+wight%0D%0A2d4+stirges%0D%0A1d6+darkmantles%0D%0A1d6+troglodytes%0D%0A1d4+bugbears%0D%0A1d4+vargouilles%0D%0A1+gray+ooze%0D%0A1+mimic%0D%0A1+ogre">
@@ -445,7 +454,9 @@
                     </tr>
                 </table>
                 <table class="table table-striped table-bordered block">
-                    <tr><th>By CR</th></tr>
+                    <tr>
+                        <th>By CR</th>
+                    </tr>
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Bat%2C+Common%0D%0ACentipede%2C+House%0D%0AHedgehog%0D%0AIsopod%2C+Giant%0D%0ASkunk%0D%0AToad">
                             1/8
@@ -601,7 +612,10 @@
             <div class="blockHolder">
                 <h2 id="Magic-Items">Magic Items</h2>
                 <table class="table table-striped table-bordered block">
-                    <tr><th>Weapon Abilities</th><th>Bonus</th></tr>
+                    <tr>
+                        <th>Weapon Abilities</th>
+                        <th>Bonus</th>
+                    </tr>
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Impervious%0D%0AGlamered%0D%0AAllying%0D%0ABane%0D%0ABenevolent%0D%0ACalled%0D%0AConductive%0D%0ACorrosive%0D%0ACountering%0D%0ACourageous%0D%0ACruel%0D%0ACunning%0D%0ADeadly%0D%0ADefending%0D%0ADispelling%0D%0AFlaming%0D%0AFrost%0D%0AFurious%0D%0AGhost+touch%0D%0AGrayflame%0D%0AGrounding%0D%0AGuardian%0D%0AHeartseeker%0D%0AHuntsman%0D%0AJurist%0D%0AKeen%0D%0AKi+focus%0D%0ALimning%0D%0AMenacing%0D%0AMerciful%0D%0AMighty+cleaving%0D%0AMimetic%0D%0ANeutralizing%0D%0AOminous%0D%0APlanar%0D%0AQuenching%0D%0ASeaborne%0D%0AShock%0D%0ASpell+storing%0D%0AThawing%0D%0AThrowing%0D%0AThundering%0D%0AValiant%0D%0AVicious">
                             Melee
@@ -664,7 +678,10 @@
                     </tr>
                 </table>
                 <table class="table table-striped table-bordered block">
-                    <tr><th>Armor & Shield Abilities</th><th>Bonus</th></tr>
+                    <tr>
+                        <th>Armor & Shield Abilities</th>
+                        <th>Bonus</th>
+                    </tr>
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Benevolent%0D%0APoison-resistant%0D%0ABalanced%0D%0ABitter%0D%0ABolstering%0D%0ABrawling%0D%0AChampion%0D%0ADastard%0D%0ADeathless%0D%0ADefiant%0D%0AFortification%28light%29%0D%0AGrinding%0D%0AImpervious%0D%0AMirrored%0D%0ASpell+storing%0D%0AStanching%0D%0AWarding">
                             Armor
@@ -727,7 +744,11 @@
                     </tr>
                 </table>
                 <table class="table table-striped table-bordered block">
-                    <tr><th>Armor</th><th>Shields</th><th>Weapons</th></tr>
+                    <tr>
+                        <th>Armor</th>
+                        <th>Shields</th>
+                        <th>Weapons</th>
+                    </tr>
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Mithral+shirt%0D%0AMasterwork+armor+or+non-magical+armor+made+with+special+material">
                             Lesser Minor
@@ -807,7 +828,9 @@
                     </tr>
                 </table>
                 <table class="table table-striped table-bordered block">
-                    <tr><th>Artifacts</th></tr>
+                    <tr>
+                        <th>Artifacts</th>
+                    </tr>
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Anathema+Archive%0D%0AAxe+of+the+Dwarvish+Lords%0D%0ABlackaxe%0D%0ABook+of+the+Damned+%28Original%29%0D%0ABook+of+the+Damned%3A+Daemonic%0D%0ABook+of+the+Damned%3A+Demonic%0D%0ABottle+of+the+Bound%0D%0ABrazen+Egg%0D%0ACelestial+Lens%0D%0AChronicle+of+the+Righteous%0D%0ACloud+Castle+of+the+Storm+King%0D%0ACodex+of+the+Infinite+Planes%0D%0ADancing+Hut+of+Baba+Yaga%0D%0ADemon+Prince+Armor%0D%0AFlame+of+Guidance%0D%0AFork+of+the+Forgotten+One%0D%0AGem+of+Dreams%0D%0AJar+of+Dragon%27s+Teeth%0D%0AMoaning+Diamond%0D%0ARandom+Orb+of+Dragonkind%0D%0AOrb+of+Dragon+Mastery%0D%0AOrb+of+Dragonkin%0D%0AOrb+of+Dragonshape%0D%0APerfection%27s+Key%0D%0ARing+of+Nine+Facets%0D%0ARunewell+of+Greed%0D%0ASaint+Cuthbert%27s+Mace%0D%0AScepter+of+Ages%0D%0AShadowstaff%0D%0AShield+of+the+Sun%0D%0AShield+of+the+Winged+Eye%0D%0ASkull+of+the+Viper+God%0D%0ASkullsoul%0D%0ASong+of+Extinction+%28Music+Box%29%0D%0ASword+of+Greed%0D%0AThe+Briar+Blade%0D%0AThe+Jewel+of+Everlasting+Gold%0D%0AThorncrown+of+Blasting">
                             Major
@@ -828,18 +851,21 @@
                             Knucklebone of Fickle Fortune
                         </a></td>
                     </tr>
-<!--                Deck of Many Things is too long
+                    <!--                Deck of Many Things is too long
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Balance+-+Change+alignment+instantly.+The+character+must+change+to+a+radically+different+alignment.+If+the+character+fails+to+act+according+to+the+new+alignment%2C+she+gains+a+negative+level.%0D%0AComet+-+Defeat+the+next+monster+you+meet+to+gain+one+level.+The+character+must+single-handed+defeat+the+next+hostile+monster+or+monsters+encountered%2C+or+the+benefit+is+lost.+If+successful%2C+the+character+gains+enough+XP+to+attain+the+next+experience+level.%0D%0ADonjon+-+You+are+imprisoned.+This+card+signifies+imprisonment+either+by+the+imprisonment+spell+or+by+some+powerful+being.+All+gear+and+spells+are+stripped+from+the+victim+in+any+case.+Draw+no+more+cards.%0D%0AEurayle+-+-1+penalty+on+all+saving+throws+henceforth.+The+Medusa-like+visage+of+this+card+brings+a+curse+that+only+the+Fates+card+or+a+deity+can+remove.+The+-1+penalty+on+all+saving+throws+is+otherwise+permanent.%0D%0AThe+Fates+-+Avoid+any+situation+you+choose%2C+once.+This+card+enables+the+character+to+avoid+even+an+instantaneous+occurrence+if+so+desired%2C+for+the+fabric+of+reality+is+unraveled+and+re-spun.+Note+that+it+does+not+enable+something+to+happen.+It+can+only+stop+something+from+happening+or+reverse+a+past+occurrence.+The+reversal+is+only+for+the+character+who+drew+the+card%3B+other+party+members+may+have+to+endure+the+situation.%0D%0AFlames+-+Enmity+between+you+and+an+outsider.+Hot+anger%2C+jealousy%2C+and+envy+are+but+a+few+of+the+possible+motivational+forces+for+the+enmity.+The+enmity+of+the+outsider+can%27t+be+ended+until+one+of+the+parties+has+been+slain.+Determine+the+outsider+randomly%2C+and+assume+that+it+attacks+the+character+%28or+plagues+her+life+in+some+way%29+within+1d20+days.%0D%0AFool+-+Lose+10%2C000+experience+points+and+you+must+draw+again.+The+payment+of+XP+and+the+redraw+are+mandatory.+This+card+is+always+discarded+when+drawn%2C+unlike+all+others+except+the+Jester.%0D%0AGem%09+-+Gain+your+choice+of+25+pieces+of+jewelry+or+50+gems.+This+card+indicates+wealth.+The+jewelry+is+all+gold+set+with+gems%2C+each+piece+worth+2%2C000+gp%2C+and+the+gems+are+worth+1%2C000+gp+each.%0D%0AIdiot+-+1d4%2B1+Intelligence+drain+immediately+to+the+character.+You+may+optionally+draw+again.%0D%0AJester+-+Gain+10%2C000+XP+or+two+more+draws+from+the+deck.+This+card+is+always+discarded+when+drawn%2C+unlike+all+others+except+the+Fool.+The+redraws+are+optional.%0D%0AKey%09Gain+a+major+magic+weapon.+The+magic+weapon+granted+must+be+one+usable+by+the+character.+It+suddenly+appears+out+of+nowhere+in+the+character%27s+hand.%0D%0AKnight+-+Gain+the+service+of+a+4th-level+fighter.+The+fighter+appears+out+of+nowhere+and+serves+loyally+until+death.+He+or+she+is+of+the+same+race+%28or+kind%29+and+gender+as+the+character.+This+fighter+can+be+taken+as+a+cohort+by+a+character+with+the+Leadership+feat.%0D%0AMoon+-+You+are+granted+1d4+wishes.+This+card+bears+the+image+of+a+moonstone+gem+with+the+appropriate+number+of+wishes+shown+as+gleams+therein%3B+sometimes+it+depicts+a+moon+with+its+phase+indicating+the+number+of+wishes+%28full+%3D+four%3B+gibbous+%3D+three%3B+half+%3D+two%3B+quarter+%3D+one%29.+These+wishes+are+the+same+as+those+granted+by+the+9th-level+wizard+spell+and+must+be+used+within+a+number+of+minutes+equal+to+the+number+received.%0D%0ARogue+-+One+of+your+friends+turns+against+you.+When+this+card+is+drawn%2C+one+of+the+character%27s+NPC+friends+%28preferably+a+cohort%29+is+totally+alienated+and+made+forever+hostile.+If+the+character+has+no+cohorts%2C+the+enmity+of+some+powerful+personage+%28or+community%2C+or+religious+order%29+can+be+substituted.+The+hatred+is+secret+until+the+time+is+ripe+for+it+to+be+revealed+with+devastating+effect.%0D%0ARuin+-+Immediately+lose+all+wealth+and+property.+As+implied+by+its+name%2C+when+this+card+is+drawn%2C+all+non-magical+possessions+of+the+drawer+are+lost.%0D%0ASkull%09+-+Defeat+dread+wraith+or+be+forever+destroyed.+A+dread+wraith+appears.+The+character+must+fight+it+alone+-+if+others+help%2C+dread+wraiths+appear+to+fight+them+as+well.+If+the+character+is+slain%2C+she+is+slain+forever+and+cannot+be+revived%2C+even+with+a+wish+or+a+miracle.%0D%0AStar+-+Immediately+gain+a+%2B2+inherent+bonus+to+a+single+ability+score+the+character+chooses.%0D%0ASun+-+Gain+beneficial+medium+wondrous+item+and+50%2C000+XP.+Roll+for+a+medium+wondrous+item+until+a+useful+item+is+indicated.%0D%0ATalons+-+All+magic+items+you+possess+disappear+permanently.+When+this+card+is+drawn%2C+every+magic+item+owned+or+possessed+by+the+character+is+instantly+and+irrevocably+lost%2C+except+for+the+deck.%0D%0AThrone+-+Gain+a+%2B6+bonus+on+Diplomacy+checks+plus+a+small+castle.+The+character+becomes+a+true+leader+in+people%27s+eyes.+The+castle+gained+appears+in+any+open+area+she+wishes+%28but+the+decision+where+to+place+it+must+be+made+within+1+hour%29.%0D%0AVizier+-+Know+the+answer+to+your+next+dilemma.+This+card+empowers+the+character+drawing+it+with+the+one-time+ability+to+call+upon+a+source+of+wisdom+to+solve+any+single+problem+or+answer+fully+any+question+upon+her+request.+The+query+or+request+must+be+made+within+1+year.+Whether+the+information+gained+can+be+successfully+acted+upon+is+another+matter+entirely.%0D%0AThe+Void+-+Body+functions%2C+but+soul+is+trapped+elsewhere.+This+black+card+spells+instant+disaster.+The+character%27s+body+continues+to+function%2C+as+though+comatose%2C+but+her+psyche+is+trapped+in+a+prison+somewhere+in+an+object+on+a+far+plane+or+planet%2C+possibly+in+the+possession+of+an+outsider.+A+wish+or+a+miracle+does+not+bring+the+character+back%2C+instead+merely+revealing+the+plane+of+entrapment.+Draw+no+more+cards.">
                             Deck of Many Things
                         </a></td>
                     </tr>
--->                </table>
+-->
+                </table>
             </div>
             <div class="blockHolder">
                 <h2 id="Miscellaneous">Miscellaneous</h2>
                 <table class="table table-striped table-bordered block">
-                    <tr><th>Other</th></tr>
+                    <tr>
+                        <th>Other</th>
+                    </tr>
                     <tr>
                         <td><a href="/tools/tableroller/tableroller.php?t=Lawful+Good%0D%0ANeutral+Good%0D%0AChaotic+Good%0D%0ALawful+Neutral%0D%0ATrue+Neutral%0D%0AChaotic+Neutral%0D%0ALawful+Evil%0D%0ANeutral+Evil%0D%0AChaotic+Evil">
                             Alignment
@@ -848,5 +874,6 @@
                 </table>
             </div>
         </div>
-    </body>
+</body>
+
 </html>

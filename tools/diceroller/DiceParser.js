@@ -1,17 +1,19 @@
+DiceParser = {};
+
 /**
  * Rolls numDice number of dice each with numSides number
  * of sides and returns the results in an array.
  */
-function rollDice(numSides, numDice)
+DiceParser.rollDice = function(numSides, numDice)
 {
     var dice = [];
-    for (var i=0; i<numDice; i++)
+    for (var i = 0; i < numDice; i++)
     {
         var roll = Math.floor(Math.random() * numSides) + 1;
         dice.push(roll);
     }
     return dice;
-}
+};
 
 /*
  * Takes the matched string - match - and returns the corresponding rollDice() output
@@ -28,7 +30,7 @@ function rollDice(numSides, numDice)
  *     match  : "5d6"
  *     return : "(3+4+5+2+6)"
  */
-function diceParse(match)
+DiceParser.diceParse = function(match)
 {
     // get an array of the first number and last
     match = match.toLowerCase().trim().split("d");
@@ -36,27 +38,27 @@ function diceParse(match)
     {
         match[0] = 1;
     }
-    return "(" + rollDice(match[1], match[0]).join("+") + ")";
-}
+    return "(" + DiceParser.rollDice(match[1], match[0]).join("+") + ")";
+};
 
-function diceParseAndEvaluate(match)
+DiceParser.diceParseAndEvaluate = function(match)
 {
-    var diceParseResult = diceParse(match);
+    var diceParseResult = DiceParser.diceParse(match);
     var sum = Parser.evaluate(diceParseResult);
     return "(" + sum + ")";
-}
+};
 
-function replaceDiceStringAndEvaluate(str)
+DiceParser.replaceDiceStringAndEvaluate = function(str)
 {
-    return str.replace(/\d*d\d+/ig, diceParseAndEvaluate);
-}
+    return str.replace(/\d*d\d+/ig, DiceParser.diceParseAndEvaluate);
+};
 
 /**
  * Searches the given string and replaces every instance of a dice format with rolled results.
  *
  * Returns the new string.
  */
-function replaceDiceString(str)
+DiceParser.replaceDiceString = function(str)
 {
-    return str.replace(/\d*d\d+/ig, diceParse);
-}
+    return str.replace(/\d*d\d+/ig, DiceParser.diceParse);
+};

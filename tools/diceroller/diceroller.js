@@ -1,5 +1,7 @@
-window.onload = function(){
-    document.getElementById("submitBtn").onclick = function(){
+window.onload = function()
+{
+    document.getElementById("submitBtn").onclick = function()
+    {
         // grab the user input
         var input = document.getElementById("inputBox").value;
 
@@ -12,7 +14,7 @@ window.onload = function(){
         // everywhere there is the pattern [number1]d<number2> (optional first number, "d" or "D", required second number)
         // replace it with rolled dice where the format is number1 = number of dice, defaults to 1; number2 = number of
         // sides on the dice
-        input = replaceDiceString(input);
+        input = DiceParser.replaceDiceString(input);
 
         // try to evaluate the total
         var outcome = input + "<br>";
@@ -28,7 +30,7 @@ window.onload = function(){
         }
 
         // prepend the new string to the existing output and get the total
-        document.getElementById("output").innerHTML = outcome + "<br/>" + document.getElementById("output").innerHTML;
+        document.getElementById("output").innerHTML = outcome + "<br>" + document.getElementById("output").innerHTML;
 
         // clear input box if clearText is checked
         if (document.getElementById("clearText").checked)

@@ -61,9 +61,10 @@
     <script>
         const INTERFACE = <?php echo $INTERFACE_CONSTANTS; ?>;
     </script>
-    <script src="../../js/peer.min.js"></script>
-    <script src="../../js/jquery-2.2.0.min.js"></script>
-    <script src="../../js/parser.min.js"></script>
-    <script src="../diceroller/diceParser.js"></script>
+    <script src="/js/peer.min.js"></script>
+    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/js/parser.min.js"></script>
+    <script src="../diceroller/DiceParser.js"></script>
+    <script src="../sacredgeo/SacredGeometry.js"></script>
     <script src="gameroom.js"></script>
 </html>

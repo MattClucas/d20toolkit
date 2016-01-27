@@ -43,6 +43,9 @@
     height: calc( 100% - 31px );
     font-size: smaller;
 }
+#messagesBlock div {
+    white-space: pre-wrap;
+}
 #setUserName {
     width: 70px;
 }

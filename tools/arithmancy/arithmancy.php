@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="../../css/bootswatch.min.css">
   </head>
   <body>
-    <?php 
+    <?php
 	include_once('../../stats.php');
-	include_once('../../header/header.php'); 
+	include_once('../../header/header.php');
 	?>
     <div class="container">
 		<h1>Arithmancy Calculator</h1>
@@ -19,11 +19,11 @@
 
 		<a href="https://youtu.be/3a8LaIME66M?t=24s">Easy mental trick.</a>
 
-		<br/>
-		<br/>Spell Name
+		<br>
+		<br>Spell Name
 		<input type="text" id="spellname" />
-		<br/>
-		
+		<br>
+
 		<div id="digitalroot">
 		</div>
 

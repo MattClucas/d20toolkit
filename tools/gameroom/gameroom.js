@@ -6,7 +6,14 @@ $(document).ready(function()
 
     const USER_COLOR_CSS_PREFIX = "user-";
 
-    const HELP_MSG_ROLL = "The roll command (/r) is used to roll virtual dice. " +
+    const HELP_MSG_SG = 'The sacred geometry command (/sg, /sacredgeometry) prompts the sacred geometry ' +
+                        'solver tool. Syntax: "/sg spellLevel diceRolls" where spellLevel is a number (1 through 9) ' +
+                        'representing the level of the spell, and diceRolls is a series of numbers representing the ' +
+                        'dice that were rolled (1 through 8). For example, if the effective spell level is 4 and the ' +
+                        'dice rolled were 5, 6, 3, 2, 4, and 4 for this spell, the input would be "/sg 4 563244" and ' +
+                        'a possible outcome would be "/sg 4 563244 => ((((4*2) *3) /4) *6) +5 = 41 in 13 guesses.".';
+
+    const HELP_MSG_ROLL = 'The roll command (/r, /roll) is used to roll dice. ' +
         'Syntax: "/r expression" where expression is some mathmatical expression. ' +
         'Any text in the expression that matches the pattern "[number]d<number>" will be ' +
         'interpretted as dice and rolled. The [number] determines the number of dice and is ' +
@@ -14,7 +21,7 @@ $(document).ready(function()
         'An example use of this command is "/r 3d6 + 5 * 8" which could have an outcome of ' +
         '"/r 3d6 + 5 * 8 => (5+3+4) + 5 * 8 = 52".';
 
-    const HELP_MSG_HELP = 'The help command (/h) displays information about how to use this tool and the commands available to the user. ' +
+    const HELP_MSG_HELP = 'The help command (/h, /help) displays information about how to use this tool and the commands available to the user. ' +
         'Syntax: "/h". ';
 
     const HELP_MSG_GENERAL = 'The D20ToolKit Game Room is designed as a simple chat room that friends can use to quickly setup a Pathfinder or ' +
@@ -501,6 +508,130 @@ $(document).ready(function()
         infoBarUpdateUI();
     }
 
+    function sendChatMessage()
+    {
+        var input = $messageInput.val().trim();
+        $messageInput.val("");
+        $messageInput.focus();
+
+        // check if there was anything typed before actually doing stuff
+        if (!input)
+        {
+            return;
+        }
+
+        function getCommand(chatString)
+        {
+            // make sure chatString is a string of the format "/*"
+            if (!chatString || typeof chatString !== "string" || chatString.charAt(0) !== "/")
+            {
+                return null;
+            }
+
+            // get whatever comes after the first "/" and before the first space
+            // "/command blah blah blah" gets "command"
+            var command = chatString.split(/(\s+)/)[0];
+            if (command.length <= 1)
+            {
+                return null;
+            }
+
+            return command.substring(1).toLowerCase();
+        }
+
+        var messageToSend = input;
+        var broadcast = true; // whether or not to spam this to the room
+        var command = getCommand(input);
+        if (command)
+        {
+            // parse everything after the command
+            var commandInput = input.substring(command.length + 1);
+
+            switch (command)
+            {
+                // roll
+                case 'r':
+                case "roll":
+                    // display help message if nothing is entered.
+                    if (!commandInput)
+                    {
+                        broadcast = false;
+                        messageToSend = HELP_MSG_ROLL;
+                        break;
+                    }
+
+                    // find all instances of the number"d"number and roll it
+                    var parsedInput = DiceParser.replaceDiceString(commandInput);
+
+                    // try to evaluate the total
+                    messageToSend = input + " => " + parsedInput + " = ";
+                    try
+                    {
+                        // uses parser.js to evaluate any total
+                        var total = Parser.evaluate(parsedInput);
+                        messageToSend += total;
+                    }
+                    catch (error)
+                    {
+                        broadcast = false;
+                        messageToSend += error.toString();
+                    }
+                    break;
+                case "sg":
+                case "sacredgeometry":
+                    if (!commandInput)
+                    {
+                        broadcast = false;
+                        messageToSend = HELP_MSG_SG;
+                        break;
+                    }
+                    // commandInput should become ["spellLevel", "space", "diceRolls"]
+                    var commandInput = commandInput.trim().split(/(\s+)/);
+                    if (commandInput.length < 3)
+                    {
+                        broadcast = false;
+                        messageToSend = HELP_MSG_SG;
+                        break;
+                    }
+                    // TODO make number of guesses optional
+                    var outcome = SacredGeometry.wizard(commandInput[0], commandInput[2], true);
+                    messageToSend = input + " => " + outcome;
+                    break;
+                case "ar":
+                case "arithmancy":
+                    // TODO
+                    break;
+                case 'h':
+                case "help":
+                    broadcast = false;
+                    messageToSend = HELP_MSG_GENERAL + "\n\n" + HELP_MSG_HELP + "\n\n" + HELP_MSG_ROLL + "\n\n" + HELP_MSG_SG;
+                    break;
+                default:
+                    messageToSend = input;
+            }
+        }
+
+        // send message to all connected users
+        if (broadcast)
+        {
+            for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
+            {
+                var peerId = CONNECTED_PEERS.IDS[i];
+                if (peerId)
+                {
+                    CONNECTED_PEERS[peerId].send(
+                    {
+                        type: PEER_MSG_TYPE_CHAT,
+                        content: messageToSend
+                    });
+                }
+            }
+        }
+
+        // show ourselves the message
+        showMessage(null, messageToSend);
+    }
+
     /*
      * attach button click handlers
      */
@@ -549,84 +680,7 @@ $(document).ready(function()
         }
     });
 
-    $('#sendButton').click(function()
-    {
-        var input = $messageInput.val().trim();
-        $messageInput.val("");
-        $messageInput.focus();
-
-        // check if there was anything typed before actually doing stuff
-        if (!input)
-        {
-            return;
-        }
-
-        var messageToSend = input;
-        var broadcast = true; // whether or not to spam this to the room
-        if (input.charAt(0) == "/")
-        {
-            var command = input.charAt(1);
-            switch (command)
-            {
-                // roll
-                case 'r':
-                    // parse everything after the "/r"
-                    var commInput = input.substring(2);
-
-                    // display help message is nothing is entered.
-                    if (!commInput)
-                    {
-                        broadcast = false;
-                        messageToSend = HELP_MSG_ROLL;
-                        break;
-                    }
-
-                    // find all instances of the number"d"number and roll it
-                    var parsedInput = replaceDiceString(commInput);
-
-                    // try to evaluate the total
-                    messageToSend = input + " => " + parsedInput + " = ";
-                    try
-                    {
-                        // uses parser.js to evaluate any total
-                        var total = Parser.evaluate(parsedInput);
-                        messageToSend += total;
-                    }
-                    catch (error)
-                    {
-                        broadcast = false;
-                        messageToSend += error.toString();
-                    }
-                    break;
-                case 'h':
-                    broadcast = false;
-                    messageToSend = HELP_MSG_GENERAL + "\n" + HELP_MSG_HELP + "\n" + HELP_MSG_ROLL;
-                    break;
-                default:
-                    messageToSend = input;
-            }
-        }
-
-        // send message to all connected users
-        if (broadcast)
-        {
-            for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
-            {
-                var peerId = CONNECTED_PEERS.IDS[i];
-                if (peerId)
-                {
-                    CONNECTED_PEERS[peerId].send(
-                    {
-                        type: PEER_MSG_TYPE_CHAT,
-                        content: messageToSend
-                    });
-                }
-            }
-        }
-
-        // show ourselves the message
-        showMessage(null, messageToSend);
-    });
+    $('#sendButton').click(sendChatMessage);
 
     // when enter is pressed on the message input it automatically clicks the send button
     $messageInput.keyup(function(event)
