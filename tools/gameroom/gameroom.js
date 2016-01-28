@@ -753,6 +753,7 @@ $(document).ready(function()
                         break;
                 }
                 $logdiv.append(msg + '<br>');
+                alert(msg);
                 return;
             }
             var msg = "Room created successfully.";
@@ -793,6 +794,7 @@ $(document).ready(function()
                         break;
                 }
                 $logdiv.append(msg + '<br>');
+                alert(msg);
                 return;
             }
             var msg = "Room joined successfully.";
@@ -865,6 +867,7 @@ $(document).ready(function()
                         break;
                 }
                 $logdiv.append(msg + '<br>');
+                alert(msg);
                 return;
             }
             var msg = "Left room successfully.";
