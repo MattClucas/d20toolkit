@@ -10,11 +10,28 @@
     const PREP_STATEMENT_PING_ROOM           = "UPDATE `ROOMS` SET `LAST_CHECKIN`=CURRENT_TIMESTAMP WHERE `ROOM_NAME`=?";
     const PREP_STATEMENT_SELECT_OPEN_ROOMS   = "SELECT `ROOM_NAME`, `ROOM_MEMBERS`, `NUM_MEMBERS` FROM `ROOMS` WHERE `ROOM_IS_OPEN`=1 AND `NUM_MEMBERS`<6";
     const PREP_STATEMENT_DELETE_EMPTY        = "DELETE FROM `ROOMS` WHERE `ROOMS`.`ROOM_NAME`=?";
+    const PREP_STATEMENT_TOTAL_USERS         = "SELECT COALESCE(SUM(NUM_MEMBERS),0) FROM `ROOMS`";
 
     $db = new mysqli("localhost", "root", "rootpw", "d20toolkit");
     if($db->connect_error)
     {
-        sendResponse(false, ERROR_DATABASE_ISSUE, null, null);
+        sendResponse(false, ERROR_DATABASE_ISSUE);
+    }
+
+    /**
+     * Returns the total number of users that are in rooms.
+     */
+    function getTotalUsers()
+    {
+        global $db;
+        if (!($stmt = $db->prepare(PREP_STATEMENT_TOTAL_USERS)))
+        {
+            sendResponse(false, ERROR_DATABASE_ISSUE);
+        }
+        $stmt->execute();
+        $stmt->bind_result($total);
+        $stmt->fetch();
+        return $total;
     }
 
     /**
@@ -23,7 +40,7 @@
      * $errorCode - one of the error code constants, this tells the client what went wrong
      * $roomMembers - a list of members that belong to the room that this person joined
      */
-    function sendResponse($success, $errorCode, $roomMembers, $roomName)
+    function sendResponse($success, $errorCode, $roomMembers = null, $roomName = null, $numUsers = null)
     {
         // close connection
         global $db;
@@ -33,9 +50,47 @@
         $response = array();
         $response[RESPONSE_SUCCESS] = $success;
         $response[RESPONSE_ERROR_CODE] = $errorCode;
-        $response[RESPONSE_ROOM_MEMBERS] = $roomMembers;
-        $response[RESPONSE_ROOM_NAME] = $roomName;
+        if ($roomMembers !== null)
+        {
+            $response[RESPONSE_ROOM_MEMBERS] = $roomMembers;
+        }
+        if ($roomName !== null)
+        {
+            $response[RESPONSE_ROOM_NAME] = $roomName;
+        }
+        if ($numUsers !== null)
+        {
+            $response[RESPONSE_NUM_USERS] = $numUsers;
+        }
         die(json_encode($response));
+    }
+
+    /**
+     * Checks to see if the $_POST[REQUEST_ROOM_NAME] was set properly
+     * Returns the room name or sends a bad request data response.
+     */
+    function validateRoomName()
+    {
+        $roomName = $_POST[REQUEST_ROOM_NAME];
+        if (!isset($roomName) || empty($roomName) || strlen($roomName) > 50)
+        {
+            sendResponse(false, ERROR_BAD_REQUEST_DATA);
+        }
+        return $roomName;
+    }
+
+    /**
+     * Checks to see if the $_POST[REQUEST_USER] was set properly
+     * Returns the user name or sends a bad request data response.
+     */
+    function validateUserName()
+    {
+        $username = $_POST[REQUEST_USER];
+        if(!isset($username) || empty($username))
+        {
+            sendResponse(false, ERROR_BAD_REQUEST_DATA);
+        }
+        return $username;
     }
 
     /**
@@ -45,11 +100,8 @@
     {
         global $db;
 
-        $roomName = $_POST[REQUEST_ROOM_NAME];
-        if (!isset($roomName) || empty($roomName) || strlen($roomName) > 50)
-        {
-            sendResponse(false, ERROR_BAD_REQUEST_DATA, null, null);
-        }
+        $username = validateUserName();
+        $roomName = validateRoomName();
 
         // create prepared statement with the db
         if (!($stmt = $db->prepare(PREP_STATEMENT_CREATE_ROOM)))
@@ -68,7 +120,7 @@
 
         // members is a stringified json array of users belonging to the room
         // in this case its just this user
-        $members = json_encode(array($_POST[REQUEST_USER]));
+        $members = json_encode(array($username));
 
         // execute query
         $stmt->execute();
@@ -89,6 +141,7 @@
     function joinRoom()
     {
         global $db;
+        $username = validateUserName();
         $randomRoom = (strtolower($_POST[REQUEST_RANDOM]) === "true");
         if ($randomRoom)
         {
@@ -123,11 +176,7 @@
         else
         {
             // validate the room name
-            $roomName = $_POST[REQUEST_ROOM_NAME];
-            if (!isset($roomName) || empty($roomName) || strlen($roomName) > 50)
-            {
-                sendResponse(false, ERROR_BAD_REQUEST_DATA, null, null);
-            }
+            $roomName = validateRoomName();
 
             // query db for room password and members
             if (!($stmt = $db->prepare(PREP_STATEMENT_SELECT_ROOM_BY_NAME)))
@@ -158,16 +207,15 @@
 
         // transform the json string into an array of members
         $membersArr = json_decode($membersStr);
-        $user = $_POST[REQUEST_USER];
 
         // check if user is already in the room
-        if (in_array($user, $membersArr)) {
+        if (in_array($username, $membersArr)) {
             // user already exists in room, we're done
             sendResponse(true, ERROR_NONE, $membersStr, $roomName);
         }
 
         // add user to members list
-        $membersArr[] = $user;
+        $membersArr[] = $username;
         $membersArrVals = array_values($membersArr);
         $numMembers = count($membersArrVals);
         $membersStr = json_encode($membersArrVals);
@@ -197,11 +245,8 @@
         global $db;
 
         // validate the room name
-        $roomName = $_POST[REQUEST_ROOM_NAME];
-        if (!isset($roomName) || empty($roomName) || strlen($roomName) > 50)
-        {
-            sendResponse(false, ERROR_BAD_REQUEST_DATA, null, null);
-        }
+        $roomName = validateRoomName();
+        $username = validateUserName();
 
         // query db for room members
         if (!($stmt = $db->prepare(PREP_STATEMENT_GET_MEMBERS)))
@@ -218,11 +263,10 @@
 
         // transform the json string into an array of members
         $membersArr = json_decode($membersStr);
-        $user = $_POST[REQUEST_USER];
 
         // get index of member in room
         // MUST USE === or !== HERE
-        if (($index = array_search($user, $membersArr)) === false) {
+        if (($index = array_search($username, $membersArr)) === false) {
             // user isn't in the room, we're done
             sendResponse(true, ERROR_NONE, null, $roomName);
         }
@@ -274,11 +318,7 @@
         global $db;
 
         // validate the room name
-        $roomName = $_POST[REQUEST_ROOM_NAME];
-        if (!isset($roomName) || empty($roomName) || strlen($roomName) > 50)
-        {
-            sendResponse(false, ERROR_BAD_REQUEST_DATA, null, null);
-        }
+        $roomName = validateRoomName();
 
         // ping latest checkin for the room
         if (!($stmt = $db->prepare(PREP_STATEMENT_PING_ROOM)))
@@ -301,7 +341,7 @@
     /* RUNNING CODE BEGINS HERE */
 
     // check if required request parameters are set
-    if (!isset($_POST[REQUEST_TYPE]) || !isset($_POST[REQUEST_USER]))
+    if (!isset($_POST[REQUEST_TYPE]) || empty($_POST[REQUEST_TYPE]))
     {
         sendResponse(false, ERROR_BAD_REQUEST_DATA, null);
     }
@@ -311,13 +351,21 @@
     {
         case TYPE_CREATE_ROOM:
             createRoom();
+            break;
         case TYPE_JOIN_ROOM:
             joinRoom();
+            break;
         case TYPE_LEAVE_ROOM:
             leaveRoom();
+            break;
         case TYPE_PING_ROOM:
             pingRoom();
+            break;
+        case TYPE_GET_NUM_USERS:
+            sendResponse(true, ERROR_NONE, null, null, getTotalUsers());
+            break;
         default:
             sendResponse(false, ERROR_BAD_REQUEST_DATA, null);
+            break;
     }
 ?>

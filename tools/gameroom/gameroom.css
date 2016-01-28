@@ -83,3 +83,9 @@
 .premessage {
     font-weight: bold;
 }
+#onlineUsersDiv {
+    font-size: small;
+    position: absolute;
+    bottom: 0;
+    left: 3px;
+}

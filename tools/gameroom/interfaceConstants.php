@@ -1,7 +1,7 @@
 <?php
     // REMOVE BEFORE GOING TO PRODUCTION
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+    //error_reporting(E_ALL);
+    //ini_set('display_errors', 1);
 
     // constants for response error codes
     const ERROR_NONE                = null;                     // when there is no error
@@ -24,12 +24,14 @@
     const RESPONSE_ERROR_CODE   = "errorCode";
     const RESPONSE_ROOM_MEMBERS = "roomMembers";
     const RESPONSE_ROOM_NAME    = "roomName";
+    const RESPONSE_NUM_USERS    = "numUsers";
 
     // constants for types of messages
-    const TYPE_CREATE_ROOM  = "CREATE";
-    const TYPE_JOIN_ROOM    = "JOIN";
-    const TYPE_LEAVE_ROOM   = "LEAVE";
-    const TYPE_PING_ROOM    = "PING";
+    const TYPE_CREATE_ROOM   = "CREATE";
+    const TYPE_JOIN_ROOM     = "JOIN";
+    const TYPE_LEAVE_ROOM    = "LEAVE";
+    const TYPE_PING_ROOM     = "PING";
+    const TYPE_GET_NUM_USERS = "USERS";
 
     // this is so that the client side also knows the interface keywords
     // a stringified object of all the constants declared above
@@ -51,9 +53,11 @@
         "RESPONSE_ERROR_CODE"       => RESPONSE_ERROR_CODE,
         "RESPONSE_ROOM_MEMBERS"     => RESPONSE_ROOM_MEMBERS,
         "RESPONSE_ROOM_NAME"        => RESPONSE_ROOM_NAME,
+        "RESPONSE_NUM_USERS"        => RESPONSE_NUM_USERS,
         "TYPE_CREATE_ROOM"          => TYPE_CREATE_ROOM,
         "TYPE_JOIN_ROOM"            => TYPE_JOIN_ROOM,
         "TYPE_LEAVE_ROOM"           => TYPE_LEAVE_ROOM,
-        "TYPE_PING_ROOM"            => TYPE_PING_ROOM
+        "TYPE_PING_ROOM"            => TYPE_PING_ROOM,
+        "TYPE_GET_NUM_USERS"        => TYPE_GET_NUM_USERS
     ));
 ?>

@@ -55,6 +55,9 @@
             </div>
             <h2>In development</h2>
             <p>Type "/help" into the messsage bar at the bottom right for usage information.</p>
+            <div id="onlineUsersDiv">
+                <label>Users In Rooms: </label><label id="onlineUsersLabel">Unknown</label>
+            </div>
             <div id="log" style="display: none;"></div>
         </div>
     </body>

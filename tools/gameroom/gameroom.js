@@ -179,6 +179,7 @@ $(document).ready(function()
     var $infoBar = $('#infoBar');
     var $leaveRoomBtn = $('#leaveRoom');
     var $roomMembersHeader = $('#roomMembersHeader');
+    var $onlineUsersLabel = $('#onlineUsersLabel');
 
     // Connect to PeerJS, have server assign an ID instead of providing one
     // Showing off some of the configs available with PeerJS :).
@@ -365,48 +366,52 @@ $(document).ready(function()
         var randomRoom = false;
         var openRoom = false;
 
-        // get and validate input from $roomNameInput
-        if (!roomname)
+        // getting the number of users does not require a roomname, password, or even user id
+        if (requestType != INTERFACE.TYPE_GET_NUM_USERS)
         {
-            roomname = $roomNameInput.val().trim();
-            if (!roomname && requestType == INTERFACE.TYPE_JOIN_ROOM)
+            // get and validate input from $roomNameInput
+            if (!roomname)
             {
-                // joining a room with no room specified means do a random room
-                randomRoom = true;
-                passwordRequired = false;
-            }
-            // not joining a room requires a room name
-            else if (!roomname || roomname.length > 50)
-            {
-                alert("Enter a room name no more than 50 characters long.");
-                return;
-            }
-        }
-
-        if (passwordRequired)
-        {
-            // get and validate input from $roomPasswordInput
-            var roompassword = $roomPasswordInput.val();
-            if (!roompassword)
-            {
-                if (requestType == INTERFACE.TYPE_CREATE_ROOM)
+                roomname = $roomNameInput.val().trim();
+                if (!roomname && requestType == INTERFACE.TYPE_JOIN_ROOM)
                 {
-                    // if no password is specified when making a room, that leaves it open
-                    openRoom = true;
+                    // joining a room with no room specified means do a random room
+                    randomRoom = true;
+                    passwordRequired = false;
                 }
-                else
+                // not joining a room requires a room name
+                else if (!roomname || roomname.length > 50)
                 {
-                    alert("Enter a password.");
+                    alert("Enter a room name no more than 50 characters long.");
                     return;
                 }
             }
-        }
 
-        // check if the user id has been created yet
-        if (!USER_ID)
-        {
-            // try again in 50 milliseconds
-            setTimeout(serverRequest, 50, requestType, passwordRequired, successFunc, errorFunc, roomname);
+            if (passwordRequired)
+            {
+                // get and validate input from $roomPasswordInput
+                var roompassword = $roomPasswordInput.val();
+                if (!roompassword)
+                {
+                    if (requestType == INTERFACE.TYPE_CREATE_ROOM)
+                    {
+                        // if no password is specified when making a room, that leaves it open
+                        openRoom = true;
+                    }
+                    else
+                    {
+                        alert("Enter a password.");
+                        return;
+                    }
+                }
+            }
+
+            // check if the user id has been created yet
+            if (!USER_ID)
+            {
+                // try again in 50 milliseconds
+                setTimeout(serverRequest, 50, requestType, passwordRequired, successFunc, errorFunc, roomname);
+            }
         }
 
         // create request data
@@ -889,6 +894,39 @@ $(document).ready(function()
         serverRequest(INTERFACE.TYPE_LEAVE_ROOM, false, successFunc, defaultErrorFunc, roomname);
     });
 
+    function updateUserCount()
+    {
+        function successFunc(response)
+        {
+            var msg;
+            if (!response[INTERFACE.RESPONSE_SUCCESS])
+            {
+                msg = INTERFACE.TYPE_GET_NUM_USERS + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
+                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
+                {
+                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
+                        msg += "Request was either malformed or missing essential data.";
+                        break;
+                    case INTERFACE.ERROR_DATABASE_ISSUE:
+                        msg += "The database is having problems.";
+                        break;
+                    default:
+                        msg += "Unexpected error code from server.";
+                        break;
+                }
+            }
+            // msg will either be the error message or if it that is not set, the success message
+            msg = msg || ("Got number of users online: " + response[INTERFACE.RESPONSE_NUM_USERS]);
+            $logdiv.append(msg + '<br>');
+
+            var onlineUsers = response[INTERFACE.RESPONSE_NUM_USERS] || "Unknown";
+            $onlineUsersLabel.text(onlineUsers);
+        }
+
+        serverRequest(INTERFACE.TYPE_GET_NUM_USERS, false, successFunc, defaultErrorFunc);
+        setTimeout(updateUserCount, 60000); // repeat this function every minute
+    }
+    updateUserCount();
 });
 
 // Make sure things clean up properly.
