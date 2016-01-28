@@ -33,8 +33,8 @@
                     </div>
                     <!-- display these when the user is not in any room -->
                     <div id="gameroomCreationDiv" class="fullWidth">
-                        <input type="text" id="roomNameInput" class="fullWidth infoBarUIElement" placeholder="Room Name"/>
-                        <input type="password" id="roomPasswordInput" class="fullWidth infoBarUIElement" placeholder="Password"/>
+                        <input type="text" id="roomNameInput" class="fullWidth infoBarUIElement" placeholder="Enter Room Name or Join Random"/>
+                        <input type="password" id="roomPasswordInput" class="fullWidth infoBarUIElement" placeholder="Enter Password or Leave Open"/>
                         <button id="createRoom" class="infoBarUIElement btn btn-default btn-xs">Create Room</button>
                         <button id="joinRoom" class="infoBarUIElement btn btn-default btn-xs">Join Room</button>
                     </div>

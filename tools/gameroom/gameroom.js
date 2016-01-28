@@ -29,12 +29,16 @@ $(document).ready(function()
     const HELP_MSG_HELP = 'The help command (/h, /help) displays information about how to use this tool and the commands available to the user. ' +
         'Syntax: "/h". ';
 
+    const HELP_MSG_CREATE_OR_JOIN = 'To create a room, enter a room name. You may also add a password that others must enter to join ' +
+        'the room. If the password is left blank, the room becomes open and others may join you randomly. To join a room, either ' +
+        'enter the room name and password (if there is one) or just press the join room button without entering anything and you will ' +
+        'join a random open room. Open rooms may not be randomly joined if there are already 6 people.';
+
     const HELP_MSG_GENERAL = 'The D20ToolKit Game Room is designed as a simple chat room that friends can use to quickly setup a Pathfinder or ' +
         'other similar styled game together across the internet. Create a room using the interface ' +
         'above and then share that room and password with your friends or whoever you wish to join you. ' +
         'This tool, like most of the content at D20ToolKit is currently in development as a hobby so there are ' +
-        'likely to be bugs from time to time. Currently this tool only supports a chat system and allows users to ' +
-        'roll dice too using the roll command. This tool uses WebRTC technology which is fairly new and so for best ' +
+        'likely to be bugs from time to time. This tool uses WebRTC technology which is fairly new and so for best ' +
         'results, please use an updated version of Chrome or Firefox.';
 
     const ENTITY_MAP = {
@@ -358,11 +362,21 @@ $(document).ready(function()
      */
     function serverRequest(requestType, passwordRequired, successFunc, errorFunc, roomname)
     {
+        var randomRoom = false;
+        var openRoom = false;
+
         // get and validate input from $roomNameInput
         if (!roomname)
         {
             roomname = $roomNameInput.val().trim();
-            if (!roomname || roomname.length > 50)
+            if (!roomname && requestType == INTERFACE.TYPE_JOIN_ROOM)
+            {
+                // joining a room with no room specified means do a random room
+                randomRoom = true;
+                passwordRequired = false;
+            }
+            // not joining a room requires a room name
+            else if (!roomname || roomname.length > 50)
             {
                 alert("Enter a room name no more than 50 characters long.");
                 return;
@@ -375,8 +389,16 @@ $(document).ready(function()
             var roompassword = $roomPasswordInput.val();
             if (!roompassword)
             {
-                alert("Enter a password.");
-                return;
+                if (requestType == INTERFACE.TYPE_CREATE_ROOM)
+                {
+                    // if no password is specified when making a room, that leaves it open
+                    openRoom = true;
+                }
+                else
+                {
+                    alert("Enter a password.");
+                    return;
+                }
             }
         }
 
@@ -393,6 +415,8 @@ $(document).ready(function()
         requestData[INTERFACE.REQUEST_ROOM_NAME] = roomname;
         requestData[INTERFACE.REQUEST_ROOM_PASSWORD] = roompassword;
         requestData[INTERFACE.REQUEST_USER] = USER_ID;
+        requestData[INTERFACE.REQUEST_RANDOM] = randomRoom;
+        requestData[INTERFACE.REQUEST_OPEN] = openRoom;
 
         // send the request
         $.ajax(
@@ -453,7 +477,7 @@ $(document).ready(function()
         }
 
         setTimeout(pingServer, 1000 * 60 * 5); // ping every 5 minutes
-        serverRequest(INTERFACE.TYPE_PING_ROOM, false, successFunc, defaultErrorFunc);
+        serverRequest(INTERFACE.TYPE_PING_ROOM, false, successFunc, defaultErrorFunc, roomname);
     }
 
     function infoBarUpdateUI()
@@ -489,7 +513,7 @@ $(document).ready(function()
         });
     }
 
-    function infoBarInRoomMode()
+    function infoBarInRoomMode(roomName)
     {
         // switch to active room UI
         $gameroomCreationDiv.hide();
@@ -497,7 +521,7 @@ $(document).ready(function()
         $leaveRoomBtn.show();
         $roomMembersHeader.show();
         $membersDiv.show();
-        $roomNameLabel.text($roomNameInput.val().trim());
+        $roomNameLabel.text(roomName || $roomNameInput.val().trim());
         infoBarUpdateUI();
     }
 
@@ -616,7 +640,7 @@ $(document).ready(function()
                 case 'h':
                 case "help":
                     broadcast = false;
-                    messageToSend = HELP_MSG_GENERAL + "\n\n" + HELP_MSG_HELP + "\n\n" + HELP_MSG_ROLL + "\n\n" + HELP_MSG_SG +
+                    messageToSend = HELP_MSG_GENERAL + "\n\n" + HELP_MSG_CREATE_OR_JOIN + "\n\n" + HELP_MSG_HELP + "\n\n" + HELP_MSG_ROLL + "\n\n" + HELP_MSG_SG +
                         "\n\n" + HELP_MSG_AR;
                     break;
                 default:
@@ -774,7 +798,7 @@ $(document).ready(function()
             var msg = "Room joined successfully.";
             $logdiv.append(msg + '<br>');
 
-            infoBarInRoomMode();
+            infoBarInRoomMode(response[INTERFACE.RESPONSE_ROOM_NAME]);
 
             setTimeout(pingServer, 1000);
 
@@ -807,7 +831,7 @@ $(document).ready(function()
             }
         }
 
-        serverRequest(INTERFACE.TYPE_JOIN_ROOM, true, successFunc, defaultErrorFunc);
+        serverRequest(INTERFACE.TYPE_JOIN_ROOM, false, successFunc, defaultErrorFunc);
     });
 
     $leaveRoomBtn.click(function()
@@ -873,4 +897,6 @@ window.onunload = window.onbeforeunload = function(e)
     {
         peer.destroy();
     }
+
+    return null;
 };

@@ -1,7 +1,7 @@
 <?php
     // REMOVE BEFORE GOING TO PRODUCTION
-    //error_reporting(E_ALL);
-    //ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
 
     // constants for response error codes
     const ERROR_NONE                = null;                     // when there is no error
@@ -16,11 +16,14 @@
     const REQUEST_ROOM_NAME     = "name";
     const REQUEST_ROOM_PASSWORD = "pass";
     const REQUEST_USER          = "user";
+    const REQUEST_RANDOM        = "rand";
+    const REQUEST_OPEN          = "open";
 
     // constants for JSON response parameters
     const RESPONSE_SUCCESS      = "isSuccessful";
     const RESPONSE_ERROR_CODE   = "errorCode";
     const RESPONSE_ROOM_MEMBERS = "roomMembers";
+    const RESPONSE_ROOM_NAME    = "roomName";
 
     // constants for types of messages
     const TYPE_CREATE_ROOM  = "CREATE";
@@ -42,9 +45,12 @@
         "REQUEST_ROOM_NAME"         => REQUEST_ROOM_NAME,
         "REQUEST_ROOM_PASSWORD"     => REQUEST_ROOM_PASSWORD,
         "REQUEST_USER"              => REQUEST_USER,
+        "REQUEST_RANDOM"            => REQUEST_RANDOM,
+        "REQUEST_OPEN"              => REQUEST_OPEN,
         "RESPONSE_SUCCESS"          => RESPONSE_SUCCESS,
         "RESPONSE_ERROR_CODE"       => RESPONSE_ERROR_CODE,
         "RESPONSE_ROOM_MEMBERS"     => RESPONSE_ROOM_MEMBERS,
+        "RESPONSE_ROOM_NAME"        => RESPONSE_ROOM_NAME,
         "TYPE_CREATE_ROOM"          => TYPE_CREATE_ROOM,
         "TYPE_JOIN_ROOM"            => TYPE_JOIN_ROOM,
         "TYPE_LEAVE_ROOM"           => TYPE_LEAVE_ROOM,
