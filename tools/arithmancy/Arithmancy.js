@@ -25,6 +25,7 @@ Arithmancy.digitalRoot = function(spellname)
 
 Arithmancy.numericalValue = function(c)
 {
+    c = c.toLowerCase();
     if (c == 'a' || c == 'j' || c == 's')
     {
         return 1;
