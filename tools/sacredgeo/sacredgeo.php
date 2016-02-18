@@ -31,7 +31,7 @@
             <br>
             <label>Ex: rolled: 5, 6, 3, 2, 4, 4 -> input: "563244"</label>
             <br>Rolled Numbers
-            <input type="text" id="rolledNumbers" />
+            <input type="text" id="rolledNumbers" onkeydown="if(event.keyCode==13)document.getElementById('calculateButton').click()" autofocus/>
             <br>
             <br>
             <button id="calculateButton">Wizard!</button>
