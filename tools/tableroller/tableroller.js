@@ -34,10 +34,23 @@ window.onload = function()
             TABLE.splice(i, 1); // delete the item if it contains nothing
             i--; // go back one index because now the array has shifted by one
         }
+        else
+        {
+            TABLE[i] = {
+                txt: TABLE[i]
+            };
+        }
     }
 
     // fill text area with input for table
-    document.getElementById("tableInput").value = TABLE.join("\n");
+    var tableInputDOM = document.getElementById("tableInput");
+    var tableInputStr = "";
+    for (var i = 0; i < TABLE.length; i++)
+    {
+        var delimiter = (i < TABLE.length - 1) ? "\n" : "";
+        tableInputStr += TABLE[i].txt + delimiter;
+    }
+    tableInputDOM.value = tableInputStr;
 
     // create resizing functions
     (function()
@@ -58,25 +71,23 @@ window.onload = function()
             };
         }
 
-        var text = document.getElementById("tableInput");
-
         function resize()
         {
-            text.style.height = 'auto';
-            text.style.height = text.scrollHeight + 'px';
+            tableInputDOM.style.height = 'auto';
+            tableInputDOM.style.height = tableInputDOM.scrollHeight + 'px';
         }
         /* 0-timeout to get the already changed text */
         function delayedResize()
         {
             window.setTimeout(resize, 0);
         }
-        observe(text, 'change', resize);
-        observe(text, 'cut', delayedResize);
-        observe(text, 'paste', delayedResize);
-        observe(text, 'drop', delayedResize);
-        observe(text, 'keydown', delayedResize);
+        observe(tableInputDOM, 'change', resize);
+        observe(tableInputDOM, 'cut', delayedResize);
+        observe(tableInputDOM, 'paste', delayedResize);
+        observe(tableInputDOM, 'drop', delayedResize);
+        observe(tableInputDOM, 'keydown', delayedResize);
 
-        text.focus();
+        tableInputDOM.focus();
         resize();
     })();
 
@@ -84,6 +95,7 @@ window.onload = function()
     if (TABLE.length > 0)
     {
         var mainDiv = document.getElementById("mainDiv");
+        var removeOptionsCheckbox = document.getElementById("removeOptionsCheckbox");
 
         // create results div for rolled results
         var resultsDiv = document.createElement("div");
@@ -98,12 +110,26 @@ window.onload = function()
         resultsDiv.appendChild(rollbutton);
         resultsDiv.appendChild(rollResults);
 
+        // create a set of remaining options to choose from
+        var remaining = [];
+        for (var i = 0; i < TABLE.length; i++)
+        {
+            remaining[i] = i;
+        }
+
         // attach roller function
         rollbutton.onclick = function()
         {
+            // this happens when all items have been removed from the table
+            if (remaining.length <= 0)
+            {
+                return;
+            }
+
             // roll content
-            var roll = Math.floor(Math.random() * TABLE.length);
-            var content = TABLE[roll];
+            var remainingSelectionIndex = Math.floor(Math.random() * remaining.length);
+            var roll = remaining[remainingSelectionIndex];
+            var content = TABLE[roll].txt;
 
             // transform any random dice rolls within the content text into actual results
             // from DiceParser.js
@@ -111,6 +137,13 @@ window.onload = function()
 
             // show results in the results div
             rollResults.innerHTML = content + "<br>" + rollResults.innerHTML;
+
+            if (removeOptionsCheckbox.checked)
+            {
+                // put a line through the table row's text and remove it from the options
+                TABLE[roll].row.className += " lineThrough";
+                remaining.splice(remainingSelectionIndex, 1);
+            }
         };
 
         // get div to hold table
@@ -144,6 +177,7 @@ window.onload = function()
         {
             // create row
             var row = document.createElement("tr");
+            TABLE[i].row = row;
             tbody.appendChild(row);
 
             // compute percentages
@@ -177,7 +211,7 @@ window.onload = function()
             percentile.appendChild(document.createTextNode(percent));
             row.appendChild(percentile);
             var content = document.createElement("td");
-            content.appendChild(document.createTextNode(TABLE[i]));
+            content.appendChild(document.createTextNode(TABLE[i].txt));
             row.appendChild(content);
         }
     }

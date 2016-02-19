@@ -12,6 +12,10 @@
             padding: 10px;
             float: left;
         }
+
+        .lineThrough {
+            text-decoration: line-through;
+        }
     </style>
 </head>
 
@@ -32,6 +36,10 @@
                     <textarea id="tableInput" class="form-control" cols="30" name="t"></textarea>
                     <label>Copy URL to save or share table.</label>
                     <br>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="removeOptionsCheckbox">Remove options when rolled?</label>
+                    </div>
                     <input type="submit" class="btn btn-default" value="Update Table" />
                 </form>
             </div>
