@@ -1,5 +1,16 @@
 window.onload = function()
 {
+    var tableInputDOM = document.getElementById("tableInput");
+
+    // compress the form data before submission
+    document.getElementById("tableUpdateForm").onsubmit = function()
+    {
+        var content = tableInputDOM.value;
+        // compress table content
+        var compressed = LZString.compressToEncodedURIComponent(content);
+        tableInputDOM.value = compressed;
+    };
+
     // parse the url parameters
     var urlParams; // url params will be inside this object
     (window.onpopstate = function()
@@ -24,6 +35,8 @@ window.onload = function()
     var TABLE = [];
     if (urlParams.t)
     {
+        // decompress table content
+        urlParams.t = LZString.decompressFromEncodedURIComponent(urlParams.t);
         TABLE = urlParams.t.split("\n"); // every new line is a seperate item
     }
     for (var i = 0; i < TABLE.length; i++)
@@ -43,7 +56,6 @@ window.onload = function()
     }
 
     // fill text area with input for table
-    var tableInputDOM = document.getElementById("tableInput");
     var tableInputStr = "";
     for (var i = 0; i < TABLE.length; i++)
     {

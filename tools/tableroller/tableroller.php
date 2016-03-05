@@ -30,7 +30,7 @@
             <br>
 
             <div id="formBlock" class="block form-group">
-                <form method="GET" action="/tools/tableroller/tableroller.php">
+                <form id="tableUpdateForm" method="GET" action="/tools/tableroller/tableroller.php">
                     <label>Insert each possiblity here, one per line.</label>
                     <br>
                     <textarea id="tableInput" class="form-control" cols="30" name="t"></textarea>
@@ -47,6 +47,7 @@
             <div id="tableBlock" class="block"></div>
         </div>
 </body>
+<script src="/js/lz-string.min.js"></script>
 <script src="/js/parser.min.js"></script>
 <script src="/tools/diceroller/DiceParser.js"></script>
 <script src="/tools/tableroller/tableroller.js"></script>
