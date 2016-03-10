@@ -11,25 +11,8 @@ window.onload = function()
         tableInputDOM.value = compressed;
     };
 
-    // parse the url parameters
-    var urlParams; // url params will be inside this object
-    (window.onpopstate = function()
-    {
-        var match,
-            pl = /\+/g, // Regex for replacing addition symbol with a space
-            search = /([^&=]+)=?([^&]*)/g,
-            decode = function(s)
-            {
-                return decodeURIComponent(s.replace(pl, " "));
-            },
-            query = window.location.search.substring(1);
-
-        urlParams = {};
-        while (match = search.exec(query))
-        {
-            urlParams[decode(match[1])] = decode(match[2]);
-        }
-    })();
+    // get the url parameters
+    var urlParams = D20_UTIL.getUrlParams();
 
     // create the TABLE array of items
     var TABLE = [];

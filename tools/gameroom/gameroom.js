@@ -41,127 +41,6 @@ $(document).ready(function()
         'likely to be bugs from time to time. This tool uses WebRTC technology which is fairly new and so for best ' +
         'results, please use an updated version of Chrome or Firefox.';
 
-    const ENTITY_MAP = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': '&quot;',
-        "'": '&#39;',
-        "/": '&#x2F;'
-    };
-
-    function escapeHtml(string)
-    {
-        return String(string).replace(/[&<>"'\/]/g, function(s)
-        {
-            return ENTITY_MAP[s];
-        });
-    }
-
-    // returns a random color hex code
-    function randomColor()
-    {
-        return '#' + ('000000' + (Math.random() * 0xFFFFFF << 0).toString(16)).slice(-6);
-    }
-
-    // creates a css selector
-    // use like createCSSSelector('.someClass', 'color: red; height: 10px;');
-    function createCSSSelector(selector, style)
-    {
-        if (!document.styleSheets)
-        {
-            return;
-        }
-
-        if (document.getElementsByTagName('head').length == 0)
-        {
-            return;
-        }
-
-        var stylesheet, mediaType, i;
-
-        if (document.styleSheets.length > 0)
-        {
-            for (i = 0; i < document.styleSheets.length; i++)
-            {
-                if (document.styleSheets[i].disabled)
-                {
-                    continue;
-                }
-                var media = document.styleSheets[i].media;
-                mediaType = typeof media;
-
-                if (mediaType == 'string')
-                {
-                    if (media == '' || (media.indexOf('screen') != -1))
-                    {
-                        styleSheet = document.styleSheets[i];
-                    }
-                }
-                else if (mediaType == 'object')
-                {
-                    if (media.mediaText == '' || (media.mediaText.indexOf('screen') != -1))
-                    {
-                        styleSheet = document.styleSheets[i];
-                    }
-                }
-
-                if (typeof styleSheet != 'undefined')
-                {
-                    break;
-                }
-            }
-        }
-
-        if (typeof styleSheet == 'undefined')
-        {
-            var styleSheetElement = document.createElement('style');
-            styleSheetElement.type = 'text/css';
-            document.getElementsByTagName('head')[0].appendChild(styleSheetElement);
-
-            for (i = 0; i < document.styleSheets.length; i++)
-            {
-                if (document.styleSheets[i].disabled)
-                {
-                    continue;
-                }
-                styleSheet = document.styleSheets[i];
-            }
-
-            var media = styleSheet.media;
-            mediaType = typeof media;
-        }
-
-        if (mediaType == 'string')
-        {
-            for (i = 0; i < styleSheet.rules.length; i++)
-            {
-                if (styleSheet.rules[i].selectorText && styleSheet.rules[i].selectorText.toLowerCase() == selector.toLowerCase())
-                {
-                    styleSheet.rules[i].style.cssText = style;
-                    return;
-                }
-            }
-
-            styleSheet.addRule(selector, style);
-        }
-        else if (mediaType == 'object')
-        {
-            var styleSheetLength = (styleSheet.cssRules) ? styleSheet.cssRules.length : 0;
-
-            for (i = 0; i < styleSheetLength; i++)
-            {
-                if (styleSheet.cssRules[i].selectorText && styleSheet.cssRules[i].selectorText.toLowerCase() == selector.toLowerCase())
-                {
-                    styleSheet.cssRules[i].style.cssText = style;
-                    return;
-                }
-            }
-
-            styleSheet.insertRule(selector + '{' + style + '}', styleSheetLength);
-        }
-    }
-
     var $roomNameInput = $("#roomNameInput");
     var $roomPasswordInput = $("#roomPasswordInput");
     var $noRoomLabel = $('#noRoomLabel');
@@ -215,19 +94,19 @@ $(document).ready(function()
     };
     var USER_ID = null;
     var USER_NAME;
-    var USER_COLOR = randomColor();
+    var USER_COLOR = D20_UTIL.getRandomColor();
 
     // Show this peer's ID.
     peer.on('open', function(id)
     {
-        id = escapeHtml(id);
+        id = D20_UTIL.escapeHtml(id);
         $logdiv.append("Created local id: " + id + "<br>");
         $userNameLabel.text(id);
         $userNameLabel.addClass(USER_COLOR_CSS_PREFIX + id);
         USER_ID = id;
 
         // create css class for user's color
-        createCSSSelector("." + USER_COLOR_CSS_PREFIX + USER_ID, "color: " + USER_COLOR + ";");
+        D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + USER_ID, "color: " + USER_COLOR + ";");
     });
 
     peer.on('error', function(err)
@@ -240,7 +119,7 @@ $(document).ready(function()
         CONNECTED_PEERS[peerId].peerName = name;
 
         // update display
-        $('#' + peerId).html(escapeHtml(name));
+        $('#' + peerId).html(D20_UTIL.escapeHtml(name));
     }
 
     function showMessage(peerId, message)
@@ -252,9 +131,9 @@ $(document).ready(function()
 
         // give a class "user-(id)" so each user can have a custom style
         var id = peerId || USER_ID;
-        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapeHtml(id) + '">' +
-            escapeHtml(name) + ':</span> ' +
-            escapeHtml(message) + '</div>');
+        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(id) + '">' +
+            D20_UTIL.escapeHtml(name) + ':</span> ' +
+            D20_UTIL.escapeHtml(message) + '</div>');
 
         if (isScrolledToBottom)
         {
@@ -298,7 +177,7 @@ $(document).ready(function()
                     showMessage(conn.peer, data.content);
                     break;
                 case PEER_MSG_TYPE_COLOR:
-                    createCSSSelector("." + USER_COLOR_CSS_PREFIX + conn.peer, "color: " + escapeHtml(data.content) + ";");
+                    D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + conn.peer, "color: " + D20_UTIL.escapeHtml(data.content) + ";");
                 default:
                     break;
             }
@@ -696,7 +575,7 @@ $(document).ready(function()
 
         $userNameInput.val("");
         USER_NAME = userName;
-        $userNameLabel.text(escapeHtml(USER_NAME));
+        $userNameLabel.text(D20_UTIL.escapeHtml(USER_NAME));
 
         // update all connected users knowledge of this change
         for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
