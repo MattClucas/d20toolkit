@@ -1,9 +1,5 @@
 $(document).ready(function()
 {
-    const PEER_MSG_TYPE_NAME_CHANGE = "name";
-    const PEER_MSG_TYPE_CHAT = "chat";
-    const PEER_MSG_TYPE_COLOR = "color";
-
     const USER_COLOR_CSS_PREFIX = "user-";
 
     const HELP_MSG_AR = 'The aritchmancy solver command (/ar, /arithmancy) prompts the arithmancy ' +
@@ -60,79 +56,91 @@ $(document).ready(function()
     var $roomMembersHeader = $('#roomMembersHeader');
     var $onlineUsersLabel = $('#onlineUsersLabel');
 
-    // Connect to PeerJS, have server assign an ID instead of providing one
-    // Showing off some of the configs available with PeerJS :).
-    var peer = new Peer(
+    var players = {}; // hashmap of id -> player object
+    var peerHandler = new GamePeerHandler();
+    peerHandler.setLoggingFunction(function(arguments)
     {
-        key: '4hgaohcj6wbi6bt9',
-
-        // Set highest debug level (log everything!).
-        debug: 3,
-
-        config:
-        {
-            'iceServers': [
-            {
-                url: 'stun:stun.l.google.com:19302'
-            },
-            {
-                url: 'turn:numb.viagenie.ca',
-                credential: 'muazkh',
-                username: 'webrtc@live.com'
-            }]
-        },
-
-        // Set a logging function:
-        logFunction: function()
-        {
-            var copy = Array.prototype.slice.call(arguments).join(' ');
-            $logdiv.append(copy + '<br>');
-        }
+        var copy = Array.prototype.slice.call(arguments).join(' ');
+        $logdiv.append(copy + '<br>');
     });
-    var CONNECTED_PEERS = {
-        IDS: []
-    };
-    var USER_ID = null;
+
     var USER_NAME;
     var USER_COLOR = D20_UTIL.getRandomColor();
+    peerHandler.setColor(USER_COLOR);
 
-    // Show this peer's ID.
-    peer.on('open', function(id)
+    peerHandler.addOpenListener(function(id)
     {
-        id = D20_UTIL.escapeHtml(id);
+        players[id] = {};
+        players[id].userName = USER_NAME;
+        players[id].color = USER_COLOR;
+
         $logdiv.append("Created local id: " + id + "<br>");
         $userNameLabel.text(id);
         $userNameLabel.addClass(USER_COLOR_CSS_PREFIX + id);
-        USER_ID = id;
 
         // create css class for user's color
-        D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + USER_ID, "color: " + USER_COLOR + ";");
+        D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + id, "color: " + USER_COLOR + ";");
     });
 
-    peer.on('error', function(err)
+    peerHandler.addErrorListener(function(err)
     {
         $logdiv.append(err.toString() + "<br>");
     });
 
-    function updatePeerName(peerId, name)
+    peerHandler.addPeerNameChangeListener(function(event)
     {
-        CONNECTED_PEERS[peerId].peerName = name;
+        players[event.peerId].userName = event.userName;
 
         // update display
-        $('#' + peerId).html(D20_UTIL.escapeHtml(name));
-    }
+        $('#' + event.peerId).html(D20_UTIL.escapeHtml(event.userName));
+    });
+
+    peerHandler.addPeerChatMsgListener(function(event)
+    {
+        showMessage(event.peerId, event.chat);
+    });
+
+    peerHandler.addPeerColorChangeListener(function(event)
+    {
+        players[event.peerId].color = event.color;
+        D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(event.peerId),
+            "color: " + D20_UTIL.escapeHtml(event.color) + ";");
+    });
+
+    peerHandler.addPeerOpenListener(function(peerId)
+    {
+        players[peerId] = {};
+        peerId = D20_UTIL.escapeHtml(peerId);
+        // create display for connection
+        $membersDiv.append('<div id="' + peerId + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + peerId + '">' + peerId + '</div>');
+        infoBarUpdateUI();
+    });
+
+    peerHandler.addPeerClosedListener(function(peerId)
+    {
+        // remove display for connection
+        $('#' + peerId).remove();
+        infoBarUpdateUI();
+    });
+
+    peerHandler.addPeerErrorListener(function(event)
+    {
+        $logdiv.append(event.error.toString() + "<br>");
+    });
+
+    // start the peer handler
+    peerHandler.init();
 
     function showMessage(peerId, message)
     {
         // allow 1px inaccuracy by adding 1
         var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
 
-        var name = (CONNECTED_PEERS[peerId] && CONNECTED_PEERS[peerId].peerName) || peerId || USER_NAME || USER_ID;
+        var displayName = players[peerId].userName;
 
         // give a class "user-(id)" so each user can have a custom style
-        var id = peerId || USER_ID;
-        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(id) + '">' +
-            D20_UTIL.escapeHtml(name) + ':</span> ' +
+        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(peerId) + '">' +
+            D20_UTIL.escapeHtml(displayName) + ':</span> ' +
             D20_UTIL.escapeHtml(message) + '</div>');
 
         if (isScrolledToBottom)
@@ -140,97 +148,6 @@ $(document).ready(function()
             $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
         }
     }
-
-    function setupConnection(conn)
-    {
-        // check if this connection somehow already exists
-        var prevConn = CONNECTED_PEERS[conn.peer];
-        if (prevConn && prevConn.type == "data" && prevConn.open)
-        {
-            // connection already exists
-            return;
-        }
-
-        // add the peer id to the array of ID's if it is not already
-        if (CONNECTED_PEERS.IDS.indexOf(conn.peer) == -1)
-        {
-            CONNECTED_PEERS.IDS.push(conn.peer);
-        }
-
-        // add the conn to the list
-        CONNECTED_PEERS[conn.peer] = conn;
-
-        function receivePeerData(data)
-        {
-            if (!data)
-            {
-                $logdiv.append("Received empty message.");
-                return;
-            }
-
-            switch (data.type)
-            {
-                case PEER_MSG_TYPE_NAME_CHANGE:
-                    updatePeerName(conn.peer, data.content);
-                    break;
-                case PEER_MSG_TYPE_CHAT:
-                    showMessage(conn.peer, data.content);
-                    break;
-                case PEER_MSG_TYPE_COLOR:
-                    D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + conn.peer, "color: " + D20_UTIL.escapeHtml(data.content) + ";");
-                default:
-                    break;
-            }
-        }
-
-        conn.on('open', function()
-        {
-            // Receive messages
-            conn.on('data', receivePeerData);
-
-            // create display for connection
-            $membersDiv.append('<div id="' + conn.peer + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + conn.peer + '">' + conn.peer + '</div>');
-            infoBarUpdateUI();
-
-            // send the peer our color
-            CONNECTED_PEERS[conn.peer].send(
-            {
-                type: PEER_MSG_TYPE_COLOR,
-                content: USER_COLOR
-            });
-
-            // send the peer our user name
-            if (USER_NAME)
-            {
-                CONNECTED_PEERS[conn.peer].send(
-                {
-                    type: PEER_MSG_TYPE_NAME_CHANGE,
-                    content: USER_NAME
-                });
-            }
-        });
-
-        conn.on("close", function()
-        {
-            // remove the connection
-            delete CONNECTED_PEERS[conn.peer];
-            var peerIndex = CONNECTED_PEERS.IDS.indexOf(conn.peer);
-            delete CONNECTED_PEERS.IDS[peerIndex];
-
-            // remove display for connection
-            $('#' + conn.peer).remove();
-            infoBarUpdateUI();
-        });
-
-        // log errors
-        conn.on("error", function(err)
-        {
-            $logdiv.append(err.toString() + "<br>");
-        });
-    }
-
-    // Await connections from others
-    peer.on('connection', setupConnection);
 
     /**
      * Sends a request to roomAccess.php.
@@ -286,7 +203,7 @@ $(document).ready(function()
             }
 
             // check if the user id has been created yet
-            if (!USER_ID)
+            if (!peerHandler.getUserId())
             {
                 // try again in 50 milliseconds
                 setTimeout(serverRequest, 50, requestType, passwordRequired, successFunc, errorFunc, roomname);
@@ -298,7 +215,7 @@ $(document).ready(function()
         requestData[INTERFACE.REQUEST_TYPE] = requestType;
         requestData[INTERFACE.REQUEST_ROOM_NAME] = roomname;
         requestData[INTERFACE.REQUEST_ROOM_PASSWORD] = roompassword;
-        requestData[INTERFACE.REQUEST_USER] = USER_ID;
+        requestData[INTERFACE.REQUEST_USER] = peerHandler.getUserId();
         requestData[INTERFACE.REQUEST_RANDOM] = randomRoom;
         requestData[INTERFACE.REQUEST_OPEN] = openRoom;
 
@@ -535,22 +452,11 @@ $(document).ready(function()
         // send message to all connected users
         if (broadcast)
         {
-            for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
-            {
-                var peerId = CONNECTED_PEERS.IDS[i];
-                if (peerId)
-                {
-                    CONNECTED_PEERS[peerId].send(
-                    {
-                        type: PEER_MSG_TYPE_CHAT,
-                        content: messageToSend
-                    });
-                }
-            }
+            peerHandler.sendMessage(peerHandler.MSG_TYPE_CHAT, messageToSend);
         }
 
         // show ourselves the message
-        showMessage(null, messageToSend);
+        showMessage(peerHandler.getUserId(), messageToSend);
     }
 
     /*
@@ -575,21 +481,12 @@ $(document).ready(function()
 
         $userNameInput.val("");
         USER_NAME = userName;
-        $userNameLabel.text(D20_UTIL.escapeHtml(USER_NAME));
-
-        // update all connected users knowledge of this change
-        for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
+        if (peerHandler.getUserId())
         {
-            var peerId = CONNECTED_PEERS.IDS[i];
-            if (peerId)
-            {
-                CONNECTED_PEERS[peerId].send(
-                {
-                    type: PEER_MSG_TYPE_NAME_CHANGE,
-                    content: USER_NAME
-                });
-            }
+            players[peerHandler.getUserId()].userName = userName;
         }
+        $userNameLabel.text(D20_UTIL.escapeHtml(userName));
+        peerHandler.setUserName(userName);
     });
 
     // when enter is pressed on the user name input it automatically clicks the set name button
@@ -690,31 +587,7 @@ $(document).ready(function()
 
             // connect to all peers from the server
             var members = JSON.parse(response[INTERFACE.RESPONSE_ROOM_MEMBERS]);
-            for (var i = 0; i < members.length; i++)
-            {
-                var peerId = members[i];
-
-                // don't connect to ourselves
-                if (peerId == USER_ID)
-                {
-                    continue;
-                }
-
-                // check if this connection somehow already exists
-                var prevConn = CONNECTED_PEERS[peerId];
-                if (prevConn && prevConn.type == "data" && prevConn.open)
-                {
-                    // connection already exists
-                    continue;
-                }
-
-                // create new connection
-                var connection = peer.connect(peerId,
-                {
-                    reliable: true
-                });
-                setupConnection(connection);
-            }
+            peerHandler.connectToPeers(members);
         }
 
         serverRequest(INTERFACE.TYPE_JOIN_ROOM, false, successFunc, defaultErrorFunc);
@@ -759,15 +632,7 @@ $(document).ready(function()
 
             infoBarNoRoomMode();
 
-            // close all connections
-            for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
-            {
-                var peerId = CONNECTED_PEERS.IDS[i];
-                if (peerId)
-                {
-                    CONNECTED_PEERS[peerId].close();
-                }
-            }
+            peerHandler.disconnectFromPeers();
         }
 
         serverRequest(INTERFACE.TYPE_LEAVE_ROOM, false, successFunc, defaultErrorFunc, roomname);
