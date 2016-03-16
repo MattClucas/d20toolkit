@@ -69,9 +69,10 @@
     <script src="/js/jquery-2.2.0.min.js"></script>
     <script src="/js/parser.min.js"></script>
     <script src="/js/d20toolkitUtil.js"></script>
-    <script src="GamePeerHandler.js"></script>
     <script src="../diceroller/DiceParser.js"></script>
     <script src="../sacredgeo/SacredGeometry.js"></script>
     <script src="../arithmancy/Arithmancy.js"></script>
+    <script src="PeerHandler.js"></script>
+    <script src="RoomHandler.js"></script>
     <script src="gameroom.js"></script>
 </html>

@@ -57,7 +57,8 @@ $(document).ready(function()
     var $onlineUsersLabel = $('#onlineUsersLabel');
 
     var players = {}; // hashmap of id -> player object
-    var peerHandler = new GamePeerHandler();
+    var peerHandler = new PeerHandler();
+    var roomHandler = new RoomHandler();
     peerHandler.setLoggingFunction(function(arguments)
     {
         var copy = Array.prototype.slice.call(arguments).join(' ');
@@ -73,6 +74,8 @@ $(document).ready(function()
         players[id] = {};
         players[id].userName = USER_NAME;
         players[id].color = USER_COLOR;
+
+        roomHandler.setUserId(id);
 
         $logdiv.append("Created local id: " + id + "<br>");
         $userNameLabel.text(id);
@@ -128,8 +131,125 @@ $(document).ready(function()
         $logdiv.append(event.error.toString() + "<br>");
     });
 
-    // start the peer handler
+    function logAndAlertErrorMsg(msg)
+    {
+        $logdiv.append(msg + "<br>");
+        alert(msg);
+    }
+
+    function initializeRoomHandler(roomHandler)
+    {
+        function badRequestFunc(data)
+        {
+            logAndAlertErrorMsg("Request was either malformed or missing essential data.");
+        }
+
+        function databaseIssueFunc(data)
+        {
+            logAndAlertErrorMsg("The database is having problems.");
+        }
+
+        function roomAlreadyExistsFunc(data)
+        {
+            logAndAlertErrorMsg("That room already exists.");
+        }
+
+        function defaultError(data)
+        {
+            logAndAlertErrorMsg("Unexpected response type from the server.");
+        }
+
+        function roomDoesNotExist(data)
+        {
+            logAndAlertErrorMsg("That room does not exist.");
+        }
+
+        // add create room listener
+        var createRoomResponseListener = new RoomResponseHandler();
+        createRoomResponseListener.setSuccessFunc(function(data)
+        {
+            $logdiv.append("Room created successfully.<br>");
+            infoBarInRoomMode(data[INTERFACE.RESPONSE_ROOM_NAME]);
+        });
+        createRoomResponseListener.setErrorBadRequestFunc(badRequestFunc);
+        createRoomResponseListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        createRoomResponseListener.setErrorRoomAlreadyExistsFunc(roomAlreadyExistsFunc);
+        createRoomResponseListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addCreateRoomListener(createRoomResponseListener);
+
+        // add join room listener
+        var joinRoomResponseListener = new RoomResponseHandler();
+        joinRoomResponseListener.setSuccessFunc(function(data)
+        {
+            $logdiv.append("Room joined successfully.<br>");
+            infoBarInRoomMode(data[INTERFACE.RESPONSE_ROOM_NAME]);
+
+            // connect to all peers from the server
+            var members = JSON.parse(data[INTERFACE.RESPONSE_ROOM_MEMBERS]);
+            peerHandler.connectToPeers(members);
+        });
+        joinRoomResponseListener.setErrorBadRequestFunc(badRequestFunc);
+        joinRoomResponseListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        joinRoomResponseListener.setErrorRoomDoesNotExistFunc(function(data)
+        {
+            $logdiv.append("The room we tried to join did not exist. Might need to create our own room.<br>");
+            createRoomWhenNoneAreOpenToJoin();
+        });
+        joinRoomResponseListener.setErrorPasswordIncorrectFunc(function(data)
+        {
+            logAndAlertErrorMsg("Incorrect password.");
+        });
+        joinRoomResponseListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addJoinRoomListener(joinRoomResponseListener);
+
+        // add leave room listener
+        var leaveRoomResponseListener = new RoomResponseHandler();
+        leaveRoomResponseListener.setErrorBadRequestFunc(badRequestFunc);
+        leaveRoomResponseListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        leaveRoomResponseListener.setErrorRoomDoesNotExistFunc(roomDoesNotExist);
+        leaveRoomResponseListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addLeaveRoomListener(leaveRoomResponseListener);
+
+        // add update user count listener
+        var updateUserCountListener = new RoomResponseHandler();
+        updateUserCountListener.setSuccessFunc(function(data)
+        {
+            var onlineUsers = response[INTERFACE.RESPONSE_NUM_USERS] || "Unknown";
+            $onlineUsersLabel.text(onlineUsers);
+        });
+        updateUserCountListener.setErrorBadRequestFunc(badRequestFunc);
+        updateUserCountListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        updateUserCountListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addUpdateUserCountListener(updateUserCountListener);
+
+        // add ping listener
+        var pingListener = new RoomResponseHandler();
+        pingListener.setErrorDefaultFunc(function(data)
+        {
+            logAndAlertErrorMsg("Error occurred when pinging the server.")
+        });
+        roomHandler.addPingListener(pingListener);
+
+        roomHandler.init();
+    }
+
+    function createRoomWhenNoneAreOpenToJoin()
+    {
+        if (!roomHandler || !roomHandler.getUserId())
+        {
+            return;
+        }
+
+        if (createRoomWhenNoneAreOpenToJoin.shouldRun)
+        {
+            $logdiv.append("Creating our own room.<br>");
+            roomHandler.createRoom(roomHandler.getUserId() + "'s room");
+        }
+    }
+
+    // start the peer and room handlers
     peerHandler.init();
+    initializeRoomHandler(roomHandler);
 
     function showMessage(peerId, message)
     {
@@ -147,138 +267,6 @@ $(document).ready(function()
         {
             $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
         }
-    }
-
-    /**
-     * Sends a request to roomAccess.php.
-     * requestType - A string: Create, Join, Leave, or Ping. As specified by INTERFACE.TYPE_* variables.
-     * passwordRequired - A boolean stating whether or not to require the password field to be filled out or not.
-     * successFunc - The callback function to call on a successful request.
-     * errorFunc - The callback function to call on a failed request.
-     * roomname - Optional. The string stating the roomname. If not specified, whatever is in the roomNameInput will be tried.
-     */
-    function serverRequest(requestType, passwordRequired, successFunc, errorFunc, roomname)
-    {
-        var randomRoom = false;
-        var openRoom = false;
-
-        // getting the number of users does not require a roomname, password, or even user id
-        if (requestType != INTERFACE.TYPE_GET_NUM_USERS)
-        {
-            // get and validate input from $roomNameInput
-            if (!roomname)
-            {
-                roomname = $roomNameInput.val().trim();
-                if (!roomname && requestType == INTERFACE.TYPE_JOIN_ROOM)
-                {
-                    // joining a room with no room specified means do a random room
-                    randomRoom = true;
-                    passwordRequired = false;
-                }
-                // not joining a room requires a room name
-                else if (!roomname || roomname.length > 50)
-                {
-                    alert("Enter a room name no more than 50 characters long.");
-                    return;
-                }
-            }
-
-            if (passwordRequired)
-            {
-                // get and validate input from $roomPasswordInput
-                var roompassword = $roomPasswordInput.val();
-                if (!roompassword)
-                {
-                    if (requestType == INTERFACE.TYPE_CREATE_ROOM)
-                    {
-                        // if no password is specified when making a room, that leaves it open
-                        openRoom = true;
-                    }
-                    else
-                    {
-                        alert("Enter a password.");
-                        return;
-                    }
-                }
-            }
-
-            // check if the user id has been created yet
-            if (!peerHandler.getUserId())
-            {
-                // try again in 50 milliseconds
-                setTimeout(serverRequest, 50, requestType, passwordRequired, successFunc, errorFunc, roomname);
-            }
-        }
-
-        // create request data
-        var requestData = {};
-        requestData[INTERFACE.REQUEST_TYPE] = requestType;
-        requestData[INTERFACE.REQUEST_ROOM_NAME] = roomname;
-        requestData[INTERFACE.REQUEST_ROOM_PASSWORD] = roompassword;
-        requestData[INTERFACE.REQUEST_USER] = peerHandler.getUserId();
-        requestData[INTERFACE.REQUEST_RANDOM] = randomRoom;
-        requestData[INTERFACE.REQUEST_OPEN] = openRoom;
-
-        // send the request
-        $.ajax(
-        {
-            type: "POST",
-            url: "roomAccess.php",
-            data: requestData,
-            success: successFunc,
-            error: errorFunc,
-            dataType: "json"
-        });
-    }
-
-    /**
-     * The default error function to be used for server calls. It simply logs a messages saying it was unable to connect to the server.
-     */
-    function defaultErrorFunc(response)
-    {
-        $logdiv.append("Unable to connect to server.<br>");
-    }
-
-    /**
-     * Will continuously ping the server and update the last checkin time for the current room.
-     */
-    function pingServer()
-    {
-        var roomname = $roomNameLabel.text().trim();
-        if (!roomname)
-        {
-            return;
-        }
-
-        function successFunc(response)
-        {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_PING_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                        msg += "Room does not exist.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                return;
-            }
-        }
-
-        setTimeout(pingServer, 1000 * 60 * 5); // ping every 5 minutes
-        serverRequest(INTERFACE.TYPE_PING_ROOM, false, successFunc, defaultErrorFunc, roomname);
     }
 
     function infoBarUpdateUI()
@@ -475,7 +463,7 @@ $(document).ready(function()
 
         if (userName.length > 25)
         {
-            alert("Please enter a name less than 25 characters long.");
+            alert("Please enter a name from 1 to 25 characters long.");
             return;
         }
 
@@ -511,166 +499,32 @@ $(document).ready(function()
 
     $("#createRoom").click(function()
     {
-        function successFunc(response)
+        var roomname = $roomNameInput.val().trim();
+        if (!roomname || roomname.length > 50)
         {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_CREATE_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                        msg += "That room already exists.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                alert(msg);
-                return;
-            }
-            var msg = "Room created successfully.";
-            $logdiv.append(msg + '<br>');
-
-            infoBarInRoomMode();
-
-            setTimeout(pingServer, 1000);
+            alert("Please enter a room name from 1 to 50 characters long.");
+            return;
         }
-
-        serverRequest(INTERFACE.TYPE_CREATE_ROOM, true, successFunc, defaultErrorFunc);
+        var roompassword = $roomPasswordInput.val();
+        roomHandler.createRoom(roomname, roompassword);
     });
 
     $("#joinRoom").click(function()
     {
-        function successFunc(response)
-        {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_JOIN_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                        msg += "That room does not exist.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                        msg += "The password is incorrect.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                alert(msg);
-                return;
-            }
-            var msg = "Room joined successfully.";
-            $logdiv.append(msg + '<br>');
+        var roomname = $roomNameInput.val().trim();
+        var roompassword = $roomPasswordInput.val();
 
-            infoBarInRoomMode(response[INTERFACE.RESPONSE_ROOM_NAME]);
-
-            setTimeout(pingServer, 1000);
-
-            // connect to all peers from the server
-            var members = JSON.parse(response[INTERFACE.RESPONSE_ROOM_MEMBERS]);
-            peerHandler.connectToPeers(members);
-        }
-
-        serverRequest(INTERFACE.TYPE_JOIN_ROOM, false, successFunc, defaultErrorFunc);
+        // if there are no open rooms to join we should make our own
+        createRoomWhenNoneAreOpenToJoin.shouldRun = !roomname;
+        roomHandler.joinRoom(roomname, roompassword);
     });
 
     $leaveRoomBtn.click(function()
     {
-        var roomname = $roomNameLabel.text().trim();
-        if (!roomname)
-        {
-            return;
-        }
-
-        function successFunc(response)
-        {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_LEAVE_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                        msg += "That room does not exist.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                alert(msg);
-                return;
-            }
-            var msg = "Left room successfully.";
-            $logdiv.append(msg + '<br>');
-
-            infoBarNoRoomMode();
-
-            peerHandler.disconnectFromPeers();
-        }
-
-        serverRequest(INTERFACE.TYPE_LEAVE_ROOM, false, successFunc, defaultErrorFunc, roomname);
+        roomHandler.leaveRoom();
+        infoBarNoRoomMode();
+        peerHandler.disconnectFromPeers();
     });
-
-    function updateUserCount()
-    {
-        function successFunc(response)
-        {
-            var msg;
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                msg = INTERFACE.TYPE_GET_NUM_USERS + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-            }
-            // msg will either be the error message or if it that is not set, the success message
-            msg = msg || ("Got number of users online: " + response[INTERFACE.RESPONSE_NUM_USERS]);
-            $logdiv.append(msg + '<br>');
-
-            var onlineUsers = response[INTERFACE.RESPONSE_NUM_USERS] || "Unknown";
-            $onlineUsersLabel.text(onlineUsers);
-        }
-
-        serverRequest(INTERFACE.TYPE_GET_NUM_USERS, false, successFunc, defaultErrorFunc);
-        setTimeout(updateUserCount, 60000); // repeat this function every minute
-    }
-    updateUserCount();
 });
 
 // Make sure things clean up properly.
