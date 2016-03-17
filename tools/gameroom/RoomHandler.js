@@ -307,7 +307,11 @@ RoomHandler.prototype._pingRoom = function()
 
     var req = this._createRequest(INTERFACE.TYPE_PING_ROOM);
     this._sendRequest(req, this.pingListeners);
-    setTimeout(this._pingRoom, this._pingRoomRefreshMilliseconds);
+    var self = this;
+    setTimeout(function()
+    {
+        self._pingRoom();
+    }, this._pingRoomRefreshMilliseconds);
 };
 
 /*
@@ -319,7 +323,11 @@ RoomHandler.prototype._updateUserCount = function()
 {
     var req = this._createRequest(INTERFACE.TYPE_GET_NUM_USERS);
     this._sendRequest(req, this.updateUserCountListeners);
-    setTimeout(this._updateUserCount, this._updateUserCountRefreshMilliseconds);
+    var self = this;
+    setTimeout(function()
+    {
+        self._updateUserCount();
+    }, this._updateUserCountRefreshMilliseconds);
 };
 
 /*
@@ -424,7 +432,10 @@ RoomHandler.prototype.init = function()
     {
         // update the room name internally and begin pinging the room
         self.room = response[INTERFACE.RESPONSE_ROOM_NAME];
-        setTimeout(self._pingRoom, 1000);
+        setTimeout(function()
+        {
+            self._pingRoom();
+        }, 1000);
     }
 
     // add join room handler
@@ -436,4 +447,6 @@ RoomHandler.prototype.init = function()
     var createRoomHandler = new RoomResponseHandler();
     createRoomHandler.setSuccessFunc(roomChangeHandler);
     this.createRoomListeners.push(createRoomHandler);
+
+    this._updateUserCount();
 };

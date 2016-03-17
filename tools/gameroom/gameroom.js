@@ -72,7 +72,7 @@ $(document).ready(function()
     peerHandler.addOpenListener(function(id)
     {
         players[id] = {};
-        players[id].userName = USER_NAME;
+        players[id].userName = USER_NAME || id;
         players[id].color = USER_COLOR;
 
         roomHandler.setUserId(id);
@@ -113,6 +113,7 @@ $(document).ready(function()
     peerHandler.addPeerOpenListener(function(peerId)
     {
         players[peerId] = {};
+        players[peerId].userName = peerId;
         peerId = D20_UTIL.escapeHtml(peerId);
         // create display for connection
         $membersDiv.append('<div id="' + peerId + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + peerId + '">' + peerId + '</div>');
@@ -214,7 +215,7 @@ $(document).ready(function()
         var updateUserCountListener = new RoomResponseHandler();
         updateUserCountListener.setSuccessFunc(function(data)
         {
-            var onlineUsers = response[INTERFACE.RESPONSE_NUM_USERS] || "Unknown";
+            var onlineUsers = data[INTERFACE.RESPONSE_NUM_USERS] || "Unknown";
             $onlineUsersLabel.text(onlineUsers);
         });
         updateUserCountListener.setErrorBadRequestFunc(badRequestFunc);
