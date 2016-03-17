@@ -59,6 +59,7 @@ $(document).ready(function()
     var players = {}; // hashmap of id -> player object
     var peerHandler = new PeerHandler();
     var roomHandler = new RoomHandler();
+    var unreadMessageNotifier = new UnreadMessageNotifier();
     peerHandler.setLoggingFunction(function(arguments)
     {
         var copy = Array.prototype.slice.call(arguments).join(' ');
@@ -268,6 +269,7 @@ $(document).ready(function()
         {
             $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
         }
+        unreadMessageNotifier.addMessage();
     }
 
     function infoBarUpdateUI()

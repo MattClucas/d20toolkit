@@ -74,5 +74,6 @@
     <script src="../arithmancy/Arithmancy.js"></script>
     <script src="PeerHandler.js"></script>
     <script src="RoomHandler.js"></script>
+    <script src="UnreadMessageNotifier.js"></script>
     <script src="gameroom.js"></script>
 </html>
