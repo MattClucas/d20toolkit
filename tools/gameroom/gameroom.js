@@ -1,9 +1,5 @@
 $(document).ready(function()
 {
-    const PEER_MSG_TYPE_NAME_CHANGE = "name";
-    const PEER_MSG_TYPE_CHAT = "chat";
-    const PEER_MSG_TYPE_COLOR = "color";
-
     const USER_COLOR_CSS_PREFIX = "user-";
 
     const HELP_MSG_AR = 'The aritchmancy solver command (/ar, /arithmancy) prompts the arithmancy ' +
@@ -41,127 +37,6 @@ $(document).ready(function()
         'likely to be bugs from time to time. This tool uses WebRTC technology which is fairly new and so for best ' +
         'results, please use an updated version of Chrome or Firefox.';
 
-    const ENTITY_MAP = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': '&quot;',
-        "'": '&#39;',
-        "/": '&#x2F;'
-    };
-
-    function escapeHtml(string)
-    {
-        return String(string).replace(/[&<>"'\/]/g, function(s)
-        {
-            return ENTITY_MAP[s];
-        });
-    }
-
-    // returns a random color hex code
-    function randomColor()
-    {
-        return '#' + ('000000' + (Math.random() * 0xFFFFFF << 0).toString(16)).slice(-6);
-    }
-
-    // creates a css selector
-    // use like createCSSSelector('.someClass', 'color: red; height: 10px;');
-    function createCSSSelector(selector, style)
-    {
-        if (!document.styleSheets)
-        {
-            return;
-        }
-
-        if (document.getElementsByTagName('head').length == 0)
-        {
-            return;
-        }
-
-        var stylesheet, mediaType, i;
-
-        if (document.styleSheets.length > 0)
-        {
-            for (i = 0; i < document.styleSheets.length; i++)
-            {
-                if (document.styleSheets[i].disabled)
-                {
-                    continue;
-                }
-                var media = document.styleSheets[i].media;
-                mediaType = typeof media;
-
-                if (mediaType == 'string')
-                {
-                    if (media == '' || (media.indexOf('screen') != -1))
-                    {
-                        styleSheet = document.styleSheets[i];
-                    }
-                }
-                else if (mediaType == 'object')
-                {
-                    if (media.mediaText == '' || (media.mediaText.indexOf('screen') != -1))
-                    {
-                        styleSheet = document.styleSheets[i];
-                    }
-                }
-
-                if (typeof styleSheet != 'undefined')
-                {
-                    break;
-                }
-            }
-        }
-
-        if (typeof styleSheet == 'undefined')
-        {
-            var styleSheetElement = document.createElement('style');
-            styleSheetElement.type = 'text/css';
-            document.getElementsByTagName('head')[0].appendChild(styleSheetElement);
-
-            for (i = 0; i < document.styleSheets.length; i++)
-            {
-                if (document.styleSheets[i].disabled)
-                {
-                    continue;
-                }
-                styleSheet = document.styleSheets[i];
-            }
-
-            var media = styleSheet.media;
-            mediaType = typeof media;
-        }
-
-        if (mediaType == 'string')
-        {
-            for (i = 0; i < styleSheet.rules.length; i++)
-            {
-                if (styleSheet.rules[i].selectorText && styleSheet.rules[i].selectorText.toLowerCase() == selector.toLowerCase())
-                {
-                    styleSheet.rules[i].style.cssText = style;
-                    return;
-                }
-            }
-
-            styleSheet.addRule(selector, style);
-        }
-        else if (mediaType == 'object')
-        {
-            var styleSheetLength = (styleSheet.cssRules) ? styleSheet.cssRules.length : 0;
-
-            for (i = 0; i < styleSheetLength; i++)
-            {
-                if (styleSheet.cssRules[i].selectorText && styleSheet.cssRules[i].selectorText.toLowerCase() == selector.toLowerCase())
-                {
-                    styleSheet.cssRules[i].style.cssText = style;
-                    return;
-                }
-            }
-
-            styleSheet.insertRule(selector + '{' + style + '}', styleSheetLength);
-        }
-    }
-
     var $roomNameInput = $("#roomNameInput");
     var $roomPasswordInput = $("#roomPasswordInput");
     var $noRoomLabel = $('#noRoomLabel');
@@ -181,308 +56,217 @@ $(document).ready(function()
     var $roomMembersHeader = $('#roomMembersHeader');
     var $onlineUsersLabel = $('#onlineUsersLabel');
 
-    // Connect to PeerJS, have server assign an ID instead of providing one
-    // Showing off some of the configs available with PeerJS :).
-    var peer = new Peer(
+    var players = {}; // hashmap of id -> player object
+    var peerHandler = new PeerHandler();
+    var roomHandler = new RoomHandler();
+    peerHandler.setLoggingFunction(function(arguments)
     {
-        key: '4hgaohcj6wbi6bt9',
-
-        // Set highest debug level (log everything!).
-        debug: 3,
-
-        config:
-        {
-            'iceServers': [
-            {
-                url: 'stun:stun.l.google.com:19302'
-            },
-            {
-                url: 'turn:numb.viagenie.ca',
-                credential: 'muazkh',
-                username: 'webrtc@live.com'
-            }]
-        },
-
-        // Set a logging function:
-        logFunction: function()
-        {
-            var copy = Array.prototype.slice.call(arguments).join(' ');
-            $logdiv.append(copy + '<br>');
-        }
+        var copy = Array.prototype.slice.call(arguments).join(' ');
+        $logdiv.append(copy + '<br>');
     });
-    var CONNECTED_PEERS = {
-        IDS: []
-    };
-    var USER_ID = null;
-    var USER_NAME;
-    var USER_COLOR = randomColor();
 
-    // Show this peer's ID.
-    peer.on('open', function(id)
+    var USER_NAME;
+    var USER_COLOR = D20_UTIL.getRandomColor();
+    peerHandler.setColor(USER_COLOR);
+
+    peerHandler.addOpenListener(function(id)
     {
-        id = escapeHtml(id);
+        players[id] = {};
+        players[id].userName = USER_NAME;
+        players[id].color = USER_COLOR;
+
+        roomHandler.setUserId(id);
+
         $logdiv.append("Created local id: " + id + "<br>");
         $userNameLabel.text(id);
         $userNameLabel.addClass(USER_COLOR_CSS_PREFIX + id);
-        USER_ID = id;
 
         // create css class for user's color
-        createCSSSelector("." + USER_COLOR_CSS_PREFIX + USER_ID, "color: " + USER_COLOR + ";");
+        D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + id, "color: " + USER_COLOR + ";");
     });
 
-    peer.on('error', function(err)
+    peerHandler.addErrorListener(function(err)
     {
         $logdiv.append(err.toString() + "<br>");
     });
 
-    function updatePeerName(peerId, name)
+    peerHandler.addPeerNameChangeListener(function(event)
     {
-        CONNECTED_PEERS[peerId].peerName = name;
+        players[event.peerId].userName = event.userName;
 
         // update display
-        $('#' + peerId).html(escapeHtml(name));
+        $('#' + event.peerId).html(D20_UTIL.escapeHtml(event.userName));
+    });
+
+    peerHandler.addPeerChatMsgListener(function(event)
+    {
+        showMessage(event.peerId, event.chat);
+    });
+
+    peerHandler.addPeerColorChangeListener(function(event)
+    {
+        players[event.peerId].color = event.color;
+        D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(event.peerId),
+            "color: " + D20_UTIL.escapeHtml(event.color) + ";");
+    });
+
+    peerHandler.addPeerOpenListener(function(peerId)
+    {
+        players[peerId] = {};
+        peerId = D20_UTIL.escapeHtml(peerId);
+        // create display for connection
+        $membersDiv.append('<div id="' + peerId + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + peerId + '">' + peerId + '</div>');
+        infoBarUpdateUI();
+    });
+
+    peerHandler.addPeerClosedListener(function(peerId)
+    {
+        // remove display for connection
+        $('#' + peerId).remove();
+        infoBarUpdateUI();
+    });
+
+    peerHandler.addPeerErrorListener(function(event)
+    {
+        $logdiv.append(event.error.toString() + "<br>");
+    });
+
+    function logAndAlertErrorMsg(msg)
+    {
+        $logdiv.append(msg + "<br>");
+        alert(msg);
     }
+
+    function initializeRoomHandler(roomHandler)
+    {
+        function badRequestFunc(data)
+        {
+            logAndAlertErrorMsg("Request was either malformed or missing essential data.");
+        }
+
+        function databaseIssueFunc(data)
+        {
+            logAndAlertErrorMsg("The database is having problems.");
+        }
+
+        function roomAlreadyExistsFunc(data)
+        {
+            logAndAlertErrorMsg("That room already exists.");
+        }
+
+        function defaultError(data)
+        {
+            logAndAlertErrorMsg("Unexpected response type from the server.");
+        }
+
+        function roomDoesNotExist(data)
+        {
+            logAndAlertErrorMsg("That room does not exist.");
+        }
+
+        // add create room listener
+        var createRoomResponseListener = new RoomResponseHandler();
+        createRoomResponseListener.setSuccessFunc(function(data)
+        {
+            $logdiv.append("Room created successfully.<br>");
+            infoBarInRoomMode(data[INTERFACE.RESPONSE_ROOM_NAME]);
+        });
+        createRoomResponseListener.setErrorBadRequestFunc(badRequestFunc);
+        createRoomResponseListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        createRoomResponseListener.setErrorRoomAlreadyExistsFunc(roomAlreadyExistsFunc);
+        createRoomResponseListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addCreateRoomListener(createRoomResponseListener);
+
+        // add join room listener
+        var joinRoomResponseListener = new RoomResponseHandler();
+        joinRoomResponseListener.setSuccessFunc(function(data)
+        {
+            $logdiv.append("Room joined successfully.<br>");
+            infoBarInRoomMode(data[INTERFACE.RESPONSE_ROOM_NAME]);
+
+            // connect to all peers from the server
+            var members = JSON.parse(data[INTERFACE.RESPONSE_ROOM_MEMBERS]);
+            peerHandler.connectToPeers(members);
+        });
+        joinRoomResponseListener.setErrorBadRequestFunc(badRequestFunc);
+        joinRoomResponseListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        joinRoomResponseListener.setErrorRoomDoesNotExistFunc(function(data)
+        {
+            $logdiv.append("The room we tried to join did not exist. Might need to create our own room.<br>");
+            createRoomWhenNoneAreOpenToJoin();
+        });
+        joinRoomResponseListener.setErrorPasswordIncorrectFunc(function(data)
+        {
+            logAndAlertErrorMsg("Incorrect password.");
+        });
+        joinRoomResponseListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addJoinRoomListener(joinRoomResponseListener);
+
+        // add leave room listener
+        var leaveRoomResponseListener = new RoomResponseHandler();
+        leaveRoomResponseListener.setErrorBadRequestFunc(badRequestFunc);
+        leaveRoomResponseListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        leaveRoomResponseListener.setErrorRoomDoesNotExistFunc(roomDoesNotExist);
+        leaveRoomResponseListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addLeaveRoomListener(leaveRoomResponseListener);
+
+        // add update user count listener
+        var updateUserCountListener = new RoomResponseHandler();
+        updateUserCountListener.setSuccessFunc(function(data)
+        {
+            var onlineUsers = response[INTERFACE.RESPONSE_NUM_USERS] || "Unknown";
+            $onlineUsersLabel.text(onlineUsers);
+        });
+        updateUserCountListener.setErrorBadRequestFunc(badRequestFunc);
+        updateUserCountListener.setErrorDatabaseIssueFunc(databaseIssueFunc);
+        updateUserCountListener.setErrorDefaultFunc(defaultError);
+        roomHandler.addUpdateUserCountListener(updateUserCountListener);
+
+        // add ping listener
+        var pingListener = new RoomResponseHandler();
+        pingListener.setErrorDefaultFunc(function(data)
+        {
+            logAndAlertErrorMsg("Error occurred when pinging the server.")
+        });
+        roomHandler.addPingListener(pingListener);
+
+        roomHandler.init();
+    }
+
+    function createRoomWhenNoneAreOpenToJoin()
+    {
+        if (!roomHandler || !roomHandler.getUserId())
+        {
+            return;
+        }
+
+        if (createRoomWhenNoneAreOpenToJoin.shouldRun)
+        {
+            $logdiv.append("Creating our own room.<br>");
+            roomHandler.createRoom(roomHandler.getUserId() + "'s room");
+        }
+    }
+
+    // start the peer and room handlers
+    peerHandler.init();
+    initializeRoomHandler(roomHandler);
 
     function showMessage(peerId, message)
     {
         // allow 1px inaccuracy by adding 1
         var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
 
-        var name = (CONNECTED_PEERS[peerId] && CONNECTED_PEERS[peerId].peerName) || peerId || USER_NAME || USER_ID;
+        var displayName = players[peerId].userName;
 
         // give a class "user-(id)" so each user can have a custom style
-        var id = peerId || USER_ID;
-        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapeHtml(id) + '">' +
-            escapeHtml(name) + ':</span> ' +
-            escapeHtml(message) + '</div>');
+        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(peerId) + '">' +
+            D20_UTIL.escapeHtml(displayName) + ':</span> ' +
+            D20_UTIL.escapeHtml(message) + '</div>');
 
         if (isScrolledToBottom)
         {
             $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
         }
-    }
-
-    function setupConnection(conn)
-    {
-        // check if this connection somehow already exists
-        var prevConn = CONNECTED_PEERS[conn.peer];
-        if (prevConn && prevConn.type == "data" && prevConn.open)
-        {
-            // connection already exists
-            return;
-        }
-
-        // add the peer id to the array of ID's if it is not already
-        if (CONNECTED_PEERS.IDS.indexOf(conn.peer) == -1)
-        {
-            CONNECTED_PEERS.IDS.push(conn.peer);
-        }
-
-        // add the conn to the list
-        CONNECTED_PEERS[conn.peer] = conn;
-
-        function receivePeerData(data)
-        {
-            if (!data)
-            {
-                $logdiv.append("Received empty message.");
-                return;
-            }
-
-            switch (data.type)
-            {
-                case PEER_MSG_TYPE_NAME_CHANGE:
-                    updatePeerName(conn.peer, data.content);
-                    break;
-                case PEER_MSG_TYPE_CHAT:
-                    showMessage(conn.peer, data.content);
-                    break;
-                case PEER_MSG_TYPE_COLOR:
-                    createCSSSelector("." + USER_COLOR_CSS_PREFIX + conn.peer, "color: " + escapeHtml(data.content) + ";");
-                default:
-                    break;
-            }
-        }
-
-        conn.on('open', function()
-        {
-            // Receive messages
-            conn.on('data', receivePeerData);
-
-            // create display for connection
-            $membersDiv.append('<div id="' + conn.peer + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + conn.peer + '">' + conn.peer + '</div>');
-            infoBarUpdateUI();
-
-            // send the peer our color
-            CONNECTED_PEERS[conn.peer].send(
-            {
-                type: PEER_MSG_TYPE_COLOR,
-                content: USER_COLOR
-            });
-
-            // send the peer our user name
-            if (USER_NAME)
-            {
-                CONNECTED_PEERS[conn.peer].send(
-                {
-                    type: PEER_MSG_TYPE_NAME_CHANGE,
-                    content: USER_NAME
-                });
-            }
-        });
-
-        conn.on("close", function()
-        {
-            // remove the connection
-            delete CONNECTED_PEERS[conn.peer];
-            var peerIndex = CONNECTED_PEERS.IDS.indexOf(conn.peer);
-            delete CONNECTED_PEERS.IDS[peerIndex];
-
-            // remove display for connection
-            $('#' + conn.peer).remove();
-            infoBarUpdateUI();
-        });
-
-        // log errors
-        conn.on("error", function(err)
-        {
-            $logdiv.append(err.toString() + "<br>");
-        });
-    }
-
-    // Await connections from others
-    peer.on('connection', setupConnection);
-
-    /**
-     * Sends a request to roomAccess.php.
-     * requestType - A string: Create, Join, Leave, or Ping. As specified by INTERFACE.TYPE_* variables.
-     * passwordRequired - A boolean stating whether or not to require the password field to be filled out or not.
-     * successFunc - The callback function to call on a successful request.
-     * errorFunc - The callback function to call on a failed request.
-     * roomname - Optional. The string stating the roomname. If not specified, whatever is in the roomNameInput will be tried.
-     */
-    function serverRequest(requestType, passwordRequired, successFunc, errorFunc, roomname)
-    {
-        var randomRoom = false;
-        var openRoom = false;
-
-        // getting the number of users does not require a roomname, password, or even user id
-        if (requestType != INTERFACE.TYPE_GET_NUM_USERS)
-        {
-            // get and validate input from $roomNameInput
-            if (!roomname)
-            {
-                roomname = $roomNameInput.val().trim();
-                if (!roomname && requestType == INTERFACE.TYPE_JOIN_ROOM)
-                {
-                    // joining a room with no room specified means do a random room
-                    randomRoom = true;
-                    passwordRequired = false;
-                }
-                // not joining a room requires a room name
-                else if (!roomname || roomname.length > 50)
-                {
-                    alert("Enter a room name no more than 50 characters long.");
-                    return;
-                }
-            }
-
-            if (passwordRequired)
-            {
-                // get and validate input from $roomPasswordInput
-                var roompassword = $roomPasswordInput.val();
-                if (!roompassword)
-                {
-                    if (requestType == INTERFACE.TYPE_CREATE_ROOM)
-                    {
-                        // if no password is specified when making a room, that leaves it open
-                        openRoom = true;
-                    }
-                    else
-                    {
-                        alert("Enter a password.");
-                        return;
-                    }
-                }
-            }
-
-            // check if the user id has been created yet
-            if (!USER_ID)
-            {
-                // try again in 50 milliseconds
-                setTimeout(serverRequest, 50, requestType, passwordRequired, successFunc, errorFunc, roomname);
-            }
-        }
-
-        // create request data
-        var requestData = {};
-        requestData[INTERFACE.REQUEST_TYPE] = requestType;
-        requestData[INTERFACE.REQUEST_ROOM_NAME] = roomname;
-        requestData[INTERFACE.REQUEST_ROOM_PASSWORD] = roompassword;
-        requestData[INTERFACE.REQUEST_USER] = USER_ID;
-        requestData[INTERFACE.REQUEST_RANDOM] = randomRoom;
-        requestData[INTERFACE.REQUEST_OPEN] = openRoom;
-
-        // send the request
-        $.ajax(
-        {
-            type: "POST",
-            url: "roomAccess.php",
-            data: requestData,
-            success: successFunc,
-            error: errorFunc,
-            dataType: "json"
-        });
-    }
-
-    /**
-     * The default error function to be used for server calls. It simply logs a messages saying it was unable to connect to the server.
-     */
-    function defaultErrorFunc(response)
-    {
-        $logdiv.append("Unable to connect to server.<br>");
-    }
-
-    /**
-     * Will continuously ping the server and update the last checkin time for the current room.
-     */
-    function pingServer()
-    {
-        var roomname = $roomNameLabel.text().trim();
-        if (!roomname)
-        {
-            return;
-        }
-
-        function successFunc(response)
-        {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_PING_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                        msg += "Room does not exist.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                return;
-            }
-        }
-
-        setTimeout(pingServer, 1000 * 60 * 5); // ping every 5 minutes
-        serverRequest(INTERFACE.TYPE_PING_ROOM, false, successFunc, defaultErrorFunc, roomname);
     }
 
     function infoBarUpdateUI()
@@ -656,22 +440,11 @@ $(document).ready(function()
         // send message to all connected users
         if (broadcast)
         {
-            for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
-            {
-                var peerId = CONNECTED_PEERS.IDS[i];
-                if (peerId)
-                {
-                    CONNECTED_PEERS[peerId].send(
-                    {
-                        type: PEER_MSG_TYPE_CHAT,
-                        content: messageToSend
-                    });
-                }
-            }
+            peerHandler.sendMessage(peerHandler.MSG_TYPE_CHAT, messageToSend);
         }
 
         // show ourselves the message
-        showMessage(null, messageToSend);
+        showMessage(peerHandler.getUserId(), messageToSend);
     }
 
     /*
@@ -690,27 +463,18 @@ $(document).ready(function()
 
         if (userName.length > 25)
         {
-            alert("Please enter a name less than 25 characters long.");
+            alert("Please enter a name from 1 to 25 characters long.");
             return;
         }
 
         $userNameInput.val("");
         USER_NAME = userName;
-        $userNameLabel.text(escapeHtml(USER_NAME));
-
-        // update all connected users knowledge of this change
-        for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
+        if (peerHandler.getUserId())
         {
-            var peerId = CONNECTED_PEERS.IDS[i];
-            if (peerId)
-            {
-                CONNECTED_PEERS[peerId].send(
-                {
-                    type: PEER_MSG_TYPE_NAME_CHANGE,
-                    content: USER_NAME
-                });
-            }
+            players[peerHandler.getUserId()].userName = userName;
         }
+        $userNameLabel.text(D20_UTIL.escapeHtml(userName));
+        peerHandler.setUserName(userName);
     });
 
     // when enter is pressed on the user name input it automatically clicks the set name button
@@ -735,198 +499,32 @@ $(document).ready(function()
 
     $("#createRoom").click(function()
     {
-        function successFunc(response)
+        var roomname = $roomNameInput.val().trim();
+        if (!roomname || roomname.length > 50)
         {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_CREATE_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                        msg += "That room already exists.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                alert(msg);
-                return;
-            }
-            var msg = "Room created successfully.";
-            $logdiv.append(msg + '<br>');
-
-            infoBarInRoomMode();
-
-            setTimeout(pingServer, 1000);
+            alert("Please enter a room name from 1 to 50 characters long.");
+            return;
         }
-
-        serverRequest(INTERFACE.TYPE_CREATE_ROOM, true, successFunc, defaultErrorFunc);
+        var roompassword = $roomPasswordInput.val();
+        roomHandler.createRoom(roomname, roompassword);
     });
 
     $("#joinRoom").click(function()
     {
-        function successFunc(response)
-        {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_JOIN_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                        msg += "That room does not exist.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                        msg += "The password is incorrect.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                alert(msg);
-                return;
-            }
-            var msg = "Room joined successfully.";
-            $logdiv.append(msg + '<br>');
+        var roomname = $roomNameInput.val().trim();
+        var roompassword = $roomPasswordInput.val();
 
-            infoBarInRoomMode(response[INTERFACE.RESPONSE_ROOM_NAME]);
-
-            setTimeout(pingServer, 1000);
-
-            // connect to all peers from the server
-            var members = JSON.parse(response[INTERFACE.RESPONSE_ROOM_MEMBERS]);
-            for (var i = 0; i < members.length; i++)
-            {
-                var peerId = members[i];
-
-                // don't connect to ourselves
-                if (peerId == USER_ID)
-                {
-                    continue;
-                }
-
-                // check if this connection somehow already exists
-                var prevConn = CONNECTED_PEERS[peerId];
-                if (prevConn && prevConn.type == "data" && prevConn.open)
-                {
-                    // connection already exists
-                    continue;
-                }
-
-                // create new connection
-                var connection = peer.connect(peerId,
-                {
-                    reliable: true
-                });
-                setupConnection(connection);
-            }
-        }
-
-        serverRequest(INTERFACE.TYPE_JOIN_ROOM, false, successFunc, defaultErrorFunc);
+        // if there are no open rooms to join we should make our own
+        createRoomWhenNoneAreOpenToJoin.shouldRun = !roomname;
+        roomHandler.joinRoom(roomname, roompassword);
     });
 
     $leaveRoomBtn.click(function()
     {
-        var roomname = $roomNameLabel.text().trim();
-        if (!roomname)
-        {
-            return;
-        }
-
-        function successFunc(response)
-        {
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                var msg = INTERFACE.TYPE_LEAVE_ROOM + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    case INTERFACE.ERROR_ROOM_DOES_NOT_EXIST:
-                        msg += "That room does not exist.";
-                        break;
-                    case INTERFACE.ERROR_PASSWORD_INCORRECT:
-                    case INTERFACE.ERROR_ROOM_ALREADY_EXISTS:
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-                $logdiv.append(msg + '<br>');
-                alert(msg);
-                return;
-            }
-            var msg = "Left room successfully.";
-            $logdiv.append(msg + '<br>');
-
-            infoBarNoRoomMode();
-
-            // close all connections
-            for (var i = 0; i < CONNECTED_PEERS.IDS.length; i++)
-            {
-                var peerId = CONNECTED_PEERS.IDS[i];
-                if (peerId)
-                {
-                    CONNECTED_PEERS[peerId].close();
-                }
-            }
-        }
-
-        serverRequest(INTERFACE.TYPE_LEAVE_ROOM, false, successFunc, defaultErrorFunc, roomname);
+        roomHandler.leaveRoom();
+        infoBarNoRoomMode();
+        peerHandler.disconnectFromPeers();
     });
-
-    function updateUserCount()
-    {
-        function successFunc(response)
-        {
-            var msg;
-            if (!response[INTERFACE.RESPONSE_SUCCESS])
-            {
-                msg = INTERFACE.TYPE_GET_NUM_USERS + ": " + response[INTERFACE.RESPONSE_ERROR_CODE] + ": ";
-                switch (response[INTERFACE.RESPONSE_ERROR_CODE])
-                {
-                    case INTERFACE.ERROR_BAD_REQUEST_DATA:
-                        msg += "Request was either malformed or missing essential data.";
-                        break;
-                    case INTERFACE.ERROR_DATABASE_ISSUE:
-                        msg += "The database is having problems.";
-                        break;
-                    default:
-                        msg += "Unexpected error code from server.";
-                        break;
-                }
-            }
-            // msg will either be the error message or if it that is not set, the success message
-            msg = msg || ("Got number of users online: " + response[INTERFACE.RESPONSE_NUM_USERS]);
-            $logdiv.append(msg + '<br>');
-
-            var onlineUsers = response[INTERFACE.RESPONSE_NUM_USERS] || "Unknown";
-            $onlineUsersLabel.text(onlineUsers);
-        }
-
-        serverRequest(INTERFACE.TYPE_GET_NUM_USERS, false, successFunc, defaultErrorFunc);
-        setTimeout(updateUserCount, 60000); // repeat this function every minute
-    }
-    updateUserCount();
 });
 
 // Make sure things clean up properly.

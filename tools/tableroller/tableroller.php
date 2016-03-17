@@ -49,6 +49,7 @@
 </body>
 <script src="/js/lz-string.min.js"></script>
 <script src="/js/parser.min.js"></script>
+<script src="/js/d20toolkitUtil.js"></script>
 <script src="/tools/diceroller/DiceParser.js"></script>
 <script src="/tools/tableroller/tableroller.js"></script>
 

@@ -8,22 +8,26 @@
     max-width: 300px;
     min-width: 245px;
 }
+
 .infoBarChild {
     padding-left: 3px;
     padding-right: 3px;
     clear: both;
 }
+
 #infoBarDivider {
     width: 100%;
     border-bottom: solid grey 2px;
     position: absolute;
     top: 164px
 }
+
 #messagesInfoBarChild {
     position: absolute;
     bottom: 0;
     height: calc( 100% - 166px );
 }
+
 #createRoom, #userNameInput {
     float: left;
 }
