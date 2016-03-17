@@ -528,6 +528,9 @@ $(document).ready(function()
         infoBarNoRoomMode();
         peerHandler.disconnectFromPeers();
     });
+
+
+    $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
 });
 
 // Make sure things clean up properly.
