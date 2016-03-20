@@ -1,4 +1,19 @@
+/*
+ * @Author: Matt Clucas
+ * This is a modified version of list.fuzzysearch.js.
+ * The original source may be found here: http://www.listjs.com/examples/fuzzy-search
+ *
+ * The modifications are a typing timer so we don't execute a fuzzy search on every
+ * character if we are typing too quickly, and changes found in the keyup/keydown bindings.
+ */
+
 ;(function(){
+
+fuzzyController = new fuzzyControl();
+
+//Used to ensure we don't do a fuzzy search on every char when typing quickly
+var typingTimer;              //timer identifier
+var doneTypingInterval = 50;  //time in ms
 
 /**
  * Require the given path.
@@ -689,17 +704,46 @@ module.exports = function(options) {
     };
 
     return {
+        //modified function to suite our specific needs
         init: function(parentList) {
             list = parentList;
 
+            function doSearch(searchTerm, e)
+            {
+              list.search(searchTerm, fuzzySearch.search);
+              var inputBox = document.getElementById('myList');
+              fuzzyController.keyupMatch(e);
+            }
+
             events.bind(getByClass(list.listContainer, options.searchClass), 'keyup', function(e) {
                 var target = e.target || e.srcElement; // IE have srcElement
+
                 if(target.value.charAt(0) == '@')
                 {
-                  list.search(target.value.substring(1).trim(), fuzzySearch.search);    
+                  //Don't fuzzy search every char if we are typing fast
+                  clearTimeout(typingTimer);
+                  //Adding " at start prevents dumb matches by lowering the score for monster names with small words.
+                  //For example, this hack lets "red dragon" appear before "river dragon" when searching for "red dragon".
+                  var searchTerm = "\""+target.value.substring(1).trim();
+                  typingTimer = setTimeout(function(){
+                    doSearch(searchTerm, e);
+                  },doneTypingInterval);
+                }
+                else
+                {
+                  fuzzyController.keyupNoMatch();
                 }
             });
 
+            //reset timer on keydown
+            events.bind(getByClass(list.listContainer, options.searchClass), 'keydown', function(e) {
+                var target = e.target || e.srcElement; // IE have srcElement
+                if(target.value.charAt(0) == '@')
+                {
+                  clearTimeout(typingTimer);
+                  fuzzyController.keydown(e);
+                }
+            });
             return;
         },
         search: function(str, columns) {

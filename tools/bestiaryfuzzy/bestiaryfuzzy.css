@@ -34,7 +34,7 @@
     margin:0;
 }
 
-.name {
+.bestiary-name {
     list-style-type: none;
     border-top: 1px solid #404040;
     border-bottom: 1px solid #363636;
@@ -44,8 +44,4 @@
 
 .selected {
     background: #ccc;
-}
-
-#myList {
-    width: 300px;
 }
