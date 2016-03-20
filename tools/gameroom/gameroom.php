@@ -53,8 +53,15 @@
                     </div>
                 </div>
             </div>
-            <h2>In development</h2>
             <p>Type "/help" into the messsage bar at the bottom right for usage information.</p>
+            <div class="canvasParent">
+                <canvas id="drawCanvas">
+                    Please use a browser that supports "canvas"
+                </canvas>
+                <br>
+                <button id="clearLocalCanvas" class="btn btn-default">Clear Local Drawing</button>
+                <input type="color" id="canvasColorPicker">
+            </div>
             <div id="onlineUsersDiv">
                 <label>Users In Rooms: </label><label id="onlineUsersLabel">Unknown</label><label>/50</label>
             </div>
@@ -75,5 +82,6 @@
     <script src="PeerHandler.js"></script>
     <script src="RoomHandler.js"></script>
     <script src="UnreadMessageNotifier.js"></script>
+    <script src="CanvasHandler.js"></script>
     <script src="gameroom.js"></script>
 </html>

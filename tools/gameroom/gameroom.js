@@ -55,10 +55,14 @@ $(document).ready(function()
     var $leaveRoomBtn = $('#leaveRoom');
     var $roomMembersHeader = $('#roomMembersHeader');
     var $onlineUsersLabel = $('#onlineUsersLabel');
+    var $clearLocalCanvas = $('#clearLocalCanvas');
+    var $canvasColorPicker = $('#canvasColorPicker');
 
     var players = {}; // hashmap of id -> player object
     var peerHandler = new PeerHandler();
     var roomHandler = new RoomHandler();
+    var canvasHandler = new CanvasHandler(document.getElementById("drawCanvas"));
+    canvasHandler.init();
     var unreadMessageNotifier = new UnreadMessageNotifier();
     peerHandler.setLoggingFunction(function(arguments)
     {
@@ -97,6 +101,26 @@ $(document).ready(function()
 
         // update display
         $('#' + event.peerId).html(D20_UTIL.escapeHtml(event.userName));
+    });
+
+    peerHandler.addPeerDrawListener(function(event)
+    {
+        var data = event[peerHandler.MSG_TYPE_DRAW];
+        if (data.clear)
+        {
+            canvasHandler.clearLayer(event.peerId);
+        }
+        else
+        {
+            canvasHandler.drawLayerPoints(event.peerId, data.points, data.color, data.lineWidth);
+        }
+    });
+
+    // message peers to update their layers whenever the local user draws
+    canvasHandler.addDrawListener(function(event)
+    {
+        event.peerId = peerHandler.getUserId();
+        peerHandler.sendMessage(peerHandler.MSG_TYPE_DRAW, event);
     });
 
     peerHandler.addPeerChatMsgListener(function(event)
@@ -195,7 +219,14 @@ $(document).ready(function()
         joinRoomResponseListener.setErrorRoomDoesNotExistFunc(function(data)
         {
             $logdiv.append("The room we tried to join did not exist. Might need to create our own room.<br>");
-            createRoomWhenNoneAreOpenToJoin();
+            if (data.roomName)
+            {
+                logAndAlertErrorMsg("The room: " + data.roomName + " does not exist.");
+            }
+            else
+            {
+                createRoomWhenNoneAreOpenToJoin();
+            }
         });
         joinRoomResponseListener.setErrorPasswordIncorrectFunc(function(data)
         {
@@ -529,7 +560,15 @@ $(document).ready(function()
         peerHandler.disconnectFromPeers();
     });
 
+    $clearLocalCanvas.click(function()
+    {
+        canvasHandler.clearLocalLayer();
+    });
 
+    $canvasColorPicker.on('input', function()
+    {
+        canvasHandler.setColor($canvasColorPicker.val());
+    });
     $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
 });
 

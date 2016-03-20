@@ -19,10 +19,12 @@ function PeerHandler()
     this.peerColorChangeListeners = [];
     this.peerNameChangeListeners = [];
     this.peerChatMsgListeners = [];
+    this.peerDrawListeners = [];
 };
 PeerHandler.prototype.MSG_TYPE_NAME_CHANGE = "userName";
 PeerHandler.prototype.MSG_TYPE_CHAT = "chat";
 PeerHandler.prototype.MSG_TYPE_COLOR = "color";
+PeerHandler.prototype.MSG_TYPE_DRAW = "draw";
 
 PeerHandler.prototype.getUserId = function()
 {
@@ -225,6 +227,24 @@ PeerHandler.prototype.addPeerColorChangeListener = function(listener)
 };
 
 /*
+ * PeerDrawListeners should accept an object with members:
+ *  peerId: The peerjs id of the peer.
+ *  color: A hex string representing the color to draw with.
+ *  points: An array of points {x, y} where each coordinate is a percentage of
+ *          how far wide and high to draw a point on the local users's canvas.
+ *  clear: If true, clears the peer's layer.
+ */
+PeerHandler.prototype.addPeerDrawListener = function(listener)
+{
+    if (!listener)
+    {
+        return;
+    }
+
+    this.peerDrawListeners.push(listener);
+};
+
+/*
  * Internal use only. Generic function to handle firing all the listeners in a listeners array and passing them the relevant data.
  */
 PeerHandler.prototype._notifyListeners = function(listeners, data)
@@ -241,7 +261,7 @@ PeerHandler.prototype._notifyListeners = function(listeners, data)
 };
 
 /*
- * Internal use only. Handles when a peer sends a message to another peer.
+ * Internal use only. Handles when a peer sends a message to the local user.
  */
 PeerHandler.prototype._handlePeerMsg = function(peerID, data)
 {
@@ -266,6 +286,10 @@ PeerHandler.prototype._handlePeerMsg = function(peerID, data)
         case this.MSG_TYPE_COLOR:
             listenerData[this.MSG_TYPE_COLOR] = data.content;
             listeners = this.peerColorChangeListeners;
+            break;
+        case this.MSG_TYPE_DRAW:
+            listenerData[this.MSG_TYPE_DRAW] = data.content;
+            listeners = this.peerDrawListeners;
             break;
     }
     this._notifyListeners(listeners, listenerData);
