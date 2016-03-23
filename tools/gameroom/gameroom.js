@@ -571,7 +571,14 @@ $(document).ready(function()
     {
         canvasHandler.setColor($canvasColorPicker.val());
     });
+
+    $("#toggleGridLines").click(function()
+    {
+        canvasHandler.toggleGridLines();
+    });
+
     $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
+
     // Make sure things clean up properly.
     window.onunload = window.onbeforeunload = function(e)
     {

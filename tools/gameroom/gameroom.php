@@ -53,13 +53,14 @@
                     </div>
                 </div>
             </div>
-            <p>Type "/help" into the messsage bar at the bottom right for usage information.</p>
+            <p>Type "/help" at the bottom right for information.</p>
             <div class="canvasParent">
                 <canvas id="drawCanvas">
                     Please use a browser that supports "canvas"
                 </canvas>
                 <br>
                 <button id="clearLocalCanvas" class="btn btn-default">Clear Local Drawing</button>
+                <button id="toggleGridLines" class="btn btn-default">Toggle Grid Lines</button>
                 <input type="color" id="canvasColorPicker">
             </div>
             <div id="onlineUsersDiv">

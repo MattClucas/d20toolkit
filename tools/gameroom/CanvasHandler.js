@@ -10,7 +10,14 @@ function CanvasHandler(canvasDOM)
 
     this.drawListeners = [];
     this.layers = {}; // hashmap of string -> layers, which are arrays of canvases
+    this.gridLines = false;
 }
+
+CanvasHandler.prototype.toggleGridLines = function()
+{
+    this.gridLines = !this.gridLines;
+    this.redrawLayers();
+};
 
 CanvasHandler.prototype._resize = function()
 {
@@ -102,12 +109,48 @@ CanvasHandler.prototype.setLayerVisibility = function(layerId, isVisible)
     }
 };
 
+CanvasHandler.prototype.drawGridLines = function()
+{
+    if (this.gridLines)
+    {
+        var numGrids = 15;
+        var max = 1.0;
+        var increment = max / numGrids;
+        var canvas = this.canvas;
+        for (var x = 0; x < max; x += increment)
+        {
+            this._drawPointsOnCanvas(canvas, [
+            {
+                x: x,
+                y: 0
+            },
+            {
+                x: x,
+                y: max
+            }], this.context.strokeStyle, 2);
+        }
+        for (var y = 0; y < max; y += increment)
+        {
+            this._drawPointsOnCanvas(canvas, [
+            {
+                x: 0,
+                y: y
+            },
+            {
+                x: max,
+                y: y
+            }], this.context.strokeStyle, 2);
+        }
+    }
+};
+
 /**
  * Redraws all the layers and all the local drawing actions.
  */
 CanvasHandler.prototype.redrawLayers = function()
 {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawGridLines();
     for (var layerId in this.layers)
     {
         if (this.layers.hasOwnProperty(layerId) && this.layers[layerId].isVisible)
