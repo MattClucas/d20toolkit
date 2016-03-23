@@ -553,12 +553,14 @@ $(document).ready(function()
         roomHandler.joinRoom(roomname, roompassword);
     });
 
-    $leaveRoomBtn.click(function()
+    function leaveRoom()
     {
         roomHandler.leaveRoom();
         infoBarNoRoomMode();
         peerHandler.disconnectFromPeers();
-    });
+    }
+
+    $leaveRoomBtn.click(leaveRoom);
 
     $clearLocalCanvas.click(function()
     {
@@ -570,17 +572,15 @@ $(document).ready(function()
         canvasHandler.setColor($canvasColorPicker.val());
     });
     $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
-});
-
-// Make sure things clean up properly.
-window.onunload = window.onbeforeunload = function(e)
-{
-    $leaveRoomBtn.click();
-
-    if (!!peer && !peer.destroyed)
+    // Make sure things clean up properly.
+    window.onunload = window.onbeforeunload = function(e)
     {
-        peer.destroy();
-    }
+        leaveRoom();
+        if (!!peer && !peer.destroyed)
+        {
+            peer.destroy();
+        }
 
-    return null;
-};
+        return null;
+    };
+});
