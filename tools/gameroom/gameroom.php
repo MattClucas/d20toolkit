@@ -74,6 +74,7 @@
     <script>
         const INTERFACE = <?php echo $INTERFACE_CONSTANTS; ?>;
     </script>
+    <script src="/js/anchorme.min.js"></script>
     <script src="/js/peer.min.js"></script>
     <script src="/js/jquery-2.2.0.min.js"></script>
     <script src="/js/parser.min.js"></script>

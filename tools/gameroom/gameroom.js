@@ -290,11 +290,15 @@ $(document).ready(function()
         var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
 
         var displayName = players[peerId].userName;
+        var escapedId = D20_UTIL.escapeHtml(peerId);
+        var escapedName = D20_UTIL.escapeHtml(displayName);
+        var escapedMsg = D20_UTIL.escapeHtml(message);
+        var linkedMsg = anchorme.js(escapedMsg);
 
         // give a class "user-(id)" so each user can have a custom style
-        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(peerId) + '">' +
-            D20_UTIL.escapeHtml(displayName) + ':</span> ' +
-            D20_UTIL.escapeHtml(message) + '</div>');
+        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapedId + '">' +
+            escapedName + ':</span> ' +
+            linkedMsg + '</div>');
 
         if (isScrolledToBottom)
         {
