@@ -577,6 +577,11 @@ $(document).ready(function()
         canvasHandler.toggleGridLines();
     });
 
+    $('#scaleInput').on('change', function()
+    {
+        canvasHandler.setScale($(this).val());
+    });
+
     $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
 
     // Make sure things clean up properly.
