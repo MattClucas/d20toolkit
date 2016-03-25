@@ -253,6 +253,9 @@ CanvasHandler.prototype._drawPointsOnCanvas = function(canvas, points, color, li
     }
     var context = canvas.getContext('2d');
 
+    // save previous values
+    var prevColor = context.strokeStyle;
+    var prevLineWidth = context.lineWidth;
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
 
@@ -266,6 +269,8 @@ CanvasHandler.prototype._drawPointsOnCanvas = function(canvas, points, color, li
         context.lineTo(x, y);
     }
     context.stroke();
+    context.strokeStyle = prevColor;
+    context.lineWidth = prevLineWidth;
 };
 
 /*
