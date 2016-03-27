@@ -11,8 +11,8 @@
     <script src="../../js/jquery-2.2.0.min.js"></script>
     <script src="http://listjs.com/no-cdn/list.js"></script>
     <script src="bestiaryPage.js"></script>
-    <!-- <script src="/d20toolkit/js/list.fuzzysearch.js"></script> -->
-    <script src="/js/list.fuzzysearch.js"></script>
+    <script src="/d20toolkit/js/list.fuzzysearch.js"></script>
+    <!-- <script src="/js/list.fuzzysearch.js"></script> -->
     <meta charset=utf-8 />
 </head>
 
@@ -21,14 +21,12 @@
         include_once('../../stats.php');
         include_once('../../header/header.php');
     ?>
-        <div class="container">
             <div id="fuzzy-list-container">
-                <input type="text" class="fuzzy-search" />
+                <input type="text" id="messageInput" class="fuzzy-search" />
                 <div class="scrollbar" style="display:none;">
                     <ul class="list">
                     </ul>
                 </div>
             </div>
-      </div>
 </body>
 </html>

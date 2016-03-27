@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="../../css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" href="../../css/bootswatch.min.css">
         <link rel="stylesheet" href="gameroom.css">
+        <link rel="stylesheet" href="/d20toolkit/tools/bestiaryfuzzy/bestiaryfuzzy.css">
     </head>
     <body>
         <?php
@@ -48,8 +49,14 @@
                 <div id="messagesInfoBarChild" class="infoBarChild fullWidth">
                     <div id="messagesBlock" class="fullWidth"></div>
                     <div class="fullWidth">
-                        <input type="text" id="messageInput" class="infoBarUIElement" placeholder="Type a message."/>
-                        <button id="sendButton" class="infoBarUIElement btn btn-default btn-xs">Send</button>
+                        <div id="fuzzy-list-container">
+                            <div class="scrollbar" style="display: none;">
+                                <ul class="list">
+                                </ul>
+                            </div>
+                            <input type="text" id="messageInput" class="infoBarUIElement fuzzy-search" placeholder="Type a message."/>
+                            <button id="sendButton" class="infoBarUIElement btn btn-default btn-xs">Send</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,10 +79,10 @@
     <script>
         const INTERFACE = <?php echo $INTERFACE_CONSTANTS; ?>;
     </script>
-    <script src="/js/peer.min.js"></script>
-    <script src="/js/jquery-2.2.0.min.js"></script>
-    <script src="/js/parser.min.js"></script>
-    <script src="/js/d20toolkitUtil.js"></script>
+    <script src="/d20toolkit/js/peer.min.js"></script>
+    <script src="/d20toolkit/js/jquery-2.2.0.min.js"></script>
+    <script src="/d20toolkit/js/parser.min.js"></script>
+    <script src="/d20toolkit/js/d20toolkitUtil.js"></script>
     <script src="../diceroller/DiceParser.js"></script>
     <script src="../sacredgeo/SacredGeometry.js"></script>
     <script src="../arithmancy/Arithmancy.js"></script>
@@ -83,5 +90,8 @@
     <script src="RoomHandler.js"></script>
     <script src="UnreadMessageNotifier.js"></script>
     <script src="CanvasHandler.js"></script>
+    <script src="http://listjs.com/no-cdn/list.js"></script>
+    <script src="/d20toolkit/tools/bestiaryfuzzy/bestiaryPage.js"></script>
+    <script src="/d20toolkit/js/list.fuzzysearch.js"></script>
     <script src="gameroom.js"></script>
 </html>

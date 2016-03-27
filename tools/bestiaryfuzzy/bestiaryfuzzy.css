@@ -1,8 +1,10 @@
 .scrollbar {
     max-height: 150px;
-    width: 300px;
+    width: 290px;
     overflow:hidden;
     overflow-y:scroll;
+    position: absolute;
+    bottom: 30px;
 }
 
 .scrollbar::-webkit-scrollbar-track
