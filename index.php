@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="./css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" href="./css/bootswatch.min.css">
+        <link rel="shortcut icon" href="img/d20toolkit.png">
     </head>
     <body>
         <?php
@@ -34,7 +35,7 @@
                             <h4><a href="./tools/terraingenerator/terraingenerator.php">Terrain Generator</a></h4>
                             <label>Not really a tool, just a visual terrain generator.</label>
                             <h4><a href="./tools/gameroom/gameroom.php">Game Room</a></h4>
-                            <label>A chat room tool that allows games over the internet. Text only.</label>
+                            <label>A chat room tool that allows games over the internet. Text and Drawing only.</label>
                         </div>
                         <h3>Linked Resources</h3>
                         <h4><a href="http://www.d20pfsrd.com/">D20PFSRD</a></h4>
