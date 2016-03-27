@@ -60,14 +60,16 @@
                     </div>
                 </div>
             </div>
-            <p>Type "/help" into the messsage bar at the bottom right for usage information.</p>
+            <p>Type "/help" at the bottom right for information.</p>
             <div class="canvasParent">
                 <canvas id="drawCanvas">
                     Please use a browser that supports "canvas"
                 </canvas>
                 <br>
                 <button id="clearLocalCanvas" class="btn btn-default">Clear Local Drawing</button>
+                <button id="toggleGridLines" class="btn btn-default">Toggle Grid Lines</button>
                 <input type="color" id="canvasColorPicker">
+                <label>Scale:</label><input type="number" step="any" min="0.01" max="512" value="1" id="scaleInput"/>
             </div>
             <div id="onlineUsersDiv">
                 <label>Users In Rooms: </label><label id="onlineUsersLabel">Unknown</label><label>/50</label>
@@ -79,6 +81,7 @@
     <script>
         const INTERFACE = <?php echo $INTERFACE_CONSTANTS; ?>;
     </script>
+    <script src="/d20toolkit/js/anchorme.min.js"></script>
     <script src="/d20toolkit/js/peer.min.js"></script>
     <script src="/d20toolkit/js/jquery-2.2.0.min.js"></script>
     <script src="/d20toolkit/js/parser.min.js"></script>

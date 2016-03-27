@@ -3,6 +3,11 @@ function CanvasHandler(canvasDOM)
     this.canvas = canvasDOM;
     this.context = canvasDOM.getContext('2d');
     this.context.lineWidth = '2';
+    this.widthAspect = 16;
+    this.heightAspect = 9;
+    this.scale = 1.0;
+    this.aspectRatio = this.widthAspect / this.heightAspect;
+    this.borderBufferSize = 8;
 
     // stores all the actions the local user does
     this.localPoints = []; // double array, contains every array of points the local user applied to the canvas
@@ -10,12 +15,27 @@ function CanvasHandler(canvasDOM)
 
     this.drawListeners = [];
     this.layers = {}; // hashmap of string -> layers, which are arrays of canvases
+    this.gridLines = false;
 }
 
 CanvasHandler.prototype._resize = function()
 {
-    this.canvas.width = this.canvas.offsetWidth;
-    this.canvas.height = this.canvas.offsetHeight;
+    // dont allow height of canvas to be more than the window minus the header and bottom buttons
+    var maxHeight = window.innerHeight - (150 + 75);
+    var maxWidth = window.innerWidth - (300 + this.borderBufferSize);
+    var maxAspectRatioWidth = maxHeight * this.aspectRatio;
+    var maxAspectRatioHeight = maxWidth / this.aspectRatio;
+
+    // choose how big the canvas is based off of its maximum allowed height
+    var height = Math.min(maxAspectRatioHeight, maxHeight);
+    var width = height * this.aspectRatio;
+
+    // set the width and height
+    this.canvas.style.width = width + "px";
+    this.canvas.width = width;
+    this.canvas.style.height = height + "px";
+    this.canvas.height = height;
+
     for (var layerId in this.layers)
     {
         if (this.layers.hasOwnProperty(layerId))
@@ -102,12 +122,63 @@ CanvasHandler.prototype.setLayerVisibility = function(layerId, isVisible)
     }
 };
 
+CanvasHandler.prototype.setScale = function(scale)
+{
+    this.scale = scale;
+    if (this.gridLines)
+    {
+        this.redrawLayers();
+    }
+};
+
+CanvasHandler.prototype.toggleGridLines = function()
+{
+    this.gridLines = !this.gridLines;
+    this.redrawLayers();
+};
+
+CanvasHandler.prototype.drawGridLines = function()
+{
+    if (this.gridLines)
+    {
+        var max = 1.0;
+        var xincrement = (max / this.widthAspect) * this.scale;
+        var yincrement = (max / this.heightAspect) * this.scale;
+        var canvas = this.canvas;
+        for (var x = 0; x < max; x += xincrement)
+        {
+            this._drawPointsOnCanvas(canvas, [
+            {
+                x: x,
+                y: 0
+            },
+            {
+                x: x,
+                y: max
+            }], this.context.strokeStyle, 1);
+        }
+        for (var y = 0; y < max; y += yincrement)
+        {
+            this._drawPointsOnCanvas(canvas, [
+            {
+                x: 0,
+                y: y
+            },
+            {
+                x: max,
+                y: y
+            }], this.context.strokeStyle, 1);
+        }
+    }
+};
+
 /**
  * Redraws all the layers and all the local drawing actions.
  */
 CanvasHandler.prototype.redrawLayers = function()
 {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawGridLines();
     for (var layerId in this.layers)
     {
         if (this.layers.hasOwnProperty(layerId) && this.layers[layerId].isVisible)
@@ -182,6 +253,9 @@ CanvasHandler.prototype._drawPointsOnCanvas = function(canvas, points, color, li
     }
     var context = canvas.getContext('2d');
 
+    // save previous values
+    var prevColor = context.strokeStyle;
+    var prevLineWidth = context.lineWidth;
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
 
@@ -195,6 +269,8 @@ CanvasHandler.prototype._drawPointsOnCanvas = function(canvas, points, color, li
         context.lineTo(x, y);
     }
     context.stroke();
+    context.strokeStyle = prevColor;
+    context.lineWidth = prevLineWidth;
 };
 
 /*

@@ -15,12 +15,12 @@ D20_UTIL.escapeHtml = (function()
         ">": "&gt;",
         '"': '&quot;',
         "'": '&#39;',
-        "/": '&#x2F;'
+        "</": '&lt;&#x2F;'
     };
 
     return function(string)
     {
-        return String(string).replace(/[&<>"'\/]/g, function(s)
+        return String(string).replace(/[<][\/]|[&<>"']/g, function(s)
         {
             return entityMap[s];
         });

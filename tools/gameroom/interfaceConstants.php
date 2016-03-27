@@ -12,12 +12,12 @@
     const ERROR_DATABASE_ISSUE      = "DATABASE_ISSUE";         // when a mysql error happens
 
     // constants for POST request parameters
-    const REQUEST_TYPE          = "type";
-    const REQUEST_ROOM_NAME     = "name";
-    const REQUEST_ROOM_PASSWORD = "pass";
-    const REQUEST_USER          = "user";
-    const REQUEST_RANDOM        = "rand";
-    const REQUEST_OPEN          = "open";
+    const REQUEST_TYPE          = "TYPE";
+    const REQUEST_ROOM_NAME     = "NAME";
+    const REQUEST_ROOM_PASSWORD = "PASS";
+    const REQUEST_USER          = "USER";
+    const REQUEST_RANDOM        = "RAND";
+    const REQUEST_OPEN          = "OPEN";
 
     // constants for JSON response parameters
     const RESPONSE_SUCCESS      = "isSuccessful";

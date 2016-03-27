@@ -290,11 +290,15 @@ $(document).ready(function()
         var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
 
         var displayName = players[peerId].userName;
+        var escapedId = D20_UTIL.escapeHtml(peerId);
+        var escapedName = D20_UTIL.escapeHtml(displayName);
+        var escapedMsg = D20_UTIL.escapeHtml(message);
+        var linkedMsg = anchorme.js(escapedMsg);
 
         // give a class "user-(id)" so each user can have a custom style
-        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + D20_UTIL.escapeHtml(peerId) + '">' +
-            D20_UTIL.escapeHtml(displayName) + ':</span> ' +
-            D20_UTIL.escapeHtml(message) + '</div>');
+        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapedId + '">' +
+            escapedName + ':</span> ' +
+            linkedMsg + '</div>');
 
         if (isScrolledToBottom)
         {
@@ -553,12 +557,14 @@ $(document).ready(function()
         roomHandler.joinRoom(roomname, roompassword);
     });
 
-    $leaveRoomBtn.click(function()
+    function leaveRoom()
     {
         roomHandler.leaveRoom();
         infoBarNoRoomMode();
         peerHandler.disconnectFromPeers();
-    });
+    }
+
+    $leaveRoomBtn.click(leaveRoom);
 
     $clearLocalCanvas.click(function()
     {
@@ -569,18 +575,28 @@ $(document).ready(function()
     {
         canvasHandler.setColor($canvasColorPicker.val());
     });
-    $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
-});
 
-// Make sure things clean up properly.
-window.onunload = window.onbeforeunload = function(e)
-{
-    $leaveRoomBtn.click();
-
-    if (!!peer && !peer.destroyed)
+    $("#toggleGridLines").click(function()
     {
-        peer.destroy();
-    }
+        canvasHandler.toggleGridLines();
+    });
 
-    return null;
-};
+    $('#scaleInput').on('change', function()
+    {
+        canvasHandler.setScale($(this).val());
+    });
+
+    $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
+
+    // Make sure things clean up properly.
+    window.onunload = window.onbeforeunload = function(e)
+    {
+        leaveRoom();
+        if (!!peer && !peer.destroyed)
+        {
+            peer.destroy();
+        }
+
+        return null;
+    };
+});
