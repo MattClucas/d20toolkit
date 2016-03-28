@@ -53,14 +53,15 @@
         </div>
         <p>Type "/help" at the bottom right for information.</p>
         <div class="canvasParent">
-            <canvas id="drawCanvas">
+            <canvas id="drawCanvas" oncontextmenu="return false;">
                 Please use a browser that supports "canvas"
             </canvas>
             <br>
             <button id="clearLocalCanvas" class="btn btn-default">Clear Local Drawing</button>
             <button id="toggleGridLines" class="btn btn-default">Toggle Grid Lines</button>
             <input type="color" id="canvasColorPicker">
-            <label>Scale:</label><input type="number" step="any" min="0.01" max="512" value="1" id="scaleInput"/>
+            <label>Scale:</label><input type="number" step="0.1" min="0.1" max="2.5" value="1" id="scaleInput"/>
+            <label>Distance:</label><label id="distanceMeasurementLabel"></label>
         </div>
         <div id="onlineUsersDiv">
             <label>Users In Rooms: </label><label id="onlineUsersLabel">Unknown</label><label>/50</label>

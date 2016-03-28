@@ -7,7 +7,11 @@ function CanvasHandler(canvasDOM)
     this.heightAspect = 9;
     this.scale = 1.0;
     this.aspectRatio = this.widthAspect / this.heightAspect;
-    this.borderBufferSize = 8;
+    this.borderBufferSize = 8; // pixels of spacing between the canvas and other stuff
+    this.gameBoxSizeFeet = 5; // every grid box is supposed to represent 5 feet
+    // represent how wide and high the canvas is supposed to be
+    this.totalCanvasDistanceWide = (this.widthAspect / this.scale) * this.gameBoxSizeFeet;
+    this.totalCanvasDistanceHigh = (this.heightAspect / this.scale) * this.gameBoxSizeFeet;
 
     // stores all the actions the local user does
     this.localPoints = []; // double array, contains every array of points the local user applied to the canvas
@@ -16,6 +20,10 @@ function CanvasHandler(canvasDOM)
     this.drawListeners = [];
     this.layers = {}; // hashmap of string -> layers, which are arrays of canvases
     this.gridLines = false;
+
+    // create flags for mouse state
+    this.isLeftMouseButtonActive = false;
+    this.isRightMouseButtonActive = false;
 }
 
 CanvasHandler.prototype._resize = function()
@@ -125,6 +133,8 @@ CanvasHandler.prototype.setLayerVisibility = function(layerId, isVisible)
 CanvasHandler.prototype.setScale = function(scale)
 {
     this.scale = scale;
+    this.totalCanvasDistanceWide = (this.widthAspect / this.scale) * this.gameBoxSizeFeet;
+    this.totalCanvasDistanceHigh = (this.heightAspect / this.scale) * this.gameBoxSizeFeet;
     if (this.gridLines)
     {
         this.redrawLayers();
@@ -134,6 +144,7 @@ CanvasHandler.prototype.setScale = function(scale)
 CanvasHandler.prototype.toggleGridLines = function()
 {
     this.gridLines = !this.gridLines;
+    this.gridLineColor = this.context.strokeStyle;
     this.redrawLayers();
 };
 
@@ -155,7 +166,7 @@ CanvasHandler.prototype.drawGridLines = function()
             {
                 x: x,
                 y: max
-            }], this.context.strokeStyle, 1);
+            }], this.gridLineColor, 1);
         }
         for (var y = 0; y < max; y += yincrement)
         {
@@ -167,7 +178,7 @@ CanvasHandler.prototype.drawGridLines = function()
             {
                 x: max,
                 y: y
-            }], this.context.strokeStyle, 1);
+            }], this.gridLineColor, 1);
         }
     }
 };
@@ -177,11 +188,13 @@ CanvasHandler.prototype.drawGridLines = function()
  */
 CanvasHandler.prototype.redrawLayers = function()
 {
+    if (this.isRightMouseButtonActive) return;
+
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawGridLines();
     for (var layerId in this.layers)
     {
-        if (this.layers.hasOwnProperty(layerId) && this.layers[layerId].isVisible)
+        if (this.layers.hasOwnProperty(layerId) && this.layers[layerId] && this.layers[layerId].isVisible)
         {
             this.context.drawImage(this.layers[layerId], 0, 0);
         }
@@ -214,6 +227,14 @@ CanvasHandler.prototype._getLayer = function(layerId)
     return this.layers[layerId];
 };
 
+CanvasHandler.prototype._removeLayer = function(layerId)
+{
+    if (this.layers[layerId])
+    {
+        this.layers[layerId] = null;
+    }
+};
+
 /**
  * Clears the given layer id's layer of all content.
  */
@@ -237,8 +258,7 @@ CanvasHandler.prototype.drawLayerPoints = function(layerId, points, color, lineW
 
     if (layer.isVisible)
     {
-        // copy the layer onto the view canvas
-        this.context.drawImage(layer, 0, 0);
+        this.redrawLayers();
     }
 };
 
@@ -289,12 +309,43 @@ CanvasHandler.prototype._notifyListeners = function(listeners, data)
     }
 };
 
+CanvasHandler.prototype.calculateDistance = function(point1, point2)
+{
+    function validatePoint(point)
+    {
+        return point !== null &&
+            typeof point === 'object' &&
+            point.x && point.x >= 0 && point.x <= 1 &&
+            point.y && point.y >= 0 && point.y <= 1;
+    }
+
+    // validate points
+    if (!validatePoint(point1) || !validatePoint(point2))
+    {
+        return;
+    }
+
+    var xDelta = (point1.x - point2.x) * (this.totalCanvasDistanceWide);
+    var yDelta = (point1.y - point2.y) * (this.totalCanvasDistanceHigh);
+    var distance = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
+    return distance;
+};
+
+CanvasHandler.prototype.setDistanceCallback = function(callback)
+{
+    this.distanceCallbackFunction = callback;
+};
+
 CanvasHandler.prototype.init = function()
 {
     var self = this;
-    this.canvas.addEventListener('mousedown', startDraw, false);
-    this.canvas.addEventListener('mousemove', draw, false);
-    this.canvas.addEventListener('mouseup', endDraw, false);
+    var LEFT_BUTTON = 0;
+    var RIGHT_BUTTON = 2;
+    var savedCanvasKey = 'MEASUREMENT_SAVE_CANVAS';
+
+    this.canvas.addEventListener('mousedown', mouseDownHandler, false);
+    this.canvas.addEventListener('mousemove', mouseMoveHandler, false);
+    this.canvas.addEventListener('mouseup', mouseUpHandler, false);
 
     (function()
     {
@@ -323,15 +374,58 @@ CanvasHandler.prototype.init = function()
         }
     }());
 
-    // create a flag
-    var isActive = false;
+
+    var startingPoint = null;
 
     // array to collect coordinates
     var points = [];
 
+    function mouseMoveHandler(e)
+    {
+        switch (e.button)
+        {
+            case LEFT_BUTTON:
+                draw(e);
+                break;
+            case RIGHT_BUTTON:
+                measure(e);
+                break;
+        }
+    }
+
+    function measure(e)
+    {
+        if (!self.isRightMouseButtonActive || self.isLeftMouseButtonActive) return;
+
+        // cross-browser canvas coordinates
+        var x = e.offsetX || e.layerX - self.canvas.offsetLeft;
+        var y = e.offsetY || e.layerY - self.canvas.offsetTop;
+        var currentPoint = {
+            x: (x / self.canvas.width),
+            y: (y / self.canvas.height)
+        };
+
+        // if the starting point haven't been set yet, set it and end
+        if (!startingPoint)
+        {
+            startingPoint = currentPoint;
+            return;
+        }
+
+        // reset canvas using saved canvas
+        self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
+        self.context.drawImage(self._getLayer(savedCanvasKey), 0, 0);
+
+        // draw a line from the starting point to the current point
+        self._drawPointsOnCanvas(self.canvas, [startingPoint, currentPoint], self.context.strokeStyle, 2);
+
+        var distance = self.calculateDistance(startingPoint, currentPoint);
+        self.distanceCallbackFunction(distance);
+    }
+
     function draw(e)
     {
-        if (!isActive) return;
+        if (!self.isLeftMouseButtonActive || self.isRightMouseButtonActive) return;
 
         // cross-browser canvas coordinates
         var x = e.offsetX || e.layerX - self.canvas.offsetLeft;
@@ -361,17 +455,57 @@ CanvasHandler.prototype.init = function()
         }
     }
 
-    function startDraw(e)
+    function mouseDownHandler(e)
     {
-        isActive = true;
+        // only activate one button at a time
+        if (e.button === LEFT_BUTTON)
+        {
+            if (self.isRightMouseButtonActive) return;
+
+            self.isLeftMouseButtonActive = true;
+            self.isRightMouseButtonActive = false;
+        }
+        else if (e.button === RIGHT_BUTTON)
+        {
+            if (self.isLeftMouseButtonActive) return;
+            self.isLeftMouseButtonActive = false;
+            self.isRightMouseButtonActive = true;
+
+            // cross-browser canvas coordinates
+            var x = e.offsetX || e.layerX - self.canvas.offsetLeft;
+            var y = e.offsetY || e.layerY - self.canvas.offsetTop;
+            startingPoint = {
+                x: (x / self.canvas.width),
+                y: (y / self.canvas.height)
+            };
+
+            // save the current canvas
+            var savedCanvas = self._getLayer(savedCanvasKey);
+            var savedContext = savedCanvas.getContext('2d');
+            savedContext.clearRect(0, 0, savedCanvas.width, savedCanvas.height);
+            savedContext.drawImage(self.canvas, 0, 0);
+        }
     }
 
-    function endDraw(e)
+    function mouseUpHandler(e)
     {
-        isActive = false;
+        if (self.isLeftMouseButtonActive && e.button == LEFT_BUTTON)
+        {
+            self.isLeftMouseButtonActive = false;
 
-        // empty the array
-        points = [];
+            // empty the array
+            points = [];
+        }
+
+        if (self.isRightMouseButtonActive && e.button == RIGHT_BUTTON)
+        {
+            self.isRightMouseButtonActive = false;
+
+            // put the canvas back
+            self._removeLayer(savedCanvasKey);
+            self.redrawLayers();
+            self.distanceCallbackFunction(null);
+        }
     }
     self._resize();
 };

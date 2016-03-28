@@ -586,6 +586,12 @@ $(document).ready(function()
         canvasHandler.setScale($(this).val());
     });
 
+    var $distanceLabel = $('#distanceMeasurementLabel');
+    canvasHandler.setDistanceCallback(function(distance)
+    {
+        $distanceLabel.text(distance);
+    });
+
     $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
 
     // Make sure things clean up properly.
