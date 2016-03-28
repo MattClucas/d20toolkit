@@ -17,7 +17,7 @@ function CanvasHandler(canvasDOM)
     this.localPoints = []; // double array, contains every array of points the local user applied to the canvas
     this.localVisible = true;
 
-    this.drawListeners = [];
+    this.changeListeners = [];
     this.layers = {}; // hashmap of string -> layers, which are arrays of canvases
     this.gridLines = false;
 
@@ -25,6 +25,9 @@ function CanvasHandler(canvasDOM)
     this.isLeftMouseButtonActive = false;
     this.isRightMouseButtonActive = false;
 }
+CanvasHandler.prototype.MSG_TYPE_SNIPPET = "SNIPPET";
+CanvasHandler.prototype.MSG_TYPE_FULL_DRAWING = "FULL_DRAWING";
+CanvasHandler.prototype.MSG_TYPE_CLEAR = "CLEAR";
 
 CanvasHandler.prototype._resize = function()
 {
@@ -56,11 +59,32 @@ CanvasHandler.prototype._resize = function()
 };
 
 /**
- * Adds a listener that is notified whenever the local user draws to their layer.
+ * Adds a listener that is notified whenever the local user makes changes to their layer.
  */
-CanvasHandler.prototype.addDrawListener = function(listener)
+CanvasHandler.prototype.addChangeListener = function(listener)
 {
-    this.drawListeners.push(listener);
+    this.changeListeners.push(listener);
+};
+
+/**
+ * Handles layer canvas changes and events.
+ */
+CanvasHandler.prototype.handleLayerDrawEvent = function(layerId, data)
+{
+    var content = data.content;
+    switch (data.type)
+    {
+        case this.MSG_TYPE_SNIPPET:
+            this.drawLayerPoints(layerId, content.points, content.color, content.lineWidth);
+            break;
+        case this.MSG_TYPE_CLEAR:
+            this.clearLayer(layerId);
+            break;
+        case this.MSG_TYPE_FULL_DRAWING:
+            this.applyCompleteDrawing(this._getLayer(layerId), content.points);
+            this.redrawLayers();
+            break;
+    }
 };
 
 CanvasHandler.prototype.setLineWidth = function(lineWidth)
@@ -78,9 +102,24 @@ CanvasHandler.prototype.setColor = function(colorHex)
     this.context.strokeStyle = colorHex;
 };
 
-CanvasHandler.prototype.getLocalPoints = function()
+CanvasHandler.prototype.getFullDrawingMsg = function()
 {
-    return this.localPoints;
+    return this._createMsg(this.MSG_TYPE_FULL_DRAWING,
+    {
+        points: this.localPoints
+    });
+};
+
+/**
+ * Internal use only. Creates a message object to send to other layer's canvas handlers.
+ * Messages have a type string and a content object.
+ */
+CanvasHandler.prototype._createMsg = function(type, content)
+{
+    return {
+        type: type,
+        content: content
+    };
 };
 
 /**
@@ -94,10 +133,11 @@ CanvasHandler.prototype.clearLocalLayer = function()
         this.redrawLayers();
     }
     var self = this;
-    self._notifyListeners(self.drawListeners,
-    {
-        clear: true
-    });
+    self._notifyListeners(self.changeListeners,
+        self._createMsg(self.MSG_TYPE_CLEAR,
+        {
+            clear: true
+        }));
 };
 
 /**
@@ -202,11 +242,16 @@ CanvasHandler.prototype.redrawLayers = function()
 
     if (this.localVisible)
     {
-        for (var i = 0; i < this.localPoints.length; i++)
-        {
-            var snippet = this.localPoints[i];
-            this._drawPointsOnCanvas(this.canvas, snippet, snippet.color, snippet.lineWidth);
-        }
+        this.applyCompleteDrawing(this.canvas, this.localPoints);
+    }
+};
+
+CanvasHandler.prototype.applyCompleteDrawing = function(canvas, fullDrawingPoints)
+{
+    for (var i = 0; i < fullDrawingPoints.length; i++)
+    {
+        var snippet = fullDrawingPoints[i];
+        this._drawPointsOnCanvas(canvas, snippet.points, snippet.color, snippet.lineWidth);
     }
 };
 
@@ -227,11 +272,16 @@ CanvasHandler.prototype._getLayer = function(layerId)
     return this.layers[layerId];
 };
 
-CanvasHandler.prototype._removeLayer = function(layerId)
+CanvasHandler.prototype.removeLayer = function(layerId)
 {
-    if (this.layers[layerId])
+    var layer = this.layers[layerId];
+    if (layer)
     {
         this.layers[layerId] = null;
+        if (layer.isVisible)
+        {
+            this.redrawLayers();
+        }
     }
 };
 
@@ -249,7 +299,7 @@ CanvasHandler.prototype.clearLayer = function(layerId)
 };
 
 /**
- * Draws the points with the given color on the layer that belongs to the peerId.
+ * Draws the points with the given color on the layer that belongs to the layerId.
  */
 CanvasHandler.prototype.drawLayerPoints = function(layerId, points, color, lineWidth)
 {
@@ -441,17 +491,13 @@ CanvasHandler.prototype.init = function()
         if (self.localVisible)
         {
             self._drawPointsOnCanvas(self.canvas, points, self.getColor(), self.context.lineWidth);
-            self._notifyListeners(self.drawListeners,
-            {
-                points: points,
-                color: self.getColor(),
-                lineWidth: self.context.lineWidth
-            });
-
-            // attach color and line width for later reference
-            points.color = self.getColor();
-            points.lineWidth = self.context.lineWidth;
-            self.localPoints.push(points);
+            self._notifyListeners(self.changeListeners,
+                self._createMsg(self.MSG_TYPE_SNIPPET,
+                {
+                    points: points,
+                    color: self.getColor(),
+                    lineWidth: self.context.lineWidth
+                }));
         }
     }
 
@@ -493,6 +539,12 @@ CanvasHandler.prototype.init = function()
         {
             self.isLeftMouseButtonActive = false;
 
+            self.localPoints.push(
+            {
+                points: points,
+                color: self.getColor(),
+                lineWidth: self.context.lineWidth
+            });
             // empty the array
             points = [];
         }
@@ -502,7 +554,7 @@ CanvasHandler.prototype.init = function()
             self.isRightMouseButtonActive = false;
 
             // put the canvas back
-            self._removeLayer(savedCanvasKey);
+            self.removeLayer(savedCanvasKey);
             self.redrawLayers();
             self.distanceCallbackFunction(null);
         }
