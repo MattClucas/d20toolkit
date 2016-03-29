@@ -44,6 +44,6 @@
     cursor: pointer;
 }
 
-.selected {
-    background: #ccc;
+.beast-highlighted {
+    background-color: #575757;
 }

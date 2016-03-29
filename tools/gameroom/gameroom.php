@@ -84,6 +84,7 @@
     <script src="/d20toolkit/js/anchorme.min.js"></script>
     <script src="/d20toolkit/js/peer.min.js"></script>
     <script src="/d20toolkit/js/jquery-2.2.0.min.js"></script>
+    <script src="/d20toolkit/js/jquery-ui.min.js"></script>
     <script src="/d20toolkit/js/parser.min.js"></script>
     <script src="/d20toolkit/js/d20toolkitUtil.js"></script>
     <script src="../diceroller/DiceParser.js"></script>

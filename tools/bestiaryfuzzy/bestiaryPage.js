@@ -1,8 +1,5 @@
 function fuzzyControl()
 {
-    //variables for the displayed monster list
-    this.UNHIGHLIGHTED_RBG = "#383838";
-    this.HIGHLIGHTED_RBG = "#575757";
     this.UP_KEY = 38;
     this.DOWN_KEY = 40;
     this.ENTER_KEY = 13;
@@ -48,6 +45,16 @@ fuzzyControl.prototype.getMonster = function(monster)
     });
 };
 
+fuzzyControl.prototype.isFuzzySearch = function()
+{
+
+    if ($(".fuzzy-search").val().charAt(0) == '@')
+    {
+        return true;
+    }
+    return false;
+};
+
 /**
  * Populates the monster list after being called by getAllMonsterNames()
  * Also handles bindings needed for the populated monster list.
@@ -67,7 +74,7 @@ fuzzyControl.prototype.populateMonsterList = function(monsterNameJson)
 
     control = this;
     $('html').click(function(e){
-        if(e.target.class !== 'fuzzy-search')
+        if(fuzzyControl.prototype.isFuzzySearch())
         { 
             control.resetInput();
         }
@@ -77,7 +84,7 @@ fuzzyControl.prototype.populateMonsterList = function(monsterNameJson)
     $(".bestiary-name").hover(
         function(){
         control.unhighlightCurrent();
-        $(this).css("background-color", control.HIGHLIGHTED_RBG);
+        $(this).addClass("beast-highlighted");
         control.highlightedIndex = $(this).parent().index();
         }, function(){
         return;
@@ -105,9 +112,9 @@ fuzzyControl.prototype.highlightNext= function()
         var next = this.highlightList[this.highlightedIndex+1];
         if (next !== undefined)
         {
-            $(this.highlightList[this.highlightedIndex]).css("background-color", this.UNHIGHLIGHTED_RBG);
+            $(this.highlightList[this.highlightedIndex]).removeClass("beast-highlighted");
             this.highlightedIndex++;
-            $(this.highlightList[this.highlightedIndex]).css( "background-color", this.HIGHLIGHTED_RBG );
+            $(this.highlightList[this.highlightedIndex]).addClass("beast-highlighted");
             $(".scrollbar").scrollTop($(".scrollbar").scrollTop()+$(next).outerHeight()); 
         }
     }
@@ -124,9 +131,9 @@ fuzzyControl.prototype.highlightPrev = function()
         var prev = this.highlightList[this.highlightedIndex-1];
         if (prev !== undefined)
         {
-            $(this.highlightList[this.highlightedIndex]).css("background-color", this.UNHIGHLIGHTED_RBG); 
+            $(this.highlightList[this.highlightedIndex]).removeClass("beast-highlighted"); 
             this.highlightedIndex--;
-            $(this.highlightList[this.highlightedIndex]).css( "background-color", this.HIGHLIGHTED_RBG );
+            $(this.highlightList[this.highlightedIndex]).addClass("beast-highlighted");
             $(".scrollbar").scrollTop($(".scrollbar").scrollTop()-$(prev).outerHeight());
         }
     }
@@ -143,7 +150,7 @@ fuzzyControl.prototype.unhighlightCurrent = function()
         var cur = this.highlightList[this.highlightedIndex];
         if (cur !== undefined)
         {
-            $(cur).css("background-color", this.UNHIGHLIGHTED_RBG);
+            $(cur).removeClass("beast-highlighted");
         }
     }
 };
@@ -168,7 +175,7 @@ fuzzyControl.prototype.highlightFirst = function(e)
             if (first !== undefined)
             {
                 this.highlightedIndex = 0;
-                $(this.highlightList[this.highlightedIndex]).css( "background-color", this.HIGHLIGHTED_RBG );
+                $(this.highlightList[this.highlightedIndex]).addClass("beast-highlighted");
                 $(".scrollbar").scrollTop(0);
             }
         }
