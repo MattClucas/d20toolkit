@@ -22,6 +22,11 @@ $(document).ready(function()
         'An example use of this command is "/r 3d6 + 5 * 8" which could have an outcome of ' +
         '"/r 3d6 + 5 * 8 => (5+3+4) + 5 * 8 = 52".';
 
+    const HELP_MSG_M = 'The monster reference command (/m) is used to quickly search for monsters ' +
+        'in the pathfinder bestiary. Syntax: "/m monstername" where monstername can be the name of ' +
+        'any monster in the bestiary.  This will populate a list the may be clicked or selected with enter to ' +
+        'open up that monster\'s reference';
+
     const HELP_MSG_HELP = 'The help command (/h, /help) displays information about how to use this tool and the commands available to the user. ' +
         'Syntax: "/h". ';
 
@@ -466,7 +471,7 @@ $(document).ready(function()
                 case "help":
                     broadcast = false;
                     messageToSend = HELP_MSG_GENERAL + "\n\n" + HELP_MSG_CREATE_OR_JOIN + "\n\n" + HELP_MSG_HELP + "\n\n" + HELP_MSG_ROLL + "\n\n" + HELP_MSG_SG +
-                        "\n\n" + HELP_MSG_AR;
+                        "\n\n" + HELP_MSG_AR + "\n\n" + HELP_MSG_M;
                     break;
                 case "m":
                     return;
