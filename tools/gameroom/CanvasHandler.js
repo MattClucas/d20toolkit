@@ -81,10 +81,18 @@ CanvasHandler.prototype.handleLayerDrawEvent = function(layerId, data)
             this.clearLayer(layerId);
             break;
         case this.MSG_TYPE_FULL_DRAWING:
+            this.removeLayer(layerId);
             this.applyCompleteDrawing(this._getLayer(layerId), content.points);
             this.redrawLayers();
             break;
     }
+};
+
+CanvasHandler.prototype.undoLastSnippet = function()
+{
+    this.localPoints.pop();
+    this._notifyListeners(this.changeListeners, this.getFullDrawingMsg());
+    this.redrawLayers();
 };
 
 CanvasHandler.prototype.setLineWidth = function(lineWidth)
@@ -396,6 +404,15 @@ CanvasHandler.prototype.init = function()
     this.canvas.addEventListener('mousedown', mouseDownHandler, false);
     this.canvas.addEventListener('mousemove', mouseMoveHandler, false);
     this.canvas.addEventListener('mouseup', mouseUpHandler, false);
+    this.canvas.addEventListener('keydown', function(event)
+    {
+        event = event || window.event;
+        // control+z
+        if (event.ctrlKey && event.keyCode == 90)
+        {
+            self.undoLastSnippet();
+        }
+    });
 
     (function()
     {
