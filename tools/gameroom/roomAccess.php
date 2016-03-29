@@ -12,7 +12,7 @@
     const PREP_STATEMENT_DELETE_EMPTY        = "DELETE FROM `ROOMS` WHERE `ROOMS`.`ROOM_NAME`=?";
     const PREP_STATEMENT_TOTAL_USERS         = "SELECT COALESCE(SUM(NUM_MEMBERS),0) FROM `ROOMS`";
 
-    $db = new mysqli("localhost", "root", "rootpw", "d20toolkit");
+    $db = new mysqli("localhost", "root", "", "d20toolkit");
     if($db->connect_error)
     {
         sendResponse(false, ERROR_DATABASE_ISSUE);
