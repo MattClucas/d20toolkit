@@ -408,8 +408,9 @@ CanvasHandler.prototype.init = function()
     {
         event = event || window.event;
         // control+z
-        if (event.ctrlKey && event.keyCode == 90)
+        if (event.keyCode == 46)
         {
+            event.preventDefault();
             self.undoLastSnippet();
         }
     });
