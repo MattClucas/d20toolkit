@@ -8,6 +8,7 @@
     <?php include_once($ROOT . '/header/common-head-tags.php'); ?>
     <title>Game Room</title>
     <link rel="stylesheet" href="gameroom.css">
+    <link rel="stylesheet" href="/tools/bestiaryfuzzy/bestiaryfuzzy.css">
 </head>
 <body>
     <?php
@@ -46,8 +47,14 @@
             <div id="messagesInfoBarChild" class="infoBarChild fullWidth">
                 <div id="messagesBlock" class="fullWidth"></div>
                 <div class="fullWidth">
-                    <input type="text" id="messageInput" class="infoBarUIElement" placeholder="Type a message."/>
-                    <button id="sendButton" class="infoBarUIElement btn btn-default btn-xs">Send</button>
+                    <div id="fuzzy-list-container">
+                        <div class="scrollbar" style="display: none;">
+                            <ul class="list">
+                            </ul>
+                        </div>
+                        <input type="text" id="messageInput" class="infoBarUIElement fuzzy-search" placeholder="Type a message."/>
+                        <button id="sendButton" class="infoBarUIElement btn btn-default btn-xs">Send</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,5 +92,8 @@
 <script src="RoomHandler.js"></script>
 <script src="UnreadMessageNotifier.js"></script>
 <script src="CanvasHandler.js"></script>
+<script src="/js/list.min.js"></script>
+<script src="/tools/bestiaryfuzzy/bestiaryPage.js"></script>
+<script src="/tools/bestiaryfuzzy/list.fuzzysearchCustom.js"></script>
 <script src="gameroom.js"></script>
 </html>

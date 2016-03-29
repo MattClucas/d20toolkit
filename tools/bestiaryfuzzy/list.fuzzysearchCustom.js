@@ -1,6 +1,6 @@
 /*
  * @Author: Matt Clucas
- * This is a modified version of list.fuzzysearch.js.
+ * This is a modified version of list.fuzzysearchCustom.js.
  * The original source may be found here: http://www.listjs.com/examples/fuzzy-search
  *
  * The modifications are a typing timer so we don't execute a fuzzy search on every
@@ -646,7 +646,7 @@ module.exports = function(s) {
 };
 
 });
-require.register("list.fuzzysearch.js/index.js", function(exports, require, module){
+require.register("list.fuzzysearchCustom.js/index.js", function(exports, require, module){
 var classes = require('classes'),
     events = require('events'),
     extend = require('extend'),
@@ -718,13 +718,13 @@ module.exports = function(options) {
             events.bind(getByClass(list.listContainer, options.searchClass), 'keyup', function(e) {
                 var target = e.target || e.srcElement; // IE have srcElement
 
-                if(target.value.charAt(0) == '@')
+                if(target.value.substring(0, 2) == '/m')
                 {
                   //Don't fuzzy search every char if we are typing fast
                   clearTimeout(typingTimer);
                   //Adding " at start prevents dumb matches by lowering the score for monster names with small words.
                   //For example, this hack lets "red dragon" appear before "river dragon" when searching for "red dragon".
-                  var searchTerm = "\""+target.value.substring(1).trim();
+                  var searchTerm = "\""+target.value.substring(2).trim();
                   typingTimer = setTimeout(function(){
                     doSearch(searchTerm, e);
                   },doneTypingInterval);
@@ -738,7 +738,7 @@ module.exports = function(options) {
             //reset timer on keydown
             events.bind(getByClass(list.listContainer, options.searchClass), 'keydown', function(e) {
                 var target = e.target || e.srcElement; // IE have srcElement
-                if(target.value.charAt(0) == '@')
+                if(target.value.substring(0, 2) == '/m')
                 {
                   clearTimeout(typingTimer);
                   fuzzyController.keydown(e);
@@ -754,7 +754,7 @@ module.exports = function(options) {
 };
 
 });
-require.register("list.fuzzysearch.js/src/fuzzy.js", function(exports, require, module){
+require.register("list.fuzzysearchCustom.js/src/fuzzy.js", function(exports, require, module){
 module.exports = function(text, pattern, options) {
     // Aproximately where in the text is the pattern expected to be found?
     var Match_Location = options.location || 0;
@@ -886,31 +886,31 @@ module.exports = function(text, pattern, options) {
 
 
 
-require.alias("component-classes/index.js", "list.fuzzysearch.js/deps/classes/index.js");
+require.alias("component-classes/index.js", "list.fuzzysearchCustom.js/deps/classes/index.js");
 require.alias("component-classes/index.js", "classes/index.js");
 require.alias("component-indexof/index.js", "component-classes/deps/indexof/index.js");
 
-require.alias("segmentio-extend/index.js", "list.fuzzysearch.js/deps/extend/index.js");
+require.alias("segmentio-extend/index.js", "list.fuzzysearchCustom.js/deps/extend/index.js");
 require.alias("segmentio-extend/index.js", "extend/index.js");
 
-require.alias("javve-events/index.js", "list.fuzzysearch.js/deps/events/index.js");
+require.alias("javve-events/index.js", "list.fuzzysearchCustom.js/deps/events/index.js");
 require.alias("javve-events/index.js", "events/index.js");
 require.alias("component-event/index.js", "javve-events/deps/event/index.js");
 
 require.alias("timoxley-is-collection/index.js", "javve-events/deps/is-collection/index.js");
 require.alias("component-type/index.js", "timoxley-is-collection/deps/type/index.js");
 
-require.alias("javve-get-by-class/index.js", "list.fuzzysearch.js/deps/get-by-class/index.js");
+require.alias("javve-get-by-class/index.js", "list.fuzzysearchCustom.js/deps/get-by-class/index.js");
 require.alias("javve-get-by-class/index.js", "get-by-class/index.js");
 
-require.alias("javve-to-string/index.js", "list.fuzzysearch.js/deps/to-string/index.js");
-require.alias("javve-to-string/index.js", "list.fuzzysearch.js/deps/to-string/index.js");
+require.alias("javve-to-string/index.js", "list.fuzzysearchCustom.js/deps/to-string/index.js");
+require.alias("javve-to-string/index.js", "list.fuzzysearchCustom.js/deps/to-string/index.js");
 require.alias("javve-to-string/index.js", "to-string/index.js");
 require.alias("javve-to-string/index.js", "javve-to-string/index.js");
-require.alias("list.fuzzysearch.js/index.js", "list.fuzzysearch.js/index.js");if (typeof exports == "object") {
-  module.exports = require("list.fuzzysearch.js");
+require.alias("list.fuzzysearchCustom.js/index.js", "list.fuzzysearchCustom.js/index.js");if (typeof exports == "object") {
+  module.exports = require("list.fuzzysearchCustom.js");
 } else if (typeof define == "function" && define.amd) {
-  define(function(){ return require("list.fuzzysearch.js"); });
+  define(function(){ return require("list.fuzzysearchCustom.js"); });
 } else {
-  this["ListFuzzySearch"] = require("list.fuzzysearch.js");
+  this["ListFuzzySearch"] = require("list.fuzzysearchCustom.js");
 }})();

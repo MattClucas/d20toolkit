@@ -468,6 +468,8 @@ $(document).ready(function()
                     messageToSend = HELP_MSG_GENERAL + "\n\n" + HELP_MSG_CREATE_OR_JOIN + "\n\n" + HELP_MSG_HELP + "\n\n" + HELP_MSG_ROLL + "\n\n" + HELP_MSG_SG +
                         "\n\n" + HELP_MSG_AR;
                     break;
+                case "m":
+                    return;
                 default:
                     messageToSend = input;
             }

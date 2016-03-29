@@ -19,7 +19,7 @@ fuzzyControl.prototype.getAllMonsterNames = function()
     var control = this;
     $.ajax({
         type: "GET",
-        url: "/d20toolkit/tools/bestiaryfuzzy/pathfinderdb.php",
+        url: "/tools/bestiaryfuzzy/pathfinderdb.php",
         datatype: "json",
         data: {'action': 'getMonsters'},
         success: function(monsters){
@@ -36,7 +36,7 @@ fuzzyControl.prototype.getMonster = function(monster)
 {
     $.ajax({
         type: "GET",
-        url: "/d20toolkit/tools/bestiaryfuzzy/pathfinderdb.php",
+        url: "/tools/bestiaryfuzzy/pathfinderdb.php",
         datatype: "html",
         data: {'action': 'getUrl', 'monsterName': $(monster).text()},
         success: function(url){
@@ -48,7 +48,7 @@ fuzzyControl.prototype.getMonster = function(monster)
 fuzzyControl.prototype.isFuzzySearch = function()
 {
 
-    if ($(".fuzzy-search").val().charAt(0) == '@')
+    if ($(".fuzzy-search").val().substring(0, 2) == '/m')
     {
         return true;
     }

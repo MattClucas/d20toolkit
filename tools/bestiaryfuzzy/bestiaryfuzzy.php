@@ -8,8 +8,7 @@
     <script src="../../js/jquery-2.2.0.min.js"></script>
     <script src="http://listjs.com/no-cdn/list.js"></script>
     <script src="bestiaryPage.js"></script>
-    <script src="/d20toolkit/js/list.fuzzysearch.js"></script>
-    <!-- <script src="/js/list.fuzzysearch.js"></script> -->
+    <script src="/tools/bestiaryfuzzy/list.fuzzysearchCustom.js"></script>
     <meta charset=utf-8 />
 
 </head>
