@@ -25,85 +25,107 @@
 #messagesInfoBarChild {
     position: absolute;
     bottom: 0;
-    height: calc( 100% - 166px );
+    height: calc( 100% - 166px);
 }
 
-#createRoom, #userNameInput {
+#createRoom,
+#userNameInput {
     float: left;
 }
-#joinRoom, #setUserName, #sendButton {
+
+#joinRoom,
+#setUserName,
+#sendButton {
     float: right;
 }
-#createRoom, #joinRoom {
+
+#createRoom,
+#joinRoom {
     width: 49.5%;
 }
+
 .fullWidth {
     width: 100%;
     float: left;
 }
+
 #messagesBlock {
     overflow-y: auto;
     margin-top: 3px;
-    height: calc( 100% - 31px );
+    height: calc( 100% - 31px);
     font-size: smaller;
 }
+
 #messagesBlock div {
     white-space: pre-wrap;
 }
+
 #setUserName {
     width: 70px;
 }
+
 #userNameInput {
-    width: calc( 100% - 73px ); /* 73px = setUserName width + 3px space */
+    width: calc( 100% - 73px);
+    /* 73px = setUserName width + 3px space */
 }
+
 #sendButton {
     width: 43px;
 }
+
 #messageInput {
-    width: calc( 100% - 46px ); /* 46px = sendButton width + 3px space */
+    width: calc( 100% - 46px);
+    /* 46px = sendButton width + 3px space */
 }
+
 .infoBarUIElement {
     height: 25px;
     margin-bottom: 3px;
     margin-left: auto;
     margin-right: auto;
 }
+
 #membersDiv {
     overflow-y: auto;
 }
+
 #roomMembersHeader {
     font-size: medium;
 }
+
 .memberLabel {
     font-size: small;
     font-weight: bold;
     margin-bottom: 3px;
 }
+
 #roomStatusInfoBarChild {
     position: absolute;
     top: 0;
-    max-height: calc( 50% - 1px );
+    max-height: calc( 50% - 1px);
 }
+
 .premessage {
     font-weight: bold;
 }
+
 #onlineUsersDiv {
     font-size: small;
     position: absolute;
     bottom: 0;
     left: 3px;
 }
+
 .canvasParent {
     position: absolute;
     top: 150px;
     bottom: 75px;
     left: 8px;
     width: 71%;
-    max-width: calc( 100% - 253px );
-    min-width: calc( 100% - 308px );
+    max-width: calc( 100% - 253px);
+    min-width: calc( 100% - 308px);
 }
+
 #drawCanvas {
     border: 1px solid black;
-    width: 100%;
-    height: 100%;
 }

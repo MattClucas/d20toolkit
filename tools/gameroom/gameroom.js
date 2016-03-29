@@ -106,18 +106,11 @@ $(document).ready(function()
     peerHandler.addPeerDrawListener(function(event)
     {
         var data = event[peerHandler.MSG_TYPE_DRAW];
-        if (data.clear)
-        {
-            canvasHandler.clearLayer(event.peerId);
-        }
-        else
-        {
-            canvasHandler.drawLayerPoints(event.peerId, data.points, data.color, data.lineWidth);
-        }
+        canvasHandler.handleLayerDrawEvent(event.peerId, data);
     });
 
     // message peers to update their layers whenever the local user draws
-    canvasHandler.addDrawListener(function(event)
+    canvasHandler.addChangeListener(function(event)
     {
         event.peerId = peerHandler.getUserId();
         peerHandler.sendMessage(peerHandler.MSG_TYPE_DRAW, event);
@@ -140,6 +133,10 @@ $(document).ready(function()
         players[peerId] = {};
         players[peerId].userName = peerId;
         peerId = D20_UTIL.escapeHtml(peerId);
+
+        // update the peer with everything we've drawn so far
+        peerHandler.sendMessage(peerHandler.MSG_TYPE_DRAW, canvasHandler.getFullDrawingMsg());
+
         // create display for connection
         $membersDiv.append('<div id="' + peerId + '" class="fullWidth memberLabel ' + USER_COLOR_CSS_PREFIX + peerId + '">' + peerId + '</div>');
         infoBarUpdateUI();
@@ -147,6 +144,7 @@ $(document).ready(function()
 
     peerHandler.addPeerClosedListener(function(peerId)
     {
+        canvasHandler.removeLayer(peerId);
         // remove display for connection
         $('#' + peerId).remove();
         infoBarUpdateUI();
@@ -584,6 +582,12 @@ $(document).ready(function()
     $('#scaleInput').on('change', function()
     {
         canvasHandler.setScale($(this).val());
+    });
+
+    var $distanceLabel = $('#distanceMeasurementLabel');
+    canvasHandler.setDistanceCallback(function(distance)
+    {
+        $distanceLabel.text(distance);
     });
 
     $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');

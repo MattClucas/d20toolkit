@@ -230,3 +230,4 @@ fuzzyControl.prototype.keydown = function(e)
           break;
     }
 };
+
