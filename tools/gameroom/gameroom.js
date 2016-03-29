@@ -296,7 +296,13 @@ $(document).ready(function()
         var escapedId = D20_UTIL.escapeHtml(peerId);
         var escapedName = D20_UTIL.escapeHtml(displayName);
         var escapedMsg = D20_UTIL.escapeHtml(message);
-        var linkedMsg = anchorme.js(escapedMsg);
+        var linkedMsg = anchorme.js(escapedMsg,
+        {
+            "attributes":
+            {
+                "target": "_blank"
+            }
+        });
 
         // give a class "user-(id)" so each user can have a custom style
         $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapedId + '">' +
