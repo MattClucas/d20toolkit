@@ -600,7 +600,9 @@ $(document).ready(function()
     var $distanceLabel = $('#distanceMeasurementLabel');
     canvasHandler.setDistanceCallback(function(distance)
     {
-        $distanceLabel.text(distance);
+        if (!distance || isNaN(distance)) return;
+
+        $distanceLabel.text(distance.toFixed(2));
     });
 
     $('#initiative-tracker').load('initiative-tracker/initiative-tracker.html');
