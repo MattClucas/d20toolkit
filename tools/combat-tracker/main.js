@@ -8,8 +8,10 @@ window.onload = function()
     var $initiativeInput = $('#initiativeInput');
     var $trackerDiv = $('#trackerDiv');
     var $roundLabel = $('#roundLabel');
+    var $startCombatButton = $('#startCombatButton');
+
     var combatStarted = false;
-    $('#startCombatButton')[0].onclick = function()
+    $startCombatButton[0].onclick = function()
     {
         if (combatStarted)
         {
@@ -102,7 +104,7 @@ window.onload = function()
 
     function removeFunc(name)
     {
-        // check if we are removing the current combatant and show 
+        // check if we are removing the current combatant and show
         // the next combatant's drop down if we are
         var currentCombatant = combatTracker.getCurrentCombatant();
         var removingCurrent = (currentCombatant && currentCombatant.id == name);
@@ -128,6 +130,12 @@ window.onload = function()
         // get the array of combatants in their turn order
         var combatants = combatTracker.getTurnOrder();
         $trackerDiv.empty();
+        if (combatants.length <= 0)
+        {
+            combatStarted = false;
+            $startCombatButton.show();
+        }
+
         for (var i = 0; i < combatants.length; i++)
         {
             var combatantName = combatants[i].id;
