@@ -58,7 +58,6 @@
                 </div>
             </div>
         </div>
-        <p>Type "/help" at the bottom right for information.</p>
         <div class="canvasParent">
             <canvas id="drawCanvas" oncontextmenu="return false;" tabindex="1000">
                 Please use a browser that supports "canvas"

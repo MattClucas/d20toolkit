@@ -32,7 +32,7 @@ CanvasHandler.prototype.MSG_TYPE_CLEAR = "CLEAR";
 CanvasHandler.prototype._resize = function()
 {
     // dont allow height of canvas to be more than the window minus the header and bottom buttons
-    var maxHeight = window.innerHeight - (150 + 75);
+    var maxHeight = window.innerHeight - (115 + 75);
     var maxWidth = window.innerWidth - (300 + this.borderBufferSize);
     var maxAspectRatioWidth = maxHeight * this.aspectRatio;
     var maxAspectRatioHeight = maxWidth / this.aspectRatio;

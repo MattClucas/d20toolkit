@@ -2,6 +2,8 @@ $(document).ready(function()
 {
     const USER_COLOR_CSS_PREFIX = "user-";
 
+    const WELCOME_MSG = 'Welcome to the Game Room. Type "/help" for detailed usage information.';
+
     const HELP_MSG_AR = 'The aritchmancy solver command (/ar, /arithmancy) prompts the arithmancy ' +
         'solver tool. Syntax: "/ar spellname" where spellname is the name of the spell. ' +
         'For example, if the spell name is "Fireball", the input to this command would ' +
@@ -93,6 +95,7 @@ $(document).ready(function()
 
         // create css class for user's color
         D20_UTIL.createCSSSelector("." + USER_COLOR_CSS_PREFIX + id, "color: " + USER_COLOR + ";");
+        showMessage(id, WELCOME_MSG);
     });
 
     peerHandler.addErrorListener(function(err)
