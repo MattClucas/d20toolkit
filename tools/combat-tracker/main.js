@@ -207,7 +207,12 @@ window.onload = function()
         this.$dropdownPanelMoveStandardRow = createDOMGridRow(fullWidth);
         this.$moveDiv = createDOMGridRow(halfWidth);
         this.$moveBtn = createDOMBlockButton("Move");
+        this.$nonRepositioningMoveBtn = createDOMBlockButton("Move (non-repositioning)");
+        this.$nonRepositioningMoveBtn.hide(); // start hidden
+        this.$nonRepositioningMoveBtn.css("margin-top", "0px");
         this.$moveDiv.append(this.$moveBtn);
+        this.$moveDiv.append(this.$nonRepositioningMoveBtn);
+        this.$dropdownPanelMoveStandardRow.append(this.$moveDiv);
         this.$dropdownPanelMoveStandardRow.append(this.$moveDiv);
         this.$standardDiv = createDOMGridRow(halfWidth);
         this.$standardBtn = createDOMBlockButton("Standard");
@@ -253,7 +258,18 @@ window.onload = function()
         this.$nameBox.text(this.displayName);
         this.$initBox.text(this.combatant.initiative);
         this.$fullRoundBtn.prop('disabled', !this.combatant.canUseFullRound());
+        if (!this.combatant.canUseMove() && this.combatant.canUseNonRepositioningMove())
+        {
+            this.$moveBtn.hide();
+            this.$nonRepositioningMoveBtn.show();
+        }
+        else
+        {
+            this.$moveBtn.show();
+            this.$nonRepositioningMoveBtn.hide();
+        }
         this.$moveBtn.prop('disabled', !this.combatant.canUseMove());
+        this.$nonRepositioningMoveBtn.prop('disabled', !this.combatant.canUseNonRepositioningMove());
         this.$standardBtn.prop('disabled', !this.combatant.canUseStandard());
         this.$fiveFootBtn.prop('disabled', !this.combatant.canUseFiveFootStep());
         this.$swiftBtn.prop('disabled', !this.combatant.canUseSwift());
@@ -266,6 +282,7 @@ window.onload = function()
         var self = this;
         setActionClickHandler(this, this.$fullRoundBtn, 'attemptFullRound', "Full Round Action");
         setActionClickHandler(this, this.$moveBtn, 'attemptMove', "Move Action");
+        setActionClickHandler(this, this.$nonRepositioningMoveBtn, 'attemptNonRepositioningMove', "Nonrepositioning Move Action");
         setActionClickHandler(this, this.$standardBtn, 'attemptStandard', "Standard Action");
         setActionClickHandler(this, this.$fiveFootBtn, 'attemptFiveFootStep', "Five Foot Step");
         setActionClickHandler(this, this.$swiftBtn, 'attemptSwift', "Swift Action");

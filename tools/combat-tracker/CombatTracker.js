@@ -153,7 +153,18 @@ Combatant.prototype.attemptFiveFootStep = function()
  */
 Combatant.prototype.canUseMove = function()
 {
-    if (!this.isCurrentTurn || this.usedFullRound || this.usedFiveFootStep)
+    return this.canUseNonRepositioningMove() && !this.usedFiveFootStep;
+};
+
+/**
+ * Check if the Combatant is able to perform a Move action that doesn't reposition them
+ * like drawing or sheathing a weapon, manipulating an item, mounting a steed, etc ...
+ *
+ * This does not count actually moving a distance.
+ */
+Combatant.prototype.canUseNonRepositioningMove = function()
+{
+    if (!this.isCurrentTurn || this.usedFullRound)
     {
         return false;
     }
@@ -176,6 +187,20 @@ Combatant.prototype.canUseMove = function()
 Combatant.prototype.attemptMove = function()
 {
     if (!this.canUseMove())
+    {
+        return false;
+    }
+    this.usedMoves++;
+    return true;
+};
+
+/**
+ * Attempting to use a move action that does not move the Combatant a distance.
+ * Returns true if the action was used, returns false otherwise.
+ */
+Combatant.prototype.attemptNonRepositioningMove = function()
+{
+    if (!this.canUseNonRepositioningMove())
     {
         return false;
     }
