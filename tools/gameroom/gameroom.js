@@ -290,6 +290,25 @@ $(document).ready(function()
     peerHandler.init();
     initializeRoomHandler(roomHandler);
 
+    function replaceLinksWithImgs($dom)
+    {
+        // find all links that end with an image file extension and replace them with image tags
+        $dom.find('a[href]').filter(function()
+        {
+            var href = this.href.toLowerCase();
+            return D20_UTIL.strEndsWith(href, "gif") ||
+                D20_UTIL.strEndsWith(href, "png") ||
+                D20_UTIL.strEndsWith(href, "jpg") ||
+                D20_UTIL.strEndsWith(href, "jpeg");
+        }).each(function()
+        {
+            $(this).replaceWith($('<img>').attr('src', this.href)
+                // this class should keep the scale of the image within the chat box
+                .addClass("messagesBlock-img"));
+        });
+        return $dom;
+    }
+
     function showMessage(peerId, message)
     {
         // allow 1px inaccuracy by adding 1
@@ -308,9 +327,13 @@ $(document).ready(function()
         });
 
         // give a class "user-(id)" so each user can have a custom style
-        $messagesBlock.append('<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapedId + '">' +
+        var messageString = '<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapedId + '">' +
             escapedName + ':</span> ' +
-            linkedMsg + '</div>');
+            linkedMsg + '</div>';
+        // create jquery object
+        var $message = $(messageString);
+        $message = replaceLinksWithImgs($message);
+        $messagesBlock.append($message);
 
         if (isScrolledToBottom)
         {

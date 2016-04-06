@@ -156,3 +156,8 @@ D20_UTIL.createCSSSelector = function(selector, style)
         styleSheet.insertRule(selector + '{' + style + '}', styleSheetLength);
     }
 }
+
+D20_UTIL.strEndsWith = function(str, suffix)
+{
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+};

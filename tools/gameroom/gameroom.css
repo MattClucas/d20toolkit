@@ -28,6 +28,15 @@
     height: calc( 100% - 166px);
 }
 
+.messagesBlock-img {
+    display: block;
+    max-width: 300px;
+    min-width: 245px;
+    max-height: calc( 100% - 166px);
+    width: auto;
+    height: auto;
+}
+
 #createRoom,
 #userNameInput {
     float: left;
