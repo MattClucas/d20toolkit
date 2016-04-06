@@ -318,7 +318,7 @@ window.onload = function()
     {
         var $dom = $("<div>");
         $dom.addClass("col-md-" + width);
-        $dom.addClass("col-xs-" + width);
+        $dom.addClass("col-xs-12");
         return $dom;
     }
 
