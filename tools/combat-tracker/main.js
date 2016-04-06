@@ -180,6 +180,7 @@ window.onload = function()
         this.$headerRow.append(this.$nameBox);
         this.$initBox = createDOMGridRow(2);
         this.$initBox.text(this.displayInit);
+        this.$initBox.addClass("text-right");
         this.$headerRow.append(this.$initBox);
         this.$rootDOM.append(this.$headerRow);
 
@@ -317,6 +318,7 @@ window.onload = function()
     {
         var $dom = $("<div>");
         $dom.addClass("col-md-" + width);
+        $dom.addClass("col-xs-" + width);
         return $dom;
     }
 
