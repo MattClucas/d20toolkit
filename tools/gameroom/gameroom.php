@@ -1,6 +1,7 @@
 <?php
-    require_once("interfaceConstants.php");
     $ROOT = $_SERVER['DOCUMENT_ROOT'];
+    include_once($ROOT . '/no-mobile.php');
+    require_once("interfaceConstants.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
