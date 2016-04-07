@@ -290,7 +290,7 @@ $(document).ready(function()
     peerHandler.init();
     initializeRoomHandler(roomHandler);
 
-    function replaceLinksWithImgs($dom)
+    function replaceLinksWithImgs($dom, imgOnloadCallback)
     {
         // find all links that end with an image file extension and replace them with image tags
         $dom.find('a[href]').filter(function()
@@ -302,9 +302,19 @@ $(document).ready(function()
                 D20_UTIL.strEndsWith(href, "jpeg");
         }).each(function()
         {
-            $(this).replaceWith($('<img>').attr('src', this.href)
+            $(this).replaceWith($('<img>')
+                .attr('src', this.href)
                 // this class should keep the scale of the image within the chat box
-                .addClass("messagesBlock-img"));
+                .addClass("messagesBlock-img")
+                // this runs the callback once when the image is loaded
+                .one("load", imgOnloadCallback)
+                .each(function()
+                {
+                    if (this.complete)
+                    {
+                        $(this).load();
+                    }
+                }));
         });
         return $dom;
     }
@@ -313,6 +323,14 @@ $(document).ready(function()
     {
         // allow 1px inaccuracy by adding 1
         var isScrolledToBottom = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight <= $messagesBlock[0].scrollTop + 1;
+
+        function scrollToBottomIfNeeded()
+        {
+            if (isScrolledToBottom)
+            {
+                $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
+            }
+        }
 
         var displayName = players[peerId].userName;
         var escapedId = D20_UTIL.escapeHtml(peerId);
@@ -332,13 +350,11 @@ $(document).ready(function()
             linkedMsg + '</div>';
         // create jquery object
         var $message = $(messageString);
-        $message = replaceLinksWithImgs($message);
+        $message = replaceLinksWithImgs($message, scrollToBottomIfNeeded);
         $messagesBlock.append($message);
 
-        if (isScrolledToBottom)
-        {
-            $messagesBlock[0].scrollTop = $messagesBlock[0].scrollHeight - $messagesBlock[0].clientHeight;
-        }
+        scrollToBottomIfNeeded();
+
         unreadMessageNotifier.addMessage();
     }
 
@@ -596,8 +612,13 @@ $(document).ready(function()
 
     function leaveRoom()
     {
-        roomHandler.leaveRoom();
         infoBarNoRoomMode();
+        peerCleanUp();
+    }
+
+    function peerCleanUp()
+    {
+        roomHandler.leaveRoom();
         peerHandler.disconnectFromPeers();
     }
 
@@ -626,7 +647,7 @@ $(document).ready(function()
     var $distanceLabel = $('#distanceMeasurementLabel');
     canvasHandler.setDistanceCallback(function(distance)
     {
-        if (!isNaN(distance))
+        if (distance && !isNaN(distance))
         {
             $distanceLabel.text(distance.toFixed(2));
         }
@@ -637,12 +658,7 @@ $(document).ready(function()
     // Make sure things clean up properly.
     window.onunload = window.onbeforeunload = function(e)
     {
-        leaveRoom();
-        if (!!peer && !peer.destroyed)
-        {
-            peer.destroy();
-        }
-
+        peerCleanUp();
         return null;
     };
 });

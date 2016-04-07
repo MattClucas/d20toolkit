@@ -35,6 +35,8 @@
     max-height: calc( 100% - 166px);
     width: auto;
     height: auto;
+    padding-right: 24px;
+    /* moves image left of the scroll bar */
 }
 
 #createRoom,

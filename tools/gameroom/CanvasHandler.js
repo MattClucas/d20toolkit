@@ -450,14 +450,13 @@ CanvasHandler.prototype.init = function()
 
     function mouseMoveHandler(e)
     {
-        switch (e.button)
+        if (self.isLeftMouseButtonActive)
         {
-            case LEFT_BUTTON:
-                draw(e);
-                break;
-            case RIGHT_BUTTON:
-                measure(e);
-                break;
+            draw(e);
+        }
+        else if (self.isRightMouseButtonActive)
+        {
+            measure(e);
         }
     }
 
