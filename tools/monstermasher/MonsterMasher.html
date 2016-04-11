@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="monstermasher.css">
 
     </head>
-    <body ng-app="myapp">
+    <body ng-app="myapp"> 
         <div class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -31,6 +31,7 @@
         </div>
 
         <div class="container" ng-controller="MonsterMasherController as monsterController">
+
 
             <div class="finishing-name-box">
                 <div class="row">
@@ -69,6 +70,8 @@
                             </div>
                         </div>
 
+
+
                         <div class="row">
                             <div class="col-xs-6" ng-repeat="stat in monsterController.Monster.EndStats">
                                 <div class="row">
@@ -86,26 +89,7 @@
 
                 <div class="col-xs-6">
                     <div class="stat-block-container" ng-if="!!monsterController.Monster.Core && !!monsterController.Monster.Core.Name">
-                        <h3 class="core-name">{{ monsterController.Monster.Core.Name }} <small>(CR {{ monsterController.Monster.Core.CR }})</small></h3>
-
-                        <div class="row description-container">
-                            <div class="col-xs-12">
-                                <i>{{ monsterController.Monster.Core.Description }}</i>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-6" ng-repeat="stat in monsterController.Monster.Core.Stats">
-                                <div class="row">
-                                    <div class="col-xs-9">
-                                        <h4>{{ stat.Name }}:</h4>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <label class="stat-value">{{ stat.Value }}</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <d20-Monster-Stat-Block monster="monsterController.Monster.Core"></d20-Monster-Stat-Block>
                     </div>
 
                     <div class="stat-block-container" ng-if="!!monsterController.Monster.Template && !!monsterController.Monster.Template.Name">
@@ -149,7 +133,13 @@
         <footer>
             <!-- Add javascript links here -->
             <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+            <script src="app.main.js"></script>
             <script src="monstermasher.ctrl.js"></script>
+            <script src="template.service.js"></script>
+            <script src="monster.service.js"></script>
+            <script src="monster.resource.js"></script>
+            <script src="monster-statblock.ctrl.js"></script>
+            <script src="monster-statblock.directive.js"></script>
         </footer>
 
     </body>

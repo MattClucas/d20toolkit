@@ -54,3 +54,16 @@
     font-size: 20px;
     text-decoration: none !important;
 }
+
+.stat-block-container label{
+    margin: 0px;
+}
+
+.stat-block-container .stat-category-header{
+    display:block; 
+    border-top: 1px solid black; 
+    border-bottom: 1px solid black;
+    font-weight: bold;
+    margin-top:10px;
+    margin-bottom: 10px;
+}
