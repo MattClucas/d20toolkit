@@ -4,8 +4,6 @@
 <head>
     <?php include_once($ROOT . '/header/common-head-tags.php'); ?>
     <title>Sacred Geometry Calculator</title>
-    <script src="SacredGeometry.js"></script>
-    <script src="sacredgeo.js"></script>
 </head>
 <body>
     <?php
@@ -36,4 +34,6 @@
         <div id="result"></div>
     </div>
 </body>
+<script src="SacredGeometry.js"></script>
+<script src="sacredgeo.js"></script>
 </html>

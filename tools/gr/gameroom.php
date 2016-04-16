@@ -85,15 +85,15 @@
 <script src="/js/jquery-2.2.0.min.js"></script>
 <script src="/js/parser.min.js"></script>
 <script src="/js/d20toolkitUtil.js"></script>
-<script src="../diceroller/DiceParser.js"></script>
-<script src="../sacredgeo/SacredGeometry.js"></script>
-<script src="../arithmancy/Arithmancy.js"></script>
+<script src="/js/list.min.js"></script>
+<script src="/tools/bf/bestiaryPage.js"></script>
+<script src="/tools/bf/list.fuzzysearchCustom.js"></script>
+<script src="/tools/dr/DiceParser.js"></script>
+<script src="/tools/sg/SacredGeometry.js"></script>
+<script src="/tools/ar/Arithmancy.js"></script>
 <script src="PeerHandler.js"></script>
 <script src="RoomHandler.js"></script>
 <script src="UnreadMessageNotifier.js"></script>
 <script src="CanvasHandler.js"></script>
-<script src="/js/list.min.js"></script>
-<script src="/tools/bestiaryfuzzy/bestiaryPage.js"></script>
-<script src="/tools/bestiaryfuzzy/list.fuzzysearchCustom.js"></script>
 <script src="gameroom.js"></script>
 </html>

@@ -5,12 +5,6 @@
     <?php include_once($ROOT . '/header/common-head-tags.php'); ?>
     <title>Bestiary Fuzzy Sample</title>
     <link rel="stylesheet" href="bestiaryfuzzy.css">
-    <script src="../../js/jquery-2.2.0.min.js"></script>
-    <script src="http://listjs.com/no-cdn/list.js"></script>
-    <script src="bestiaryPage.js"></script>
-    <script src="/tools/bestiaryfuzzy/list.fuzzysearchCustom.js"></script>
-    <meta charset=utf-8 />
-
 </head>
 
 <body>
@@ -28,4 +22,8 @@
         </div>
     </div>
 </body>
+<script src="/js/jquery-2.2.0.min.js"></script>
+<script src="http://listjs.com/no-cdn/list.js"></script>
+<script src="list.fuzzysearchCustom.js"></script>
+<script src="bestiaryPage.js"></script>
 </html>

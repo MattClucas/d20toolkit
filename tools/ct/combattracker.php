@@ -26,9 +26,9 @@
     </div>
 </body>
 <script src="/js/parser.min.js"></script>
-<script src="/js/d20toolkitUtil.js"></script>
-<script src="/tools/diceroller/DiceParser.js"></script>
 <script src="/js/jquery-2.2.0.min.js"></script>
+<script src="/js/d20toolkitUtil.js"></script>
+<script src="/tools/dr/DiceParser.js"></script>
 <script src="CombatTracker.js"></script>
 <script src="main.js"></script>
 </html>
