@@ -161,3 +161,20 @@ D20_UTIL.strEndsWith = function(str, suffix)
 {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
 };
+
+/*
+ * Generic function to handle firing all the listeners in a listeners array
+ * and passing them the relevant data.
+ */
+D20_UTIL.notifyListeners = function(listeners, data)
+{
+    if (!listeners || listeners.constructor !== Array)
+    {
+        return;
+    }
+
+    for (var i = 0; i < listeners.length; i++)
+    {
+        listeners[i](data);
+    }
+};

@@ -245,22 +245,6 @@ PeerHandler.prototype.addPeerDrawListener = function(listener)
 };
 
 /*
- * Internal use only. Generic function to handle firing all the listeners in a listeners array and passing them the relevant data.
- */
-PeerHandler.prototype._notifyListeners = function(listeners, data)
-{
-    if (!listeners || listeners.constructor !== Array)
-    {
-        return;
-    }
-
-    for (var i = 0; i < listeners.length; i++)
-    {
-        listeners[i](data);
-    }
-};
-
-/*
  * Internal use only. Handles when a peer sends a message to the local user.
  */
 PeerHandler.prototype._handlePeerMsg = function(peerID, data)
@@ -292,7 +276,7 @@ PeerHandler.prototype._handlePeerMsg = function(peerID, data)
             listeners = this.peerDrawListeners;
             break;
     }
-    this._notifyListeners(listeners, listenerData);
+    D20_UTIL.notifyListeners(listeners, listenerData);
 };
 
 /*
@@ -332,7 +316,7 @@ PeerHandler.prototype._handleNewPeer = function(connection)
         // send the peer our user name
         self.sendMessage(self.MSG_TYPE_NAME_CHANGE, self.getUserName(), [connection.peer]);
 
-        self._notifyListeners(self.peerOpenListeners, connection.peer);
+        D20_UTIL.notifyListeners(self.peerOpenListeners, connection.peer);
     });
 
     // handles the closing event of the connection
@@ -344,7 +328,7 @@ PeerHandler.prototype._handleNewPeer = function(connection)
     // handles error events of the connection
     connection.on("error", function(err)
     {
-        self._notifyListeners(self.peerErrorListeners,
+        D20_UTIL.notifyListeners(self.peerErrorListeners,
         {
             peerId: connection.peer,
             error: err
@@ -364,7 +348,7 @@ PeerHandler.prototype._deletePeer = function(peerId)
     {
         delete this.peerIds[peerIndex];
     }
-    this._notifyListeners(this.peerClosedListeners, peerId);
+    D20_UTIL.notifyListeners(this.peerClosedListeners, peerId);
 };
 
 /*
@@ -481,13 +465,13 @@ PeerHandler.prototype.init = function()
     this.peerClient.on('open', function(id)
     {
         self.localUser.id = id;
-        self._notifyListeners(self.openListeners, id);
+        D20_UTIL.notifyListeners(self.openListeners, id);
         delete self.openListeners;
     });
 
     this.peerClient.on('error', function(err)
     {
-        self._notifyListeners(self.errorListeners, err);
+        D20_UTIL.notifyListeners(self.errorListeners, err);
         delete self.errorListeners;
     });
 

@@ -91,7 +91,7 @@ CanvasHandler.prototype.handleLayerDrawEvent = function(layerId, data)
 CanvasHandler.prototype.undoLastSnippet = function()
 {
     this.localPoints.pop();
-    this._notifyListeners(this.changeListeners, this.getFullDrawingMsg());
+    D20_UTIL.notifyListeners(this.changeListeners, this.getFullDrawingMsg());
     this.redrawLayers();
 };
 
@@ -141,7 +141,7 @@ CanvasHandler.prototype.clearLocalLayer = function()
         this.redrawLayers();
     }
     var self = this;
-    self._notifyListeners(self.changeListeners,
+    D20_UTIL.notifyListeners(self.changeListeners,
         self._createMsg(self.MSG_TYPE_CLEAR,
         {
             clear: true
@@ -351,22 +351,6 @@ CanvasHandler.prototype._drawPointsOnCanvas = function(canvas, points, color, li
     context.lineWidth = prevLineWidth;
 };
 
-/*
- * Internal use only. Generic function to handle firing all the listeners in a listeners array and passing them the relevant data.
- */
-CanvasHandler.prototype._notifyListeners = function(listeners, data)
-{
-    if (!listeners || listeners.constructor !== Array)
-    {
-        return;
-    }
-
-    for (var i = 0; i < listeners.length; i++)
-    {
-        listeners[i](data);
-    }
-};
-
 CanvasHandler.prototype.calculateDistance = function(point1, point2)
 {
     function validatePoint(point)
@@ -508,7 +492,7 @@ CanvasHandler.prototype.init = function()
         if (self.localVisible)
         {
             self._drawPointsOnCanvas(self.canvas, points, self.getColor(), self.context.lineWidth);
-            self._notifyListeners(self.changeListeners,
+            D20_UTIL.notifyListeners(self.changeListeners,
                 self._createMsg(self.MSG_TYPE_SNIPPET,
                 {
                     points: points,
