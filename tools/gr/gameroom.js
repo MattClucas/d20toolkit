@@ -65,6 +65,10 @@ $(document).ready(function()
     var $clearLocalCanvas = $('#clearLocalCanvas');
     var $canvasColorPicker = $('#canvasColorPicker');
 
+    // create tab manager
+    var tabManager = new TabManager($('#tabNavigation'), $('#tabContent'));
+    tabManager.init();
+
     var players = {}; // hashmap of id -> player object
     var peerHandler = new PeerHandler();
     var roomHandler = new RoomHandler();

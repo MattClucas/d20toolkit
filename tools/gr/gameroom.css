@@ -1,3 +1,13 @@
+/* Override width of container to be left of the chat bar */
+.container {
+    margin-right: initial;
+    margin-left: initial;
+    padding-left: 15px;
+    padding-right: 15px;
+    max-width: calc( 100% - 300px);
+    min-width: calc( 100% - 308px);
+}
+
 #infoBar {
     border-left: solid grey 2px;
     position: absolute;
@@ -129,12 +139,11 @@
 
 .canvasParent {
     position: absolute;
-    top: 115px;
-    bottom: 75px;
-    left: 8px;
+    top: 106px;
+    left: 15px;
     width: 71%;
-    max-width: calc( 100% - 253px);
-    min-width: calc( 100% - 308px);
+    max-width: calc( 100% - 260px);
+    min-width: calc( 100% - 315px);
 }
 
 #drawCanvas {

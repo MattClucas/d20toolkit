@@ -19,7 +19,7 @@ fuzzyControl.prototype.getAllMonsterNames = function()
     var control = this;
     $.ajax({
         type: "GET",
-        url: "/tools/bestiaryfuzzy/pathfinderdb.php",
+        url: "/tools/bf/pathfinderdb.php",
         datatype: "json",
         data: {'action': 'getMonsters'},
         success: function(monsters){
@@ -36,7 +36,7 @@ fuzzyControl.prototype.getMonster = function(monster)
 {
     $.ajax({
         type: "GET",
-        url: "/tools/bestiaryfuzzy/pathfinderdb.php",
+        url: "/tools/bf/pathfinderdb.php",
         datatype: "html",
         data: {'action': 'getUrl', 'monsterName': $(monster).text()},
         success: function(url){

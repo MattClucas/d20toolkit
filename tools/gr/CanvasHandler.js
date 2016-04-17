@@ -7,7 +7,7 @@ function CanvasHandler(canvasDOM)
     this.heightAspect = 9;
     this.scale = 1.0;
     this.aspectRatio = this.widthAspect / this.heightAspect;
-    this.borderBufferSize = 8; // pixels of spacing between the canvas and other stuff
+    this.borderBufferSize = 15; // pixels of spacing between the canvas and other stuff
     this.gameBoxSizeFeet = 5; // every grid box is supposed to represent 5 feet
     // represent how wide and high the canvas is supposed to be
     this.totalCanvasDistanceWide = (this.widthAspect / this.scale) * this.gameBoxSizeFeet;
@@ -32,7 +32,7 @@ CanvasHandler.prototype.MSG_TYPE_CLEAR = "CLEAR";
 CanvasHandler.prototype._resize = function()
 {
     // dont allow height of canvas to be more than the window minus the header and bottom buttons
-    var maxHeight = window.innerHeight - (115 + 75);
+    var maxHeight = window.innerHeight - (106 + 75);
     var maxWidth = window.innerWidth - (300 + this.borderBufferSize);
     var maxAspectRatioWidth = maxHeight * this.aspectRatio;
     var maxAspectRatioHeight = maxWidth / this.aspectRatio;
