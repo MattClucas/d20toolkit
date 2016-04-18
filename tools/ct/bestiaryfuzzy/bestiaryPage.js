@@ -20,7 +20,7 @@ fuzzyControl.prototype.getAllMonsterNames = function()
     var control = this;
     $.ajax({
         type: "GET",
-        url: "/tools/combat-tracker/bestiaryfuzzy/pathfinderdb.php",
+        url: "bestiaryfuzzy/pathfinderdb.php",
         datatype: "json",
         data: {'action': 'getMonsters'},
         success: function(monsters){
