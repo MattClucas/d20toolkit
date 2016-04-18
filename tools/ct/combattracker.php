@@ -78,7 +78,7 @@
                     </div>
                 </div>
             </div>
-                <iframe src="http://www.d20pfsrd.com/bestiary/monster-listings/magical-beasts/shedu" id="monster-DOM-reference" class="calculated-width"style="width: -webkit-calc(100% - 300px); min-height:85%; float:right;">
+                <iframe src="http://www.d20pfsrd.com/bestiary/monster-listings/outsiders/aasimar" id="monster-DOM-reference" class="calculated-width"style="width: -webkit-calc(100% - 300px); min-height:85%; float:right;">
                 </iframe>
                 <button id="addMonsterButton" class="btn btn-block btn-primary" style="width: -webkit-calc(100% - 300px);float:right;">Add Monster</button>
          </div>
