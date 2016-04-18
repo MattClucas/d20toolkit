@@ -28,6 +28,14 @@ Combatant.prototype.setInitiative = function(initiative)
 };
 
 /**
+ * Sets the url for this Combatant.
+ */
+Combatant.prototype.setUrl = function(url)
+{
+    this.url = url;
+};
+
+/**
  * Ends this Combatant's turn.
  */
 Combatant.prototype.endTurn = function()
@@ -390,10 +398,10 @@ CombatTracker.prototype.nextTurn = function()
 };
 
 /**
- * Adds a new combatant to the CombatTracker with the given id and initiative.
+ * Adds a new combatant to the CombatTracker with the given id, initiative, and url.
  * They will join combat on the next round.
  */
-CombatTracker.prototype.addCombatant = function(id, initiative)
+CombatTracker.prototype.addCombatant = function(id, initiative, url)
 {
     // validate inputs
     if (typeof id !== 'string' && !(id instanceof String))
@@ -408,11 +416,28 @@ CombatTracker.prototype.addCombatant = function(id, initiative)
     // create the new combatant
     var combatant = new Combatant(id);
     combatant.setInitiative(initiative);
+    combatant.setUrl(url);
 
     // add combatant to the map and array
     this.combatantsMap[id] = combatant;
     this._addCombatantToWaitingList(combatant);
     return combatant;
+};
+
+/**
+ * Returns an index number onto existing named combatants so that more than one 
+ * with the same name may be added.
+ */
+CombatTracker.prototype.getIndexedId = function(id)
+{
+    var i = 2;
+    baseId = id;
+    while(this.combatantsMap[id])
+    {
+        id = baseId + " " + i;
+        i++;
+    }
+    return id;
 };
 
 /**

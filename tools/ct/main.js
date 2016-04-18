@@ -1,11 +1,12 @@
-window.onload = function()
+window.onload = function combatTrackerInstance()
 {
     var combatTracker = new CombatTracker();
     var combatantDOMs = {};
 
-    var MAX_CHARACTERS = 50;
+    var MAX_CHARACTERS = 100; //Increasing this because some templated monsters have over 50 chars in name.
     var $userNameInput = $('#userNameInput');
     var $initiativeInput = $('#initiativeInput');
+    var $hpInput = $('#hpInput');
     var $trackerDiv = $('#trackerDiv');
     var $roundLabel = $('#roundLabel');
     var $startCombatButton = $('#startCombatButton');
@@ -35,7 +36,7 @@ window.onload = function()
         var name = $userNameInput.val().trim();
         if (!name || name.length > MAX_CHARACTERS)
         {
-            alert("Please enter a name between 1 and 50 characters.");
+            alert("Please enter a name between 1 and 100 characters.");
             return;
         }
 
@@ -56,8 +57,8 @@ window.onload = function()
         }
         catch (err)
         {
-            alert("A problem occured when interpretting the initiative, try again.");
-            return
+            alert("A problem occured when interpreting the initiative, try again.");
+            return;
         }
         if (isNaN(initiative))
         {
@@ -69,7 +70,8 @@ window.onload = function()
         var combatant;
         try
         {
-            combatant = combatTracker.addCombatant(name, initiative);
+            indexedId = combatTracker.getIndexedId(name);
+            combatant = combatTracker.addCombatant(indexedId, initiative, "");
         }
         catch (error)
         {
@@ -77,13 +79,125 @@ window.onload = function()
             return;
         }
 
-        var combatantDom = new CombatantDOM(name, combatant);
+        var hp = $hpInput.val().trim();
+        var combatantDom = new CombatantDOM(indexedId, combatant, hp);
         combatantDom.initialize();
-        combatantDOMs[name] = combatantDom;
+        combatantDOMs[indexedId] = combatantDom;
 
         // success! combatant added, now update the view
         reorderView();
     };
+
+    $('#addMonsterButton')[0].onclick = function()
+    {
+        var currentMonster = fuzzyControl.prototype.getCurrentMonster();
+        if (currentMonster !== undefined)
+        {
+            $.ajax({
+                type: "GET",
+                url: "bestiaryfuzzy/pathfinderdb.php",
+                datatype: "json",
+                data: {'action': 'getInitStats', 'monsterName': currentMonster},
+                success: function(monsterInfo){
+                    monsterInfo = JSON.parse(monsterInfo)[0];
+                    addMonster(monsterInfo);
+                }
+            });
+        }
+    };
+        
+    function addMonster(monsterInfo)
+    {
+         // validate the name
+        var name = monsterInfo.NAME;
+        if (!name || name.length > MAX_CHARACTERS)
+        {
+            alert("Error parsing monster name. Please report this bug at support@d20toolkit.com.");
+            return;
+        }
+
+        // validate the initiative
+        var initiative = monsterInfo.INIT;
+        initiative = "1d20"+initiative.split(/([+\-0-9d ]*)/)[1]; //For simplicity, only do the first option for monsters like the Formian Warrior for now.
+        if (!initiative)
+        {
+            alert("Error parsing monster initiative. Please report this bug at support@d20toolkit.com.");
+            return;
+        }
+
+        // parse the initiative
+        try
+        {
+            initiative = DiceParser.replaceDiceString(initiative);
+            initiative = Parser.evaluate(initiative);
+            initiative = parseInt(initiative);
+        }
+        catch (err)
+        {
+            alert("A problem occured when interpreting the initiative. Please report this bug at support@d20toolkit.com");
+            return;
+        }
+        if (isNaN(initiative))
+        {
+            alert("A problem occured when interpreting the initiative. Please report this bug at support@d20toolkit.com");
+            return;
+        }
+
+        var hp;
+        // validate hp
+        if ($("#rollHp").prop("checked"))
+        {
+            hp = monsterInfo.HD;
+            hp = hp.split(/([+\-0-9d ]*)/)[1]; //For simplicity, only do the first option for monsters like the Formian Warrior for now.
+        }
+        else
+        {
+            hp = monsterInfo.HP.toString();
+        }
+        if (!hp)
+        {
+            alert("Error parsing monster hd. Please report this bug at support@d20toolkit.com.");
+            return;
+        }
+
+        // parse the initiative
+        try
+        {
+            hp = DiceParser.replaceDiceString(hp);
+            hp = Parser.evaluate(hp);
+            hp = parseInt(hp);
+        }
+        catch (err)
+        {
+            alert("A problem occured when interpreting the hp. Please report this bug at support@d20toolkit.com");
+            return;
+        }
+        if (isNaN(hp))
+        {
+            alert("A problem occured when interpreting the hp. Please report this bug at support@d20toolkit.com");
+            return;
+        }
+
+        // try to create the combatant
+        var combatant;
+        try
+        {
+            indexedId = combatTracker.getIndexedId(name);
+            combatant = combatTracker.addCombatant(indexedId, initiative, monsterInfo.URL);
+        }
+        catch (error)
+        {
+            alert(error.toString());
+            return;
+        }
+
+        var combatantDom = new CombatantDOM(indexedId, combatant, hp);
+        combatantDom.initialize();
+        combatantDOMs[indexedId] = combatantDom;
+
+        // success! combatant added, now update the view
+        reorderView();
+    }
 
     function nextTurnFunc()
     {
@@ -146,7 +260,7 @@ window.onload = function()
         $roundLabel.text(combatTracker.round);
     }
 
-    function CombatantDOM(name, combatant)
+    function CombatantDOM(name, combatant, hp)
     {
         if (!combatant || !(combatant instanceof Combatant))
         {
@@ -154,7 +268,7 @@ window.onload = function()
         }
 
         this.combatant = combatant;
-        this.displayInit = combatant.initiative;
+        this.displayInit = "Init: " + combatant.initiative;
         this.displayName = name;
 
         // create a reference to this object to use in subfunctions
@@ -175,28 +289,72 @@ window.onload = function()
         // create header row which displays the name and the initiative
         this.$headerRow = createDOMGridRow(fullWidth);
         this.$headerRow.addClass("h3");
-        this.$nameBox = createDOMGridRow(10);
+        this.$nameBox = createDOMGridRow(4);
         this.$nameBox.text(this.displayName);
+        this.$nameBox.css({"word-wrap": "break-word"});
         this.$headerRow.append(this.$nameBox);
+        // icon to click to expand to see more actions
+        this.$expandBox = createDOMGridRow(1);
+        this.$expandBox.html("<svg class=\"icon\"><use xlink:href=\"#icon-man\"></use></svg>");
+        this.$headerRow.append(this.$expandBox);
+        //hp icon
+        this.$hpIcon = createDOMGridRow(1);
+        this.$hpIcon.html("<svg class=\"icon\"><use xlink:href=\"#icon-heart\"></use></svg>");
+        this.$headerRow.append(this.$hpIcon);
+        //hp box
+        this.$hpBox = createDOMNumberBox(2,hp);
+        this.$hpBox.addClass("text-right");
+        this.$headerRow.append(this.$hpBox);
+
+        //init
         this.$initBox = createDOMGridRow(2);
         this.$initBox.text(this.displayInit);
         this.$initBox.addClass("text-right");
         this.$headerRow.append(this.$initBox);
         this.$rootDOM.append(this.$headerRow);
 
+        //external link
+        this.$extLink = createDOMGridRow(1);
+        //internal link
+        this.$intLink = createDOMGridRow(1);
+        if(combatant.url==="")
+        {
+            this.$extLink.html("<svg class=\"icon icon-disabled\"><use xlink:href=\"#icon-link\"></use></svg>");
+            this.$intLink.html("<svg class=\"icon icon-disabled\"><use xlink:href=\"#icon-new-tab\"></use></svg>");
+
+        }
+        else
+        {
+            this.$extLink.html("<svg class=\"icon\"><use xlink:href=\"#icon-link\"></use></svg>");
+            this.$extLink.css('cursor', 'pointer');
+            this.$extLink[0].onclick = function()
+            {
+                window.open(combatant.url);
+            };
+
+            this.$intLink.html("<svg class=\"icon\"><use xlink:href=\"#icon-new-tab\"></use></svg>");
+            this.$intLink.css('cursor', 'pointer');
+            this.$intLink[0].onclick = function()
+            {
+                alert("Modal references coming soon to a d20toolkit near you!");
+            };
+        }
+        this.$headerRow.append(this.$extLink);
+        this.$headerRow.append(this.$intLink);
         // create the dropdown panel
         this.$dropdownPanel = createDOMGridRow(fullWidth);
         this.$rootDOM.append(this.$dropdownPanel);
         // start the drop down panel as hidden
         // when the headerrow is clicked, the dropdown panel will toggle
         this.$dropdownPanel.hide();
-        this.$headerRow.css('cursor', 'pointer');
+        this.$expandBox.css('cursor', 'pointer');
         // using regular javascript because for some reason .click(function(){...}); was overwriting
         // all previous click event handlers. Go ahead, try and fix it!
-        this.$headerRow[0].onclick = function()
+        this.$expandBox[0].onclick = function()
         {
             self.$dropdownPanel.toggle();
         };
+        //I reproduced the hack above three times instead of fixing it ^^
 
         // create top row to contain full round action button
         this.$dropdownPanelTopRow = createDOMGridRow(fullWidth);
@@ -257,7 +415,7 @@ window.onload = function()
     {
         // enable or disable all the buttons based on the combatant's state
         this.$nameBox.text(this.displayName);
-        this.$initBox.text(this.combatant.initiative);
+        this.$initBox.text(this.displayInit);
         this.$fullRoundBtn.prop('disabled', !this.combatant.canUseFullRound());
         if (!this.combatant.canUseMove() && this.combatant.canUseNonRepositioningMove())
         {
@@ -319,6 +477,24 @@ window.onload = function()
         var $dom = $("<div>");
         $dom.addClass("col-md-" + width);
         $dom.addClass("col-xs-12");
+        return $dom;
+    }
+
+    function createDOMNumberBox(width, val)
+    {
+        var $dom = $("<input type=\"number\">");
+        $dom.addClass("col-md-" + width);
+        $dom.addClass("col-xs-12");
+        $dom.val(val);
+        return $dom;
+    }
+
+    function createDOMActionIcon(width)
+    {
+        var $dom = $("<input type=\"number\">");
+        $dom.addClass("col-md-" + width);
+        $dom.addClass("col-xs-12");
+        $dom.val(val);
         return $dom;
     }
 
