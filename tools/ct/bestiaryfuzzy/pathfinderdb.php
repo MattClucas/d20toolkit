@@ -29,9 +29,6 @@
         $stmt->execute();
         $res = $stmt->get_result();
         echo json_encode($res->fetch_all(MYSQLI_ASSOC));
-        // $stmt->bind_result($cr, $hd, $hp, $init, $name, $url);
-        //$stmt->fetch();
-        //printf ("%s \n", $url);
     }
     $db->close();
 
