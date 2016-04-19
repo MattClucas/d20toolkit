@@ -43,7 +43,7 @@
             <br>
             <input type="text" id="initiativeInput" class="form-control" onkeydown="if(event.keyCode==13)document.getElementById('addUserButton').click()" placeholder='Initative. Ex: "d20 + 5" or "17"'>
             <br>
-            <input type="text" id="hpInput" class="form-control" onkeydown="if(event.keyCode==13)document.getElementById('addUserButton').click()" placeholder='HP (optional). Ex: "d20 + 5" or "17"'>
+            <input type="text" id="hpInput" class="form-control" onkeydown="if(event.keyCode==13)document.getElementById('addUserButton').click()" placeholder='HP (optional). Ex: "5d8 + 5" or "40"'>
             <br>
             <button id="addUserButton" class="btn btn-block btn-default">Add User</button>
             <a href="#openModal" id="addMonstersButton" class="btn btn-block btn-default">Add Monsters</a>

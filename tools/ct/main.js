@@ -80,6 +80,26 @@ window.onload = function combatTrackerInstance()
         }
 
         var hp = $hpInput.val().trim();
+        // parse hp only if one exists
+        if(hp)
+        { 
+            try
+            {
+                hp = DiceParser.replaceDiceString(hp);
+                hp = Parser.evaluate(hp);
+                hp = parseInt(hp);
+            }
+            catch (err)
+            {
+                alert("A problem occured when interpreting the hp, try again.");
+                return;
+            }
+            if (isNaN(initiative))
+            {
+                alert("Please enter a valid hp. It can be a dice roll, mathematical expression, or a combination of both.");
+                return;
+            }
+        }
         var combatantDom = new CombatantDOM(indexedId, combatant, hp);
         combatantDom.initialize();
         combatantDOMs[indexedId] = combatantDom;
