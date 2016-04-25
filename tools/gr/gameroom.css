@@ -149,3 +149,11 @@
 #drawCanvas {
     border: 1px solid black;
 }
+
+.rollCritFail {
+    color: red;
+}
+
+.rollCritSuccess {
+    color: green;
+}

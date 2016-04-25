@@ -323,6 +323,66 @@ $(document).ready(function()
         return $dom;
     }
 
+    function handleDiceRollColoration(message)
+    {
+        var command = getCommand(message);
+        switch (command)
+        {
+            case 'r':
+            case 'roll':
+                break;
+            default:
+                return message;
+        }
+
+        var messageSections = message.split('=');
+        if (messageSections.length != 3) {
+            console.warn("/r command result does not fit required format");
+            return message;
+        }
+        var command = messageSections[0];
+        var result = messageSections[1];
+        var total = messageSections[2];
+
+        var matches = [];
+        // Regex checks for any die roll or parenthesis without die rolls inside
+        command.replace(/(\d*d\d+)|(\([^d\(\)]*\))/ig,
+            function(match, p1, p2) 
+            {
+                if (p1) {
+                    matches.push(parseInt(match.toLowerCase().split('d')[1]));
+                } else if (p2) {
+                    matches.push(0);
+                }
+            }
+        )
+        
+        var matchCount = 0;
+        result = result.replace(/\([^\(\)]*\)/g,
+            function(match) 
+            {
+                if (matches[matchCount] != 0) {
+                    match = match.replace(/\d+/g,
+                        function(roll) 
+                        {
+                            var rollInt = parseInt(roll);
+                            if (rollInt == 1) {
+                                return '<span class="rollCritFail">' + rollInt + '</span>';
+                            } else if (rollInt == matches[matchCount]) {
+                                return '<span class="rollCritSuccess">' + rollInt + '</span>';
+                            }
+                            return roll;
+                        }
+                    )
+                }
+                matchCount++
+                return match;
+            }
+        )
+
+        return command + "=" + result + "=" + total;
+    }
+
     function showMessage(peerId, message)
     {
         // allow 1px inaccuracy by adding 1
@@ -347,6 +407,7 @@ $(document).ready(function()
                 "target": "_blank"
             }
         });
+        linkedMsg = handleDiceRollColoration(linkedMsg);
 
         // give a class "user-(id)" so each user can have a custom style
         var messageString = '<div class="fullWidth"><span class="premessage ' + USER_COLOR_CSS_PREFIX + escapedId + '">' +
@@ -419,19 +480,7 @@ $(document).ready(function()
         infoBarUpdateUI();
     }
 
-    function sendChatMessage()
-    {
-        var input = $messageInput.val().trim();
-        $messageInput.val("");
-        $messageInput.focus();
-
-        // check if there was anything typed before actually doing stuff
-        if (!input)
-        {
-            return;
-        }
-
-        function getCommand(chatString)
+    function getCommand(chatString)
         {
             // make sure chatString is a string of the format "/*"
             if (!chatString || typeof chatString !== "string" || chatString.charAt(0) !== "/")
@@ -450,7 +499,20 @@ $(document).ready(function()
             return command.substring(1).toLowerCase();
         }
 
-        var messageToSend = input;
+
+    function sendChatMessage()
+    {
+        var input = $messageInput.val().trim();
+        $messageInput.val("");
+        $messageInput.focus();
+
+        // check if there was anything typed before actually doing stuff
+        if (!input)
+        {
+            return;
+        }
+
+                var messageToSend = input;
         var broadcast = true; // whether or not to spam this to the room
         var command = getCommand(input);
         if (command)
