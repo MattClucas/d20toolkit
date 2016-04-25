@@ -335,8 +335,10 @@ $(document).ready(function()
                 return message;
         }
 
-        var messageSections = message.split('=');
-        if (messageSections.length != 3) {
+        var splitCharacter = '=';
+        var messageSections = message.split(splitCharacter);
+        if (messageSections.length != 3)
+        {
             console.warn("/r command result does not fit required format");
             return message;
         }
@@ -347,28 +349,35 @@ $(document).ready(function()
         var matches = [];
         // Regex checks for any die roll or parenthesis without die rolls inside
         command.replace(/(\d*d\d+)|(\([^d\(\)]*\))/ig,
-            function(match, p1, p2) 
+            function(match, p1, p2)
             {
-                if (p1) {
+                if (p1)
+                {
                     matches.push(parseInt(match.toLowerCase().split('d')[1]));
-                } else if (p2) {
+                }
+                else if (p2)
+                {
                     matches.push(0);
                 }
             }
         )
-        
+
         var matchCount = 0;
         result = result.replace(/\([^\(\)]*\)/g,
-            function(match) 
+            function(match)
             {
-                if (matches[matchCount] != 0) {
+                if (matches[matchCount] != 0)
+                {
                     match = match.replace(/\d+/g,
-                        function(roll) 
+                        function(roll)
                         {
                             var rollInt = parseInt(roll);
-                            if (rollInt == 1) {
+                            if (rollInt == 1)
+                            {
                                 return '<span class="rollCritFail">' + rollInt + '</span>';
-                            } else if (rollInt == matches[matchCount]) {
+                            }
+                            if (rollInt == matches[matchCount])
+                            {
                                 return '<span class="rollCritSuccess">' + rollInt + '</span>';
                             }
                             return roll;
@@ -380,7 +389,7 @@ $(document).ready(function()
             }
         )
 
-        return command + "=" + result + "=" + total;
+        return command + splitCharacter + result + splitCharacter + total;
     }
 
     function showMessage(peerId, message)
@@ -481,23 +490,23 @@ $(document).ready(function()
     }
 
     function getCommand(chatString)
+    {
+        // make sure chatString is a string of the format "/*"
+        if (!chatString || typeof chatString !== "string" || chatString.charAt(0) !== "/")
         {
-            // make sure chatString is a string of the format "/*"
-            if (!chatString || typeof chatString !== "string" || chatString.charAt(0) !== "/")
-            {
-                return null;
-            }
-
-            // get whatever comes after the first "/" and before the first space
-            // "/command blah blah blah" gets "command"
-            var command = chatString.split(/(\s+)/)[0];
-            if (command.length <= 1)
-            {
-                return null;
-            }
-
-            return command.substring(1).toLowerCase();
+            return null;
         }
+
+        // get whatever comes after the first "/" and before the first space
+        // "/command blah blah blah" gets "command"
+        var command = chatString.split(/(\s+)/)[0];
+        if (command.length <= 1)
+        {
+            return null;
+        }
+
+        return command.substring(1).toLowerCase();
+    }
 
 
     function sendChatMessage()
@@ -512,7 +521,7 @@ $(document).ready(function()
             return;
         }
 
-                var messageToSend = input;
+        var messageToSend = input;
         var broadcast = true; // whether or not to spam this to the room
         var command = getCommand(input);
         if (command)
