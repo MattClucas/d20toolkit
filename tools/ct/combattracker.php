@@ -89,10 +89,10 @@
 <script src="/js/parser.min.js"></script>
 <script src="/js/jquery-2.2.0.min.js"></script>
 <script src="/js/d20toolkitUtil.js"></script>
-<script src="/tools/dr/DiceParser.js"></script>
-<script src="CombatTracker.js"></script>
-<script src="main.js"></script>
 <script src="/js/list.min.js"></script>
 <script src="bestiaryfuzzy/bestiaryPage.js"></script>
 <script src="bestiaryfuzzy/list.fuzzysearchCustom.js"></script>
+<script src="/tools/dr/DiceParser.js"></script>
+<script src="CombatTracker.js"></script>
+<script src="main.js"></script>
 </html>

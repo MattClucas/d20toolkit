@@ -1,12 +1,12 @@
 .icon {
-	display: inline-block;
-	width: 1em;
-	height: 1em;
-	fill: currentColor;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
 }
 
 .icon-heart {
-	/*color: #990000;*/
+    /*color: #990000;*/
 }
 
 .icon-disabled {

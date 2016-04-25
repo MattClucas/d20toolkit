@@ -432,7 +432,7 @@ CombatTracker.prototype.getIndexedId = function(id)
 {
     var i = 2;
     baseId = id;
-    while(this.combatantsMap[id])
+    while (this.combatantsMap[id])
     {
         id = baseId + " " + i;
         i++;

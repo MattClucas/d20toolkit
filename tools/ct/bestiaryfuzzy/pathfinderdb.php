@@ -24,7 +24,7 @@
         printf ("%s \n", $url);
     }
     else if($_GET['action'] == "getInitStats") {
-        $stmt = $db->prepare("SELECT `INIT`, `HD`, `HP`, `CR`, `NAME`, `URL` FROM `monsters` WHERE `NAME` = ? LIMIT 1");
+        $stmt = $db->prepare("SELECT `INIT`, `HD`, `HP`, `CR`, `NAME`, `URL` FROM `MONSTERS` WHERE `NAME` = ? LIMIT 1");
         $stmt->bind_param("s", $_GET["monsterName"]);
         $stmt->execute();
         $res = $stmt->get_result();

@@ -81,8 +81,8 @@ window.onload = function combatTrackerInstance()
 
         var hp = $hpInput.val().trim();
         // parse hp only if one exists
-        if(hp)
-        { 
+        if (hp)
+        {
             try
             {
                 hp = DiceParser.replaceDiceString(hp);
@@ -113,22 +113,28 @@ window.onload = function combatTrackerInstance()
         var currentMonster = fuzzyControl.prototype.getCurrentMonster();
         if (currentMonster !== undefined)
         {
-            $.ajax({
+            $.ajax(
+            {
                 type: "GET",
                 url: "bestiaryfuzzy/pathfinderdb.php",
                 datatype: "json",
-                data: {'action': 'getInitStats', 'monsterName': currentMonster},
-                success: function(monsterInfo){
+                data:
+                {
+                    'action': 'getInitStats',
+                    'monsterName': currentMonster
+                },
+                success: function(monsterInfo)
+                {
                     monsterInfo = JSON.parse(monsterInfo)[0];
                     addMonster(monsterInfo);
                 }
             });
         }
     };
-        
+
     function addMonster(monsterInfo)
     {
-         // validate the name
+        // validate the name
         var name = monsterInfo.NAME;
         if (!name || name.length > MAX_CHARACTERS)
         {
@@ -138,7 +144,7 @@ window.onload = function combatTrackerInstance()
 
         // validate the initiative
         var initiative = monsterInfo.INIT;
-        initiative = "1d20"+initiative.split(/([+\-0-9d ]*)/)[1]; //For simplicity, only do the first option for monsters like the Formian Warrior for now.
+        initiative = "1d20" + initiative.split(/([+\-0-9d ]*)/)[1]; //For simplicity, only do the first option for monsters like the Formian Warrior for now.
         if (!initiative)
         {
             alert("Error parsing monster initiative. Please report this bug at support@d20toolkit.com.");
@@ -311,7 +317,10 @@ window.onload = function combatTrackerInstance()
         this.$headerRow.addClass("h3");
         this.$nameBox = createDOMGridRow(4);
         this.$nameBox.text(this.displayName);
-        this.$nameBox.css({"word-wrap": "break-word"});
+        this.$nameBox.css(
+        {
+            "word-wrap": "break-word"
+        });
         this.$headerRow.append(this.$nameBox);
         // icon to click to expand to see more actions
         this.$expandBox = createDOMGridRow(1);
@@ -322,7 +331,7 @@ window.onload = function combatTrackerInstance()
         this.$hpIcon.html("<svg class=\"icon\"><use xlink:href=\"#icon-heart\"></use></svg>");
         this.$headerRow.append(this.$hpIcon);
         //hp box
-        this.$hpBox = createDOMNumberBox(2,hp);
+        this.$hpBox = createDOMNumberBox(2, hp);
         this.$hpBox.addClass("text-right");
         this.$headerRow.append(this.$hpBox);
 
@@ -337,7 +346,7 @@ window.onload = function combatTrackerInstance()
         this.$extLink = createDOMGridRow(1);
         //internal link
         this.$intLink = createDOMGridRow(1);
-        if(combatant.url==="")
+        if (combatant.url === "")
         {
             this.$extLink.html("<svg class=\"icon icon-disabled\"><use xlink:href=\"#icon-link\"></use></svg>");
             this.$intLink.html("<svg class=\"icon icon-disabled\"><use xlink:href=\"#icon-new-tab\"></use></svg>");
