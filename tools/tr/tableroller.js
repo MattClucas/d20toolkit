@@ -89,13 +89,10 @@ window.onload = function()
     // create content table
     if (TABLE.length > 0)
     {
-        var mainDiv = document.getElementById("mainDiv");
         var removeOptionsCheckbox = document.getElementById("removeOptionsCheckbox");
 
-        // create results div for rolled results
-        var resultsDiv = document.createElement("div");
-        resultsDiv.className += "block";
-        mainDiv.appendChild(resultsDiv);
+        // get results div for rolled results
+        var resultsDiv = document.getElementById("rollBlock");
 
         // create roll results div and button
         var rollResults = document.createElement("div");
@@ -131,7 +128,7 @@ window.onload = function()
             content = DiceParser.replaceDiceStringAndEvaluate(content);
 
             // show results in the results div
-            rollResults.innerHTML = content + "<br>" + rollResults.innerHTML;
+            rollResults.innerHTML = "<hr>" + content + rollResults.innerHTML;
 
             if (removeOptionsCheckbox.checked)
             {
