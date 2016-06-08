@@ -11,7 +11,7 @@
         <td>+1</td>
     </tr>
     <tr>
-        <td><a href="/tools/tr/tableroller.php?t=IIEwbghgdgxgllA5gKGFCAnGALONWzYD2GCKwAHnEQLYQAueyAwiRkQM5xgCmABACMArhg71kAER4AzONHES4HAA48ANmrKCRYyUoxDljIlGQAxNRBpbho8WZEBPASVMBxNSWpCOyABJEao7IAJIwjtp2oYhQcIxIoTTKEDD0ACyhUGBwiCQMZMgA0nB8CPQ8UFzSjgUAMnDSPBwiiDzIAHI8iPkJAArYEBz8njAA1gUAysRjNjriE-QQauMJAKpQxEHIAOpEQlAgZEA">
+        <td><a href="/tools/tr/tableroller.php?t=IIEwbghgdgxgllA5gKGFCAnGALONWzYD2GCKwAHnEQLYQAueyAwiRkQM5xgCmABACMArhg71kAER4AzONHES4HAA48ANmrKCRYyUoxDljIlGQAxNRBpbho8WZEBPASVMBxNSWpCOyABJEao7IAJIwjtp2oYhQcIxIoTTKEDDiIVBgcIgkDGTIANJwfAj0PFBc0o55ADJw0jwcIog8yAByPIi5CQAK2BAc-J4wANZ5AMrEIzY64mP0EGqjCQCqUMRByADqREJQIGRAA">
             Melee
         </a></td>
         <td>+2</td>
