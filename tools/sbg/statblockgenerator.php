@@ -22,7 +22,10 @@
 <script src="/js/jquery-2.2.0.min.js"></script>
 <script src="/js/d20toolkitUtil.js"></script>
 <script src="/tools/dr/DiceParser.js"></script>
-<script src="pfspells.js"></script>
+<script src="pfFeats.js"></script>
+<script src="pfLanguages.js"></script>
+<script src="pfSkills.js"></script>
+<script src="pfSpells.js"></script>
 <script src="StatBlockGenerator.js"></script>
 <script src="main.js"></script>
 </html>

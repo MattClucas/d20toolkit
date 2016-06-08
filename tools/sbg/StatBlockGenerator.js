@@ -335,28 +335,40 @@ var StatInputFactory = (function()
         return $inputRoot;
     };
 
-    function LargeTextInput(id, alternateDisplayTitle, placeholderText, rows)
+    function LargeTextInput(id, alternateDisplayTitle, placeholderText, numRows)
     {
         validateId(id);
         this.id = id;
         this.alternateDisplayTitle = alternateDisplayTitle || null;
         this.placeholderText = placeholderText || "";
-        var intRows = parseInt(rows);
-        this.rows = (!isNaN(intRows) && intRows >= 1) ? intRows : 3;
+        var intRows = parseInt(numRows);
+        this.numRows = (!isNaN(intRows) && intRows >= 1) ? intRows : 3;
     }
     LargeTextInput.prototype.createInputDom = function()
     {
         var $inputRoot = createInputBase(this.alternateDisplayTitle, this.id);
-        var $textInput = $('<textarea rows="' + this.rows + '">');
+        var $textInput = $('<textarea rows="' + this.numRows + '">');
         applyInputAttributes($textInput, this.id, this.placeholderText);
         $inputRoot.append($textInput);
         return $inputRoot;
     };
 
-    // add create methods to the return object so that the return object can be used to create input 
+    // Maybe, to make this a generic input, this should be a multi input or an input group somehow?
+    // an attack could then be a list input for the weapon, number input for attack, number input for the crit range, number input for the damage, and maybe a new dice input
+    // Then a full attack could be a grouping of this attack input grouping
+    function FullAttackInput(id /* TODO */ )
+    {
+        // TODO
+    }
+    FullAttackInput.prototype.createInputDom = function()
+    {
+        // TODO
+    };
+
+    // add create methods to the return object so that the return object can be used to create input
     // types like so "var enum = StatInputFactory.createEnumInput(...);"
     // using bind.apply and passing in the constructor name and the arguments variable allows us
-    // to not have to have the arguments in these functions. The calling code just calls these 
+    // to not have to have the arguments in these functions. The calling code just calls these
     // functions with the arguments of the actual constructor.
     function callConstructor(constructor)
     {
@@ -367,6 +379,7 @@ var StatInputFactory = (function()
         createListInput: callConstructor.bind(null, ListInput),
         createNumberInput: callConstructor.bind(null, NumberInput),
         createSmallTextInput: callConstructor.bind(null, SmallTextInput),
-        createLargeTextInput: callConstructor.bind(null, LargeTextInput)
+        createLargeTextInput: callConstructor.bind(null, LargeTextInput),
+        createFullAttackInput: callConstructor.bind(null, FullAttackInput)
     };
 })();

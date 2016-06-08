@@ -1,7 +1,7 @@
 window.onload = function()
 {
     var creatureFormInputs = [
-        StatInputFactory.createSmallTextInput("creatureName", "Name", "Richmond"),
+        StatInputFactory.createSmallTextInput("creatureName", "Name", "Shedu"),
         StatInputFactory.createLargeTextInput("FlavorText", "Flavor Text", "This noble creature stands strong and tall with the body of a powerful bull and the head of a wise-looking human."),
         StatInputFactory.createNumberInput("challengeRating", "CR"),
         StatInputFactory.createNumberInput("experiencePoints", "XP"),
@@ -128,15 +128,15 @@ window.onload = function()
             "Scent",
             "True Seeing"
         ], null, true, true),
-        StatInputFactory.createNumberInput("armorClass", "AC"),
+        StatInputFactory.createNumberInput("ac", "AC"),
         StatInputFactory.createNumberInput("touch", "Touch"),
         StatInputFactory.createNumberInput("flatFooted", "Flat Footed"),
-        StatInputFactory.createNumberInput("healthPoints", "HP"),
+        StatInputFactory.createNumberInput("hp", "HP"),
         // TODO defensive monster abilities (regeneration, fast heal, special monster abilities)
         StatInputFactory.createNumberInput("fortitude", "Fortitude"),
         StatInputFactory.createNumberInput("reflex", "Reflex"),
         StatInputFactory.createNumberInput("will", "Will"),
-        StatInputFactory.createListInput("damageReduction", [
+        StatInputFactory.createListInput("dr", [
             "Adamantine",
             "Bludgeoning",
             "Chaos",
@@ -149,7 +149,7 @@ window.onload = function()
             "Piercing",
             "Silver",
             "Slashing"
-        ], "DR", false, true, true),
+        ], "Damage Reduction", false, true, true),
         StatInputFactory.createListInput("energyResistance", [
             "Acid",
             "Cold",
@@ -175,7 +175,25 @@ window.onload = function()
         // TODO offensive monster abilities
         StatInputFactory.createNumberInput("casterLevel", "Caster Level"),
         StatInputFactory.createNumberInput("Concentration"),
-        StatInputFactory.createListInput("spellLikeAbilitiesConstant", ALL_PATHFINDER_SPELLS, "Spell-Like Abilites - Constant", true, true)
+        StatInputFactory.createListInput("spellLikeAbilitiesConstant", ALL_PATHFINDER_SPELLS, "Spell-Like Abilites - Constant", true, true),
+        StatInputFactory.createListInput("spellLikeAbilities", ALL_PATHFINDER_SPELLS, "Spell-Like Abilites (with amount per day)", true, true, true),
+        StatInputFactory.createNumberInput("Strength", null, 0),
+        StatInputFactory.createNumberInput("Dexterity", null, 0),
+        StatInputFactory.createNumberInput("Constitution", null, 0),
+        StatInputFactory.createNumberInput("Intelligence", null, 0),
+        StatInputFactory.createNumberInput("Wisdom", null, 0),
+        StatInputFactory.createNumberInput("Charisma", null, 0),
+        StatInputFactory.createNumberInput("bab", "Base Attack Bonus"),
+        StatInputFactory.createNumberInput("cmb", "Combat Maneuver Bonus"),
+        StatInputFactory.createNumberInput("cmd", "Combat Maneuver Defense"),
+        StatInputFactory.createListInput("feats", ALL_PATHFINDER_FEATS, "Feats", true, true),
+        StatInputFactory.createListInput("skills", ALL_PATHFINDER_SKILLS, "Skills", true, true, true),
+        StatInputFactory.createListInput("languages", ALL_PATHFINDER_LANGUAGES, "Languages", true, true)
+        // TODO special abilities
+        // TODO environment
+        // TODO organization
+        // TODO treasure
+        // TODO ecology description
     ];
 
     var $mainForm = $("#mainForm");
