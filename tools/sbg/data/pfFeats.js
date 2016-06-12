@@ -1,4 +1,4 @@
-var ALL_PATHFINDER_FEATS = [
+var PATHFINDER_FEATS = [
     "Aberrant Tumor",
     "Ability Focus",
     "Abundant Revelations",
@@ -1907,4 +1907,4 @@ var ALL_PATHFINDER_FEATS = [
     "Wretched Curator",
     "Yai-Mimic Spell"
 ];
-Object.freeze(ALL_PATHFINDER_FEATS);
+Object.freeze(PATHFINDER_FEATS);

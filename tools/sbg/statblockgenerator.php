@@ -22,10 +22,18 @@
 <script src="/js/jquery-2.2.0.min.js"></script>
 <script src="/js/d20toolkitUtil.js"></script>
 <script src="/tools/dr/DiceParser.js"></script>
-<script src="pfFeats.js"></script>
-<script src="pfLanguages.js"></script>
-<script src="pfSkills.js"></script>
-<script src="pfSpells.js"></script>
+<script src="data/pfAlignments.js"></script>
+<script src="data/pfCreatureSubTypes.js"></script>
+<script src="data/pfCreatureTypes.js"></script>
+<script src="data/pfDamageReductionTypes.js"></script>
+<script src="data/pfEnergyTypes.js"></script>
+<script src="data/pfFeats.js"></script>
+<script src="data/pfLanguages.js"></script>
+<script src="data/pfMovementTypes.js"></script>
+<script src="data/pfSenses.js"></script>
+<script src="data/pfSizeCategories.js"></script>
+<script src="data/pfSkills.js"></script>
+<script src="data/pfSpells.js"></script>
 <script src="StatBlockGenerator.js"></script>
 <script src="main.js"></script>
 </html>

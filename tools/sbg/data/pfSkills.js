@@ -1,4 +1,4 @@
-var ALL_PATHFINDER_SKILLS = [
+var PATHFINDER_SKILLS = [
     "Acrobatics",
     "Appraise",
     "Bluff",
@@ -35,4 +35,4 @@ var ALL_PATHFINDER_SKILLS = [
     "Swim",
     "Use Magic Device",
 ];
-Object.freeze(ALL_PATHFINDER_SKILLS);
+Object.freeze(PATHFINDER_SKILLS);

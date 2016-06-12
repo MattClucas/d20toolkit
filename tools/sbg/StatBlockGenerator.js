@@ -115,29 +115,35 @@ var StatInputFactory = (function()
             var combinedInputs = [];
             $inputArray.forEach(function($input)
             {
-                var $itemInput = $('<input type="hidden">');
-                $itemInput.attr('name', $input.attr('name'));
-                var value = $input.val();
-                $itemInput.val(value);
-                combinedInputs.push(value);
-
-                $addedItem.append($itemInput);
+                var value = $input.val().trim();
+                // only do anything if there is a value
+                if (value)
+                {
+                    var $itemInput = $('<input type="hidden">');
+                    $itemInput.attr('name', $input.attr('name'));
+                    $itemInput.val(value);
+                    combinedInputs.push(value);
+                    $addedItem.append($itemInput);
+                }
             });
-            var combinedInputString = combinedInputs.join(" ");
-
-            // append a text node instead of doing .text() because using .text()
-            // overwrites the innerHtml which holds all the appended hidden inputs
-            $addedItem.append(document.createTextNode(combinedInputString));
-
-            // create a "button" that will remove this item when clicked on
-            var $removeBtn = $('<span class="badge">X</span>');
-            $removeBtn.css("cursor", "pointer");
-            $removeBtn.click(function()
+            if (combinedInputs.length)
             {
-                $addedItem.remove();
-            });
-            $addedItem.append($removeBtn);
-            $listHolder.append($addedItem);
+                var combinedInputString = combinedInputs.join(" ");
+
+                // append a text node instead of doing .text() because using .text()
+                // overwrites the innerHtml which holds all the appended hidden inputs
+                $addedItem.append(document.createTextNode(combinedInputString));
+
+                // create a "button" that will remove this item when clicked on
+                var $removeBtn = $('<span class="badge">X</span>');
+                $removeBtn.css("cursor", "pointer");
+                $removeBtn.click(function()
+                {
+                    $addedItem.remove();
+                });
+                $addedItem.append($removeBtn);
+                $listHolder.append($addedItem);
+            }
         });
 
         // click the add button when enter is pressed on the input

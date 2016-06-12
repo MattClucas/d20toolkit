@@ -1,4 +1,4 @@
-var ALL_PATHFINDER_LANGUAGES = [
+var PATHFINDER_LANGUAGES = [
     "Aboleth",
     "Abyssal",
     "Aklo",
@@ -34,4 +34,4 @@ var ALL_PATHFINDER_LANGUAGES = [
     "Undercommon",
     "Vegepygmy"
 ];
-Object.freeze(ALL_PATHFINDER_LANGUAGES);
+Object.freeze(PATHFINDER_LANGUAGES);

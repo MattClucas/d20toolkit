@@ -1,4 +1,4 @@
-var ALL_PATHFINDER_SPELLS = [
+var PATHFINDER_SPELLS = [
     "Abeyance",
     "Abhorrent Blight",
     "Ablative Barrier",
@@ -2177,4 +2177,4 @@ var ALL_PATHFINDER_SPELLS = [
     "Zone of Silence",
     "Zone of Truth"
 ];
-Object.freeze(ALL_PATHFINDER_SPELLS);
+Object.freeze(PATHFINDER_SPELLS);
