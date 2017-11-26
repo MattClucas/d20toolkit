@@ -2,17 +2,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php include_once($ROOT . '/header/common-head-tags.php'); ?>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/css/bootstrap.min.css" media="screen">
+	<link rel="stylesheet" href="/css/bootswatch.min.css">
+	<link rel="shortcut icon" href="/img/d20toolkit.png">
+	<script src="/js/stats.js"></script>
     <title>Combat Tracker</title>
-    <link rel="stylesheet" href="bestiaryfuzzy/bestiaryfuzzy.css">
     <link rel="stylesheet" href="CombatTracker.css">
     <link rel="stylesheet" href="svgStyle.css">
 </head>
 <body>
-    <?php
-        include_once($ROOT . '/stats.php');
-        include_once($ROOT . '/header/header.php');
-    ?>
+	<!--
+		Curious about the source code? We try to make this site
+		as simple and minimal as possible. We minify all our
+		css and js files to make the site load faster (really
+		it's just for fun). But all the source code is here:
+		https://github.com/MattClucas/d20toolkit
+	-->
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a href="/" class="navbar-brand">D20ToolKit</a>
+			</div>
+			<div class="navbar-collapse collapse" id="navbar-main">
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="/header/about.html">About</a>
+					</li>
+					<li>
+						<a href="/header/contact.html">Contact</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
     <!-- define svgs used later -->
     <svg style="position: absolute; width: 0; height: 0;" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
@@ -46,52 +70,18 @@
             <input type="text" id="hpInput" class="form-control" onkeydown="if(event.keyCode==13)document.getElementById('addUserButton').click()" placeholder='HP (optional). Ex: "5d8 + 5" or "40"'>
             <br>
             <button id="addUserButton" class="btn btn-block btn-default">Add User</button>
-            <a href="#openModal" id="addMonstersButton" class="btn btn-block btn-default">Add Monsters</a>
             <button id="startCombatButton" class="btn btn-block btn-default">Start Combat</button>
             <label>Current Round:</label><label id="roundLabel">0</label>
         </div>
         <div id="trackerDiv" class="col-md-8">
         </div>
     </div>
-    <div id="openModal" class="modalDialog">
-        <div>
-            <a href="#close" title="Close" class="close">X</a>
-            <div id="monster-filter">
-                <div id="fuzzy-list-container">
-                    <input type="text" class="fuzzy-search" placeholder='Monster Name. Ex: "Shedu"' />
-                    <select disabled>
-                        <option>1/6</option>
-                        <option>1/4</option>
-                        <option>1/2</option>
-                        <option>1</option>
-                    </select>
-                    <select disabled>
-                        <option>30</option>
-                        <option>1/4</option>
-                        <option>1/2</option>
-                        <option>1</option>
-                    </select>
-                    <input type="checkbox" id="rollHp" value="checkbox" checked> <label for="cbox2">Roll Monster HP</label>
-                    <div class="scrollbar">
-                        <ul class="list">
-                        </ul>
-                    </div>
-                </div>
-            </div>
-                <iframe src="http://www.d20pfsrd.com/bestiary/monster-listings/outsiders/aasimar" id="monster-DOM-reference" class="calculated-width"style="width: -webkit-calc(100% - 300px); min-height:85%; float:right;">
-                </iframe>
-                <button id="addMonsterButton" class="btn btn-block btn-primary" style="width: -webkit-calc(100% - 300px);float:right;">Add Monster</button>
-         </div>
-
-     </div>
 
 </body>
 <script src="/js/parser.min.js"></script>
 <script src="/js/jquery-2.2.0.min.js"></script>
 <script src="/js/d20toolkitUtil.js"></script>
 <script src="/js/list.min.js"></script>
-<script src="bestiaryfuzzy/bestiaryPage.js"></script>
-<script src="bestiaryfuzzy/list.fuzzysearchCustom.js"></script>
 <script src="/tools/dr/DiceParser.js"></script>
 <script src="CombatTracker.js"></script>
 <script src="main.js"></script>
